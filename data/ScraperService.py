@@ -10,9 +10,9 @@ import scrapers.EventInfoScraper as EventInfoScraper
 
 class ScraperService:
 
-    FIGHT_CSV = "../../resources/fights.csv"
-    EVENT_CSV = "../../resources/events.csv"
-    EVENT_INFO_CSV = "../../resources/events-info.csv"
+    FIGHT_CSV = "../resources/initial_data/fights.csv"
+    EVENT_CSV = "../resources/initial_data/events.csv"
+    EVENT_INFO_CSV = "../resources/initial_data/events-info.csv"
 
     def __init__(self):
         self.fight_cache = FightCache(self.FIGHT_CSV)

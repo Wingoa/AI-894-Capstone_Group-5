@@ -1,0 +1,24 @@
+NEXT STEPS FOR MODEL TRAINING
+
+1. Create matchup_features.py
+   - Load train_set.csv and test_set.csv
+   - Compute fighter differentials (A - B) for all 14 features
+   - Example: striking_pace_diff, takedown_accuracy_diff, control_pct_diff
+   - Save as train_matchup.csv and test_matchup.csv
+
+2. Train NMF style model
+   - Use 25 style features from features.py
+   - Extract 5 components (striking, muay thai, wrestling, grappling, pace)
+   - Save model + fighter style profiles
+
+3. Train XGBoost classifier
+   - Use 14 matchup differential features
+   - Target: outcome (win/loss)
+   - Goal: ≥68% precision, AUC ≥ 0.72
+
+4. Add SHAP explainability
+   - Identify top 5 outcome drivers per prediction
+   - Build "what-if" optimizer for tactical recommendations
+
+Data location: ../../resources/clean_data/
+Current state: 9,904 cleaned fights ready (14,066 train / 1,040 test)
