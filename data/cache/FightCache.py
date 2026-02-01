@@ -1,30 +1,9 @@
 from __future__ import annotations
-from dataclasses import dataclass
 from typing import Dict, List, Optional
+from data_model.FightStatLine import FightStatLine
 import csv
 import os
 import BaseCsvCache as BaseCsvCache
-
-@dataclass(frozen=True)
-class FightStatLine:
-    fight_id: str
-    fighter_id: str
-    fighter: str
-    kd: Optional[int]
-    sig_str: str
-    sig_str_pct: str
-    total_str: str
-    td: str
-    td_pct: str
-    sub_att: Optional[int]
-    rev: Optional[int]
-    ctrl: str
-    head: str
-    body: str
-    leg: str
-    distance: str
-    clinch: str
-    ground: str
 
 
 class FightCache(BaseCsvCache[str, List[FightStatLine]]):

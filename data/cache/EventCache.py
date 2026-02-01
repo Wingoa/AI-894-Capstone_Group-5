@@ -1,14 +1,6 @@
 import csv
 import BaseCsvCache
-from dataclasses import dataclass
-
-@dataclass(frozen=True)
-class Event:
-    event_id: str
-    event_name: str
-    event_date: str
-    event_location: str
-    event_url: str
+from data_model.Event import Event
 
 class EventCache(BaseCsvCache[str, Event]):
     FIELDS = ["event_id", "event_name", "event_date", "event_location", "event_url"]

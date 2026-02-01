@@ -1,31 +1,14 @@
 from __future__ import annotations
-from dataclasses import dataclass
 from typing import Dict, List, Optional
 import csv
 import os
 import BaseCsvCache
+from data_model.EventInfo import EventInfo
 
-# assumes BaseCsvCache is already defined exactly as earlier:
-# class BaseCsvCache(ABC, Generic[K, T]): ...
-
-
-@dataclass(frozen=True)
-class EventFightInfo:
-    event_id: str
-    fight_id: Optional[str]
-    winner_name: str
-    loser_name: str
-    weight_class: str
-    method: Optional[str]
-    round: Optional[int]
-    time: Optional[str]
-    fight_url: Optional[str]
-
-
-class EventInfoCache(BaseCsvCache[str, List[EventFightInfo]]):
+class EventInfoCache(BaseCsvCache[str, List[EventInfo]]):
     """
     Key: event_id
-    Value: list of EventFightInfo rows for that event
+    Value: list of EventInfo rows for that event
     """
 
     FIELDS = [
@@ -40,21 +23,21 @@ class EventInfoCache(BaseCsvCache[str, List[EventFightInfo]]):
         "fight_url",
     ]
 
-    def key_of(self, value: List[EventFightInfo]) -> str:
+    def key_of(self, value: List[EventInfo]) -> str:
         if not value:
-            raise ValueError("Cannot cache an empty list of EventFightInfo")
+            raise ValueError("Cannot cache an empty list of EventInfo")
         return value[0].event_id
 
     # Like FightCache, we store list-per-key, so provide a line-level upsert.
-    def upsert_line(self, info: EventFightInfo) -> None:
+    def upsert_line(self, info: EventInfo) -> None:
         """
-        Add/append a single EventFightInfo into the event_id bucket.
+        Add/append a single EventInfo into the event_id bucket.
         """
         self.load()
         with self._lock:
             self._data.setdefault(info.event_id, []).append(info)
 
-    def get_event(self, event_id: str) -> List[EventFightInfo]:
+    def get_event(self, event_id: str) -> List[EventInfo]:
         """
         Convenience: returns [] if event_id not found.
         """
@@ -78,9 +61,9 @@ class EventInfoCache(BaseCsvCache[str, List[EventFightInfo]]):
                 info = self._row_to_info(row)
                 self._data.setdefault(event_id, []).append(info)
 
-    def append_to_csv(self, value: List[EventFightInfo]) -> None:
+    def append_to_csv(self, value: List[EventInfo]) -> None:
         """
-        Append a batch of EventFightInfo rows to the CSV (append-only).
+        Append a batch of EventInfo rows to the CSV (append-only).
         """
         self.load()
         with self._lock:
@@ -95,9 +78,9 @@ class EventInfoCache(BaseCsvCache[str, List[EventFightInfo]]):
                 for info in value:
                     writer.writerow(self._info_to_row(info))
 
-    def append_line_to_csv(self, info: EventFightInfo) -> None:
+    def append_line_to_csv(self, info: EventInfo) -> None:
         """
-        Convenience: append a single EventFightInfo row to the CSV (append-only).
+        Convenience: append a single EventInfo row to the CSV (append-only).
         """
         self.load()
         with self._lock:
@@ -135,8 +118,8 @@ class EventInfoCache(BaseCsvCache[str, List[EventFightInfo]]):
             return None
 
     @classmethod
-    def _row_to_info(cls, row: Dict) -> EventFightInfo:
-        return EventFightInfo(
+    def _row_to_info(cls, row: Dict) -> EventInfo:
+        return EventInfo(
             event_id=cls._clean_str(row.get("event_id")) or "",
             fight_id=cls._clean_str(row.get("fight_id")),
             winner_name=cls._clean_str(row.get("winner_name")) or "",
@@ -149,7 +132,7 @@ class EventInfoCache(BaseCsvCache[str, List[EventFightInfo]]):
         )
 
     @staticmethod
-    def _info_to_row(info: EventFightInfo) -> Dict[str, object]:
+    def _info_to_row(info: EventInfo) -> Dict[str, object]:
         return {
             "event_id": info.event_id,
             "fight_id": info.fight_id or "",
