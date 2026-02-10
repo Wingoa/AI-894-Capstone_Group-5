@@ -1,12 +1,12 @@
 import csv
-import BaseCsvCache
+from cache.BaseCsvCache import BaseCsvCache
 from data_model.Event import Event
 
 class EventCache(BaseCsvCache[str, Event]):
     FIELDS = ["event_id", "event_name", "event_date", "event_location", "event_url"]
 
     def key_of(self, value: Event) -> str:
-        return value.event_id
+        return value["event_id"]
 
     def _load_from_csv(self, csv_path) -> None:
         with open(csv_path, "r", newline="", encoding="utf-8") as f:
@@ -38,9 +38,9 @@ class EventCache(BaseCsvCache[str, Event]):
                 if not file_has_rows:
                     writer.writeheader()
                 writer.writerow({
-                    "event_id": value.event_id,
-                    "event_name": value.event_name,
-                    "event_date": value.event_date,
-                    "event_location": value.event_location,
-                    "event_url": value.event_url,
+                    "event_id": value["event_id"],
+                    "event_name": value["event_name"],
+                    "event_date": value["event_date"],
+                    "event_location": value["event_location"],
+                    "event_url": value["event_url"],
                 })

@@ -1,9 +1,9 @@
 import re
 import time
 import random
-from typing import Dict, List, Optional, Tuple, Any
+from typing import Dict, List, Optional, Any
 
-import ScraperUtil
+from scrapers.ScraperUtil import make_session, get_html
 import requests
 from bs4 import BeautifulSoup
 
@@ -13,7 +13,7 @@ FIGHT_DETAILS_PREFIX = "http://ufcstats.com/fight-details/"
 FIGHT_ID_RE = re.compile(r"/fight-details/([a-zA-Z0-9]+)")
 
 def scrapeEventInfo(event_id: str) -> List[Dict[str, str]]:
-    session = ScraperUtil.make_session()
+    session = make_session()
     fights = scrape_event_fights(session, event_id)
 
     print(f"Scraped {len(fights)} fights")
@@ -36,7 +36,10 @@ def scrape_event_fights(session: requests.Session, event_id: str) -> List[Dict[s
     # polite delay
     time.sleep(random.uniform(0.8, 1.8))
 
-    resp = session.get(url, timeout=30)
+    resp = get_html(session, url)
+    if resp == None:
+        print(f"Could not return html after multiple attempts for url {url}")
+        return []
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
 

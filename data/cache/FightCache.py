@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 from data_model.FightStatLine import FightStatLine
 import csv
 import os
-import BaseCsvCache as BaseCsvCache
+from cache.BaseCsvCache import BaseCsvCache
 
 
 class FightCache(BaseCsvCache[str, List[FightStatLine]]):
@@ -18,10 +18,10 @@ class FightCache(BaseCsvCache[str, List[FightStatLine]]):
         "leg", "distance", "clinch", "ground",
     ]
 
-    def key_of(self, value: List[FightStatLine]) -> str:
+    def key_of(self, value: FightStatLine) -> str:
         if not value:
             raise ValueError("Cannot cache an empty list of FightStatLine")
-        return value[0].fight_id
+        return value["fight_id"]
 
     # Override because BaseCsvCache.upsert expects a single object per key,
     # while this cache stores list-per-key.
@@ -57,7 +57,7 @@ class FightCache(BaseCsvCache[str, List[FightStatLine]]):
                 line = self._row_to_line(row)
                 self._data.setdefault(fight_id, []).append(line)
 
-    def append_to_csv(self, value: List[FightStatLine]) -> None:
+    def append_to_csv(self, value: FightStatLine) -> None:
         """
         Append a batch of stat lines to the CSV (append-only).
         """
@@ -71,8 +71,7 @@ class FightCache(BaseCsvCache[str, List[FightStatLine]]):
                 if file_empty:
                     writer.writeheader()
 
-                for line in value:
-                    writer.writerow(self._line_to_row(line))
+                writer.writerow(self._line_to_row(value))
 
     def append_line_to_csv(self, line: FightStatLine) -> None:
         """
@@ -94,8 +93,10 @@ class FightCache(BaseCsvCache[str, List[FightStatLine]]):
             print(f"Saving fight {fight} to FightCache")
             self.save(fight)
 
-    # -------- helpers --------
+    def hasFight(self, fight_id: str) -> bool:
+        return len(self.get_fight(fight_id)) > 0
 
+    # -------- helpers --------
     @staticmethod
     def _clean_str(v) -> str:
         return "" if v is None else str(v).strip()
@@ -138,22 +139,22 @@ class FightCache(BaseCsvCache[str, List[FightStatLine]]):
     @staticmethod
     def _line_to_row(line: FightStatLine) -> Dict[str, object]:
         return {
-            "fight_id": line.fight_id,
-            "fighter_id": line.fighter_id,
-            "fighter": line.fighter,
-            "kd": "" if line.kd is None else line.kd,
-            "sig_str": line.sig_str,
-            "sig_str_pct": line.sig_str_pct,
-            "total_str": line.total_str,
-            "td": line.td,
-            "td_pct": line.td_pct,
-            "sub_att": "" if line.sub_att is None else line.sub_att,
-            "rev": "" if line.rev is None else line.rev,
-            "ctrl": line.ctrl,
-            "head": line.head,
-            "body": line.body,
-            "leg": line.leg,
-            "distance": line.distance,
-            "clinch": line.clinch,
-            "ground": line.ground,
+            "fight_id": line["fight_id"],
+            "fighter_id": line["fighter_id"],
+            "fighter": line["fighter"],
+            "kd": "" if line["kd"] is None else line["kd"],
+            "sig_str": line["sig_str"],
+            "sig_str_pct": line["sig_str_pct"],
+            "total_str": line["total_str"],
+            "td": line["td"],
+            "td_pct": line["td_pct"],
+            "sub_att": "" if line["sub_att"] is None else line["sub_att"],
+            "rev": "" if line["rev"] is None else line["rev"],
+            "ctrl": line["ctrl"],
+            "head": line["head"],
+            "body": line["body"],
+            "leg": line["leg"],
+            "distance": line["distance"],
+            "clinch": line["clinch"],
+            "ground": line["ground"],
         }

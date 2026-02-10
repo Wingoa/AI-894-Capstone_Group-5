@@ -1,9 +1,8 @@
-import csv
 import re
 import time
 import random
-import data.scrapers.ScraperUtil as ScraperUtil
-from typing import Dict, List, Tuple, Optional
+from scrapers.ScraperUtil import make_session, get_html
+from typing import Dict, List, Tuple
 
 import requests
 from bs4 import BeautifulSoup
@@ -72,7 +71,10 @@ def scrape_fight_totals_by_id(session: requests.Session, fight_id: str) -> List[
     # polite delay
     time.sleep(random.uniform(0.8, 1.8))
 
-    resp = session.get(url, timeout=30)
+    resp = get_html(session, url)
+    if resp == None:
+        print(f"Could not return html after multiple attempts for url {url}")
+        return []
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
 
@@ -157,6 +159,10 @@ def scrape_fight_totals_by_id(session: requests.Session, fight_id: str) -> List[
     return rows
 
 def scrapeFight(fight_id: str) -> List[Dict]:
-    session = ScraperUtil.make_session()
-    fights = scrape_fight_totals_by_id(session, fight_id)
-    return fights
+    try:
+        session = make_session()
+        fights = scrape_fight_totals_by_id(session, fight_id)
+        return fights
+    except Exception as e:
+        print(f"Encountered exception when trying to scrape {fight_id}. Ignoring fight entry: {e}")
+        return []
