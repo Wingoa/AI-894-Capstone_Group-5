@@ -30,6 +30,36 @@ def calculate_success_rate(landed: Optional[float], attempted: Optional[float]) 
         return None
     return landed / attempted
 
+def categorize_outcome_type(method: str) -> Optional[str]:
+
+    if pd.isna(method) or method == "" or method == "---":
+        return None
+    
+    method_lower = str(method).lower().strip()
+    
+    # Submission patterns
+    if 'submission' in method_lower or 'sub' in method_lower:
+        return 'submission'
+    
+    # Knockout via strike (punches, elbows, headbutt, etc.)
+    if 'ko/tko' in method_lower or 'knockout' in method_lower or 'tko' in method_lower:
+        # Check for kick variants
+        if 'kick' in method_lower:
+            return 'knockout_kick'
+        # Check for punch variants (default for KO/TKO if not explicit kick)
+        else:
+            return 'knockout_strike'
+    
+    # Decision-based outcomes
+    if 'dec' in method_lower or 'decision' in method_lower:
+        return 'decision'
+    
+    # Other outcomes (rare)
+    if 'dww' in method_lower or 'dq' in method_lower or 'nc' in method_lower:
+        return 'other'
+    
+    return 'other'
+
 def clean_fights_data(fights: pd.DataFrame) -> pd.DataFrame:
     df = fights.copy()
     df = df.dropna(subset=['fight_id', 'fighter_id', 'fighter'])
@@ -95,6 +125,8 @@ def merge_with_event_info(fights_clean: pd.DataFrame, events_info: pd.DataFrame,
         loser = row['loser_name']
         event_date = row['event_date']
         weight_class = row['weight_class']
+        method = row['method']
+        outcome_type = categorize_outcome_type(method)
         
         fight_stats = fights_clean[fights_clean['fight_id'] == fight_id]
         
@@ -107,15 +139,10 @@ def merge_with_event_info(fights_clean: pd.DataFrame, events_info: pd.DataFrame,
                 fighter_row_with_outcome['outcome'] = outcome
                 fighter_row_with_outcome['event_date'] = event_date
                 fighter_row_with_outcome['weight_class'] = weight_class
+                fighter_row_with_outcome['outcome_type'] = outcome_type
                 fights_with_outcome.append(fighter_row_with_outcome)
     
     return pd.DataFrame(fights_with_outcome)
-
-def save_processed_data(df: pd.DataFrame, filename: str):
-    output_path = os.path.join(OUTPUT_DIR, filename)
-    df.to_csv(output_path, index=False)
-    print(f"Saved: {output_path}")
-    return output_path
 
 def main():
     print("Loading raw data...")
@@ -134,20 +161,10 @@ def main():
     print("Merging with event outcomes...")
     training_data = merge_with_event_info(fights_norm, events_info, events)
     
-    training_data['event_date'] = pd.to_datetime(training_data['event_date'])
-    cutoff_date = pd.to_datetime("2025-01-01")
-    train_set = training_data[training_data['event_date'] < cutoff_date]
-    test_set = training_data[training_data['event_date'] >= cutoff_date]
-    
-    print(f"\nTrain: {len(train_set)} | Test: {len(test_set)}")
-    
-    save_processed_data(fights_clean, "fights_cleaned.csv")
-    save_processed_data(fights_norm, "fights_normalized.csv")
-    save_processed_data(training_data, "training_data.csv")
-    save_processed_data(train_set, "train_set.csv")
-    save_processed_data(test_set, "test_set.csv")
-    
-    print("\nComplete")
+    output_path = os.path.join(OUTPUT_DIR, "training_data.csv")
+    training_data.to_csv(output_path, index=False)
+    print(f"\nSaved: {output_path}")
+    print("Complete")
 
 if __name__ == "__main__":
     main()
