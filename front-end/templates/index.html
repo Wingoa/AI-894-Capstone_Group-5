@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UFC Fighter Optimizer</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+</head>
+<body>
+<main class="container">
+    <h1>UFC Fighter Optimizer Dashboard</h1>
+    <p>Select a fighter to begin exploring optimizer inputs.</p>
+    <body>All data gathered from ufcstats.com</body>
+    <label for="fighter-select">Fighter</label>
+    <!--Jinja2 template for dynamic fighter selection, helps populate dropdown-->
+    <select id="fighter-select" name="fighter_id">
+        <option value="">Choose a fighter</option>
+        {% for fighter in fighters %}
+            <option value="{{ fighter.id }}">{{ fighter.name }}</option>
+        {% endfor %}
+    </select>
+</main>
+</body>
+</html>

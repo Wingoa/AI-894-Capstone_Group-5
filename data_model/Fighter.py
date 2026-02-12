@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import List
-from FighterComposition import FighterComposition
+from .FighterComposition import FighterComposition
 
 @dataclass(frozen=True)
 class Fighter:
