@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Dict, List, Optional
 import csv
 import os
-import BaseCsvCache
+from cache.BaseCsvCache import BaseCsvCache
 from data_model.EventInfo import EventInfo
 
 class EventInfoCache(BaseCsvCache[str, List[EventInfo]]):
@@ -23,10 +23,10 @@ class EventInfoCache(BaseCsvCache[str, List[EventInfo]]):
         "fight_url",
     ]
 
-    def key_of(self, value: List[EventInfo]) -> str:
+    def key_of(self, value: EventInfo) -> str:
         if not value:
             raise ValueError("Cannot cache an empty list of EventInfo")
-        return value[0].event_id
+        return value["event_id"]
 
     # Like FightCache, we store list-per-key, so provide a line-level upsert.
     def upsert_line(self, info: EventInfo) -> None:
@@ -35,7 +35,7 @@ class EventInfoCache(BaseCsvCache[str, List[EventInfo]]):
         """
         self.load()
         with self._lock:
-            self._data.setdefault(info.event_id, []).append(info)
+            self._data.setdefault(info["event_id"], []).append(info)
 
     def get_event(self, event_id: str) -> List[EventInfo]:
         """
@@ -61,7 +61,7 @@ class EventInfoCache(BaseCsvCache[str, List[EventInfo]]):
                 info = self._row_to_info(row)
                 self._data.setdefault(event_id, []).append(info)
 
-    def append_to_csv(self, value: List[EventInfo]) -> None:
+    def append_to_csv(self, value: EventInfo) -> None:
         """
         Append a batch of EventInfo rows to the CSV (append-only).
         """
@@ -75,8 +75,7 @@ class EventInfoCache(BaseCsvCache[str, List[EventInfo]]):
                 if file_empty:
                     writer.writeheader()
 
-                for info in value:
-                    writer.writerow(self._info_to_row(info))
+                writer.writerow(self._info_to_row(value))
 
     def append_line_to_csv(self, info: EventInfo) -> None:
         """
@@ -134,13 +133,13 @@ class EventInfoCache(BaseCsvCache[str, List[EventInfo]]):
     @staticmethod
     def _info_to_row(info: EventInfo) -> Dict[str, object]:
         return {
-            "event_id": info.event_id,
-            "fight_id": info.fight_id or "",
-            "winner_name": info.winner_name,
-            "loser_name": info.loser_name,
-            "weight_class": info.weight_class,
-            "method": info.method or "",
-            "round": "" if info.round is None else info.round,
-            "time": info.time or "",
-            "fight_url": info.fight_url or "",
+            "event_id": info["event_id"],
+            "fight_id": info["fight_id"] or "",
+            "winner_name": info["winner_name"],
+            "loser_name": info["loser_name"],
+            "weight_class": info["weight_class"],
+            "method": info["method"] or "",
+            "round": "" if info["round"] is None else info["round"],
+            "time": info["time"] or "",
+            "fight_url": info["fight_url"] or "",
         }

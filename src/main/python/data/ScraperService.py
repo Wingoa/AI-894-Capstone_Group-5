@@ -1,23 +1,25 @@
 from typing import Dict, List
 
-import cache.FightCache as FightCache
-import cache.EventCache as EventCache
-import cache.EventInfoCache as EventInfoCache
+import data.cache.FightCache as FightCache
+import data.cache.EventCache as EventCache
+import data.cache.EventInfoCache as EventInfoCache
 
-import scrapers.FightDataScraper as FightDataScraper
-import scrapers.EventScraper as EventScraper
-import scrapers.EventInfoScraper as EventInfoScraper
+import data.scrapers.FightDataScraper as FightDataScraper
+import data.scrapers.EventScraper as EventScraper
+import data.scrapers.EventInfoScraper as EventInfoScraper
 
 class ScraperService:
 
-    FIGHT_CSV = "../resources/initial_data/fights.csv"
-    EVENT_CSV = "../resources/initial_data/events.csv"
-    EVENT_INFO_CSV = "../resources/initial_data/events-info.csv"
+    FIGHT_CSV = "../../resources/fights.csv"
+    EVENT_CSV = "../../resources/events.csv"
+    EVENT_INFO_CSV = "../../resources/events-info.csv"
 
     def __init__(self):
         self.fight_cache = FightCache(self.FIGHT_CSV)
         self.event_cache = EventCache(self.EVENT_CSV)
         self.event_info_cache = EventInfoCache(self.EVENT_INFO_CSV)
+
+        self.event_scraper = EventScraper
 
     def loadFights(self):
         return self.fight_cache.all()
