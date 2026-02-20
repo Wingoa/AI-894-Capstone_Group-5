@@ -16,6 +16,37 @@ PREDICTION_MODEL_FEATURES = [
     'td_success', 'sub_att', 'ctrl_pct', 'rev', 'ground_landed', 'kd',
 ]
 
+# Fighter Vector Features (proposed by team for style modeling)
+# These represent normalized, per-minute stats and ratios that aggregate across a fighter's career
+FIGHTER_VECTOR_FEATURES = [
+    # Pace metrics (per minute)
+    'sig_str_per_min',
+    'td_att_per_min',
+    'td_success_per_min', 
+    'ctrl_sec_per_min',
+    
+    # Power metric
+    'kd_per_min',
+    
+    # Strike location per minute
+    'distance_str_per_min',
+    'clinch_str_per_min',
+    'ground_str_per_min',
+    
+    # Submission attempts per minute
+    'sub_att_per_min',
+    
+    # Strike location ratios
+    'distance_strike_ratio',
+    'clinch_strike_ratio',
+    'ground_strike_ratio',
+    
+    # Target ratios
+    'head_target_ratio',
+    'body_target_ratio',
+    'leg_target_ratio',
+]
+
 PREDICTION_TARGET = 'outcome'
 
 def get_training_features(df: pd.DataFrame, for_style_modeling: bool = False) -> pd.DataFrame:
@@ -39,7 +70,7 @@ def get_training_data_with_features(df: pd.DataFrame, for_style_modeling: bool =
 
 def summary_statistics(df: pd.DataFrame) -> pd.DataFrame:
     print("\nFeature Summary:")
-    print("=" * 80)
+    print("=" * 14)
     stats = df.describe()
     print(stats)
     print(f"\nNon-null counts (out of {len(df)}):")
@@ -60,7 +91,7 @@ if __name__ == "__main__":
         print(f"X shape: {X.shape}, y shape: {y.shape}")
         summary_statistics(X)
         
-        print("\n" + "=" * 80)
+        print("\n" + "=" * 14)
         print("Style Modeling Features:")
         X_style, _ = get_training_data_with_features(df, for_style_modeling=True)
         print(f"X_style shape: {X_style.shape}")

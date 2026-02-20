@@ -1,11 +1,5 @@
-import csv
-import re
-import time
-import random
-from typing import Dict, List, Optional, Tuple, Any
-
 import requests
-from bs4 import BeautifulSoup
+import time
 
 def make_session() -> requests.Session:
     s = requests.Session()
@@ -22,3 +16,18 @@ def make_session() -> requests.Session:
         "Referer": "http://ufcstats.com/",
     })
     return s
+
+def get_html(session: requests.Session, url: str, timeout: int = 30):
+    resp = None
+    attempts = 0
+    while resp == None and attempts < 3:
+        try:
+            resp = session.get(url, timeout=timeout)
+        except Exception as e:
+            print(f"Attempted to get html for {url}, but encountered an exception: {e}")
+            print(f"Trying again in 10 seconds")
+            time.sleep(10)
+            attempts = attempts + 1
+    return resp
+            
+

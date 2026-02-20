@@ -1,9 +1,9 @@
-import csv
 import re
 import time
 import random
-import data.scrapers.ScraperUtil as ScraperUtil
-from typing import Dict, List, Optional, Tuple, Any
+from scrapers.ScraperUtil import make_session, get_html
+from typing import Dict, List, Optional, Any
+from data_model.Event import Event
 
 import requests
 from bs4 import BeautifulSoup
@@ -45,11 +45,14 @@ def extract_event_id(href: str) -> Optional[str]:
     m = re.search(r"/event-details/([a-zA-Z0-9]+)", href)
     return m.group(1) if m else None
 
-def scrape_completed_events(session: requests.Session) -> List[Dict[str, str]]:
+def scrape_completed_events(session: requests.Session) -> List[Event]:
     # Polite delay (even for one request)
     time.sleep(random.uniform(0.8, 1.8))
 
-    resp = session.get(COMPLETED_EVENTS_URL, timeout=30)
+    resp = get_html(session, COMPLETED_EVENTS_URL)
+    if resp == None:
+        print(f"Could not return html after multiple attempts for url {COMPLETED_EVENTS_URL}")
+        return []
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
 
@@ -57,7 +60,7 @@ def scrape_completed_events(session: requests.Session) -> List[Dict[str, str]]:
     if not table:
         raise RuntimeError("Could not find events table. Site layout may have changed.")
 
-    events: List[Dict[str, str]] = []
+    events: List[Event] = []
 
     # Each row in tbody corresponds to one event
     for tr in table.select("tbody tr"):
@@ -98,20 +101,30 @@ def scrape_completed_events(session: requests.Session) -> List[Dict[str, str]]:
             "event_location": event_location,
             "event_url": event_url,
         })
+        # events.append(
+        #     Event(
+        #         event_id, 
+        #         event_name, 
+        #         event_date, 
+        #         event_location, 
+        #         event_url
+        #         )
+        #     )
 
     return events
 
-def scrapeEvents() -> List[Dict]:
-    events: List[Dict]
+def scrapeEvents() -> List[Event]:
+    events: List[Event]
     try:
-        session = ScraperUtil.make_session()
+        session = make_session()
         events = scrape_completed_events(session)
     except Exception as e:
         print(f"Could not scrape events page, encountered an exception {e}")
 
     print(f"Scraped {len(events)} events.")
     if events:
-        print("Example row:", events[0])
+        for i in range(0,2):
+            print("Example row:", events[i])
 
     return events
 

@@ -10,9 +10,9 @@ def load_data():
     return fights, events, events_info
 
 def explore_fights(fights):
-    print("=" * 60)
+    print("=" * 14)
     print("FIGHTS DATA")
-    print("=" * 60)
+    print("=" * 14)
     print(f"Shape: {fights.shape}")
     print(f"Columns: {fights.columns.tolist()}")
     print(f"Missing values:\n{fights.isnull().sum()}")
@@ -20,18 +20,18 @@ def explore_fights(fights):
     return fights
 
 def explore_events(events):
-    print("\n" + "=" * 60)
+    print("\n" + "=" * 14)
     print("EVENTS DATA")
-    print("=" * 60)
+    print("=" * 14)
     print(f"Shape: {events.shape}")
     print(f"Missing values:\n{events.isnull().sum()}")
     print(f"Date range: {events['event_date'].min()} to {events['event_date'].max()}")
     return events
 
 def explore_events_info(events_info):
-    print("\n" + "=" * 60)
+    print("\n" + "=" * 14)
     print("EVENTS-INFO DATA")
-    print("=" * 60)
+    print("=" * 14)
     print(f"Shape: {events_info.shape}")
     print(f"Missing values:\n{events_info.isnull().sum()}")
     print(f"Weight classes: {events_info['weight_class'].unique()[:10]}")
