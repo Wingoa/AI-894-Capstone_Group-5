@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import List, Iterator
-from FighterComposition import FighterComposition
+from data_model.FighterComposition import FighterComposition
 
 @dataclass(frozen=True)
 class Fighter:
