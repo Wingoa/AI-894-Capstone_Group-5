@@ -148,7 +148,7 @@ def loss_fn(pred, y):
 # -----------------------------
 # 7) Train
 # -----------------------------
-for epoch in range(1, 41):
+for epoch in range(1, 61):
     model.train()
     tr = 0.0
     for xb, yb in train_dl:
@@ -187,12 +187,12 @@ out = df[["fighter_id", "fighter", "event_date", "weight_class"]].copy()
 for i, b in enumerate(BUCKETS):
     out[b] = comps[:, i]
 
-out.to_csv("../../resources/fighter_vectors/fighter_style_predictions.csv", index=False)
-print("Wrote: ../../resources/fighter_vectors/fighter_style_predictions.csv")
+out.to_csv("../../resources/fighter_vectors/fighter_style_predictions-test.csv", index=False)
+print("Wrote: ../../resources/fighter_vectors/fighter_style_predictions-test.csv")
 
 
 # -----------------------------
 # 9) Save model metadata
 # -----------------------------
-torch.save(model.state_dict(), "./metadata/style_model.pt")
-joblib.dump(scaler, "./metadata/scaler.pkl")
+# torch.save(model.state_dict(), "./metadata/style_model.pt")
+# joblib.dump(scaler, "./metadata/scaler.pkl")
