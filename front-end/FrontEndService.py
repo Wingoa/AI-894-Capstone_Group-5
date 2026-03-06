@@ -2,11 +2,20 @@ from __future__ import annotations
 from collections import defaultdict
 from datetime import date, datetime
 from pathlib import Path
-from typing import Dict, List, Optional
+import sys
+from typing import Dict, List, Optional, Tuple
 import csv
+
+BASE_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = BASE_DIR.parent
+
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from data_model.Event import Event
 from data_model.EventInfo import EventInfo
-from data_model.FighterComposition import FighterComposition
 from data_model.Fighter import Fighter
+from data_model.FighterComposition import FighterComposition
 
 
 class FrontEndService:
@@ -45,7 +54,56 @@ class FrontEndService:
             if row.event_id in completed_ids and row.fight_id:
                 completed.append(row)
         return completed
+    
+    def getAllEvents(self) -> List[Event]:
+        events: List[Event] = []
+        with self._events_csv.open("r", newline="", encoding="utf-8") as f:
+            for row in csv.DictReader(f):
+                event_id = (row.get("event_id") or "").strip()
+                if not event_id:
+                    continue
+                events.append(Event(
+                    event_id       = event_id,
+                    event_name     = (row.get("event_name")     or "").strip(),
+                    event_date     = (row.get("event_date")     or "").strip(),
+                    event_location = (row.get("event_location") or "").strip(),
+                    event_url      = (row.get("event_url")      or "").strip(),
+                ))
+        return sorted(
+            events,
+            key=lambda e: self._parse_event_date(e.event_date) or date.min,
+            reverse=True,
+        )
 
+    def getEventById(self, event_id: str) -> Optional[Event]:
+        for event in self.getAllEvents():
+            if event.event_id == event_id:
+                return event
+        return None
+
+    def getNextFightsWithEvents(self) -> List[Tuple[EventInfo, Optional[Event]]]:
+        events_by_id = {e.event_id: e for e in self.getAllEvents()}
+        return [
+            (info, events_by_id.get(info.event_id))
+            for info in self.getNextFights()
+        ]
+
+    def getLastFightsWithEvents(self) -> List[Tuple[EventInfo, Optional[Event]]]:
+        events_by_id = {e.event_id: e for e in self.getAllEvents()}
+        return [
+            (info, events_by_id.get(info.event_id))
+            for info in self.getLastFights()
+        ]
+
+    def loadEventInfo(self, event_id: str) -> Optional[EventInfo]:
+        for row in self._load_event_info_rows():
+            if row.event_id == event_id:
+                return row
+        return None
+
+    def loadEventInfoRows(self) -> List[EventInfo]:
+        return self._load_event_info_rows()
+    
     def getAllFighters(self) -> List[Fighter]:
         fights_by_fighter: Dict[str, List[str]] = defaultdict(list)
         names_by_id: Dict[str, str] = {}
@@ -171,7 +229,17 @@ class FrontEndService:
                 wrestling=agg["wrestling_sum"] / count,
                 grappling=agg["grappling_sum"] / count,
             )
-        return compositions
+        
+        return {
+            fighter_id: FighterComposition(
+                pace      = agg["pace_sum"]       / max(agg["count"], 1.0),
+                boxing    = agg["boxing_sum"]     / max(agg["count"], 1.0),
+                muay_thai = agg["muay_thai_sum"]  / max(agg["count"], 1.0),
+                wrestling = agg["wrestling_sum"]  / max(agg["count"], 1.0),
+                grappling = agg["grappling_sum"]  / max(agg["count"], 1.0),
+            )
+            for fighter_id, agg in aggregates.items()
+        }
 
     @staticmethod
     def _parse_event_date(value: str) -> Optional[date]:
