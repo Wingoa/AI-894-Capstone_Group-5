@@ -1,4 +1,4 @@
-from StyleNet import StyleNet
+from style.StyleNet import StyleNet
 from typing import List
 
 import torch
@@ -8,13 +8,14 @@ import numpy as np
 
 class StylePredictor:
 
-    MODEL_WEIGHT_PATH = "./metadata/style_model.pt"
-    SCALER_PATH = "./metadata/scaler.pkl"
+    MODEL_WEIGHT_PATH = "./style/metadata/style_model.pt"
+    SCALER_PATH = "./style/metadata/scaler.pkl"
     MAP_LOCATION = "cuda" if torch.cuda.is_available() else "cpu"
     
     def __init__(self):
         self._model = self._recreate_model()
         self._scaler = self._load_scaler()
+        print("Successfully reloaded StyleNet model")
 
     def _recreate_model(self):
         model = StyleNet(d_in=15)

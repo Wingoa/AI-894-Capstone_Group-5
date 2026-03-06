@@ -1,7 +1,12 @@
 import pandas as pd
 import os
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
 
 DATA_DIR = "../resources/initial_data/"
+PLOT_DIR = "../resources/plots/initial/"
+os.makedirs(PLOT_DIR, exist_ok=True)
 
 def load_data():
     fights = pd.read_csv(os.path.join(DATA_DIR, "fights.csv"))
