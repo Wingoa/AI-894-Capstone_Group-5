@@ -11,5 +11,6 @@ if str(FE_DIR) not in sys.path:
 
 module_globals = runpy.run_path(str(FE_FILE))
 app = module_globals.get("app")
+
 if app is None:
     raise RuntimeError("Couldn't find 'app' in front-end/FrontEndResource.py")
