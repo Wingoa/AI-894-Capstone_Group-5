@@ -1274,3 +1274,68 @@ input[type="range"]::-webkit-slider-thumb:hover {
 	border-radius: 3px;
 	transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+.info-icon {
+	display: inline-flex;
+	align-items: center;
+	position: relative;
+	margin-left: 6px;
+	color: var(--muted);
+	cursor: help;
+	font-size: 0.95em;
+	line-height: 1;
+	vertical-align: middle;
+}
+
+.info-icon .info-mark {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	margin-left: 6px;
+	border-radius: 50%;
+	border: 1px solid currentColor;
+	font-size: 12px;
+	line-height: 1;
+	color: var(--muted);
+	background: transparent;
+	text-transform: lowercase;
+	padding-left: 2px;
+}
+
+.info-icon .tooltip-text {
+	visibility: hidden;
+	transition: opacity 0.12s ease-in-out;
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	bottom: 140%;
+	background: #2d2d2d;
+	color: #fff;
+	font-size: 12px;
+	white-space: normal;
+	z-index: 9999;
+	min-width: 250px;
+	border-radius: 10px;
+	padding: 10px;
+	text-align: left;
+	text-transform: initial;
+	font-family: calibri;
+}
+
+.info-icon:hover .tooltip-text {
+	visibility: visible;
+	opacity: 1;
+}
+
+.info-icon .tooltip-text::after {
+	content: "";
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+	border-width: 6px;
+	border-style: solid;
+	border-color: #2d2d2d transparent transparent transparent;
+}
