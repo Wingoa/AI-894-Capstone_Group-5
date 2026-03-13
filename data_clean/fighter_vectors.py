@@ -142,7 +142,7 @@ def main():
     print("\n" + "=" * 14)
     print("COMPLETE!")
 
-def latest_vectors(start_date=None, end_date=None, training_data_path: str = os.path.join(DATA_DIR, "training_data.csv"), window: int = 10, include_no_history: bool = False, fill_value=None) -> pd.DataFrame: 
+def latest_vectors(start_date=None, end_date=None, training_data_path: str = os.path.join(DATA_DIR, "training_data.csv"), window: int = 10, include_no_history: bool = False, fill_value=None, fighter_id: str=None) -> pd.DataFrame: 
     # - If `start_date` is None, uses full history before `end_date`.
     # - If `end_date` is None, uses all history up to latest available.
     # - `include_no_history` includes fighters with no prior fights (filled with `fill_value`).
@@ -165,6 +165,9 @@ def latest_vectors(start_date=None, end_date=None, training_data_path: str = os.
         max_ctrl = fight_rows['ctrl_seconds'].fillna(0).max()
         duration = max(max_ctrl / 60, 5.0)
         for _, row in fight_rows.iterrows():
+            if fighter_id != None and row['fighter_id'] != fighter_id:
+                continue
+
             profile = {'fighter': row['fighter'], 'fighter_id': row['fighter_id'], 'fight_id': row['fight_id'], 'event_date': pd.to_datetime(row['event_date']), 'weight_class': row.get('weight_class', None), 'outcome': row.get('outcome', None)}
             profile['sig_str_per_min'] = row.get('sig_str_landed', 0) / duration if pd.notna(row.get('sig_str_landed', 0)) else 0
             profile['td_att_per_min'] = row.get('td_attempted', 0) / duration if pd.notna(row.get('td_attempted', 0)) else 0
@@ -237,7 +240,7 @@ def latest_vectors(start_date=None, end_date=None, training_data_path: str = os.
             agg[col] = prior[col].mean()
         results.append(agg)
 
-    return pd.DataFrame(results).sort_values('fighter_id').reset_index(drop=True)
+    return pd.DataFrame(results).reset_index(drop=True)
 
 
 if __name__ == "__main__":
