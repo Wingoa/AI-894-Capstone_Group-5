@@ -32,4 +32,4 @@ class StylePredictor:
 
         with torch.no_grad():
             comp = self._model(torch.tensor(X_scaled, dtype=torch.float32))
-        return comp.numpy().toList()
+        return comp.numpy().tolist()
