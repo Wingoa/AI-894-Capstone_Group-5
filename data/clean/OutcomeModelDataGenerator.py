@@ -32,11 +32,11 @@ import csv
 import pandas as pd
 from fighter_vectors import latest_vectors
 
-FIGHT_CSV = "../resources/initial_data/fights.csv"
-EVENT_CSV = "../resources/initial_data/events.csv"
-EVENT_INFO_CSV = "../resources/initial_data/events-info.csv"
+FIGHT_CSV = "../../resources/initial_data/fights.csv"
+EVENT_CSV = "../../resources/initial_data/events.csv"
+EVENT_INFO_CSV = "../../resources/initial_data/events-info.csv"
 
-TRAINING_CSV = "../resources/clean_data/training_data.csv"
+TRAINING_CSV = "../../resources/clean_data/training_data.csv"
 
 def getEventInfo(fight_id: str):
     with open(EVENT_INFO_CSV, newline="", encoding="utf-8") as f:
@@ -78,8 +78,6 @@ with open(FIGHT_CSV, newline="", encoding="utf-8") as f:
                 print(f"Fight was no contest, refusing to further process")
                 continue
                 
-            # get fight vector from Austin
-
             vector = latest_vectors(None, date, training_data_path=TRAINING_CSV, fighter_id=fighter_id)
             if vector.empty:
                 print("Fighter had no prior experience, refusing to further process")
@@ -92,8 +90,3 @@ with open(FIGHT_CSV, newline="", encoding="utf-8") as f:
 
         except Exception as e:
             print(f"Encountered exception: {e}")
-
-
-
-
-

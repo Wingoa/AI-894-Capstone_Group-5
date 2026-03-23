@@ -56,10 +56,12 @@ feature_cols = [
     "leg_target_ratio",
 ]
 
-
-event_data = pd.read_csv(EVENT_CSV)
-event_data["event_date"] = pd.to_datetime(event_data["event_date"])
-event_info_data = pd.read_csv(EVENT_INFO_CSV)
+event_data = None
+event_info_data = None
+def loadData():
+    event_data = pd.read_csv(EVENT_CSV)
+    event_data["event_date"] = pd.to_datetime(event_data["event_date"])
+    event_info_data = pd.read_csv(EVENT_INFO_CSV)
 
 def getEventIdByDate(date: str):
     return event_data.loc[event_data["event_date"] == date, "event_id"].iloc[0]
@@ -82,43 +84,13 @@ def calculatePace(sig_strike_per_min: float, td_att_per_min: float):
 def normalizeNumberOfFights(fights: int):
     return min(int(fights), 10) / 10
 
-counter = 1
-with open(FIGHT_VECTOR_CSV, newline="", encoding="utf-8") as f:
-    reader = csv.DictReader(f)   # rows as dictionaries
-    for row in reader:
-        fighter = row["fighter"]
-        fighter_id = row["fighter_id"]
-        date = row["event_date"]
-        try:
-            # Gather features for style predictor
-            df = pd.DataFrame([row])
-            features = df[feature_cols].replace([np.inf, -np.inf], np.nan).fillna(0.0).to_numpy(dtype=np.float32).tolist()
+def getStyleVector(fighter_vector: dict):
+    # Gather features for style predictor
+    df = pd.DataFrame([fighter_vector])
+    features = df[feature_cols].replace([np.inf, -np.inf], np.nan).fillna(0.0).to_numpy(dtype=np.float32).tolist()
 
-            # Calculate style vector
-            style = style_predictor.predict(features[0])[0]
-            print(style)
-
-            outcome_vector = {}
-            outcome_vector["fighter"] = fighter
-            outcome_vector["fighter_id"] = fighter_id
-            outcome_vector["fight_id"] = getFightId(fighter, date)
-            outcome_vector["event_date"] = date
-            outcome_vector["muay_thai"] = style[0]
-            outcome_vector["boxing"] = style[1]
-            outcome_vector["wrestling"] = style[2]
-            outcome_vector["grappling"] = style[3]
-            outcome_vector["pace"] = calculatePace(float(row["sig_str_per_min"]), float(row["td_att_per_min"]))
-            outcome_vector["td_success"] = row["td_success_per_min"]
-            outcome_vector["ctrl_share"] = row["ctrl_sec_per_min"]
-            outcome_vector["n_fights_norm"] = normalizeNumberOfFights(row["total_fights"])
-            outcome_vector["won"] = 1 if row["win"] == "True" else 0
-
-            pd.DataFrame([outcome_vector]).to_csv("test.csv", mode="a", index=False, header=False)
-            print(f"{counter}. Saved DF for {fighter} on {date}: {outcome_vector}")
-        except Exception as e:
-            print(f"Encountered exception when calculating outcome vector for {fighter} on {date}: {e}")
-        counter = counter + 1
-
+    # Calculate style vector
+    return style_predictor.predict(features[0])[0]
 
 def dedupe_csv(input_path: str, output_path: str) -> None:
     seen = set()
@@ -138,4 +110,41 @@ def dedupe_csv(input_path: str, output_path: str) -> None:
                 seen.add(row_tuple)
                 writer.writerow(row)
 
-dedupe_csv("test.csv", "outcome_vectors.csv")
+
+def generateOutcomeVectorTrainingData():
+    loadData()
+    counter = 1
+    with open(FIGHT_VECTOR_CSV, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)   # rows as dictionaries
+        for row in reader:
+            fighter = row["fighter"]
+            fighter_id = row["fighter_id"]
+            date = row["event_date"]
+            try:
+                # Calculate style vector
+                style = getStyleVector(row)
+                print(style)
+
+                outcome_vector = {}
+                outcome_vector["fighter"] = fighter
+                outcome_vector["fighter_id"] = fighter_id
+                outcome_vector["fight_id"] = getFightId(fighter, date)
+                outcome_vector["event_date"] = date
+                outcome_vector["muay_thai"] = style[0]
+                outcome_vector["boxing"] = style[1]
+                outcome_vector["wrestling"] = style[2]
+                outcome_vector["grappling"] = style[3]
+                outcome_vector["pace"] = calculatePace(float(row["sig_str_per_min"]), float(row["td_att_per_min"]))
+                outcome_vector["td_success"] = row["td_success_per_min"]
+                outcome_vector["ctrl_share"] = row["ctrl_sec_per_min"]
+                outcome_vector["n_fights_norm"] = normalizeNumberOfFights(row["total_fights"])
+                outcome_vector["won"] = 1 if row["win"] == "True" else 0
+
+                pd.DataFrame([outcome_vector]).to_csv("test.csv", mode="a", index=False, header=False)
+                print(f"{counter}. Saved DF for {fighter} on {date}: {outcome_vector}")
+            except Exception as e:
+                print(f"Encountered exception when calculating outcome vector for {fighter} on {date}: {e}")
+            counter = counter + 1
+
+
+    dedupe_csv("test.csv", "outcome_vectors.csv")

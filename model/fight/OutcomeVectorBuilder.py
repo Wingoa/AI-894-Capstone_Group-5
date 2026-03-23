@@ -12,7 +12,7 @@ df = pd.read_csv("../../resources/fighter_vectors/outcome_vectors.csv")
 df = df[pd.to_datetime(df["event_date"]) >= (pd.Timestamp.today() - pd.DateOffset(years=10))]
 
 # Drop fights where fighters had too little data
-df = df[df["n_fights_norm"] >= 0.2]
+df = df[df["n_fights_norm"] <= 0.2]
 
 # Explicit feature vectors
 feature_cols = [

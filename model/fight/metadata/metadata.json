@@ -1,5 +1,5 @@
 {
-  "csv_path": "./test.csv",
+  "csv_path": "./fight_matchups.csv",
   "label_col": "y",
   "feature_order": [
     "wrestling",
@@ -28,5 +28,5 @@
     "dropout": 0.2,
     "random_state": 42
   },
-  "best_test_loss": 0.6870225277499876
+  "best_test_loss": 0.6764174131482218
 }

@@ -3,6 +3,7 @@ import uvicorn
 from cache.EventCache import EventCache
 from cache.EventInfoCache import EventInfoCache
 from cache.FightCache import FightCache
+from clean.fighter_vectors import latest_vectors
 
 class FightDataResource:
 
@@ -31,6 +32,11 @@ class FightDataResource:
                     "status": "ok", 
                     "message": "API is running. Go to http://localhost:8080/docs for the interactive swagger page"
                     }
+        
+        @self.app.get("/latest/{fighter_id}")
+        def get_latest_fight_vector(fighter_id: str):
+            data = latest_vectors(fighter_id=fighter_id, include_no_history=True)
+            return data.iloc[0].to_dict()
 
         @self.app.get("/fights/{name}")
         def get_fights_by_fighter(name: str):

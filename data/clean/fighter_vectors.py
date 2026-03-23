@@ -1,8 +1,8 @@
 import pandas as pd
 import os
 
-DATA_DIR = "resources/clean_data/"
-OUTPUT_DIR = "resources/fighter_vectors/"
+DATA_DIR = "../resources/clean_data/"
+OUTPUT_DIR = "../resources/fighter_vectors/"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Define the feature columns 

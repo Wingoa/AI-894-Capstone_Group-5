@@ -39,3 +39,18 @@ class FrontEndService:
         # TODO - On a browser refresh, this should be called to check if any
         #     data needs to be reloaded. If so, update the cache's
         return
+    
+    def predictFight(self, fighter_a_id: str, fighter_b_id: str):
+        queryParams = {
+            "fighter_a_id": fighter_a_id,
+            "fighter_b_id": fighter_b_id
+        }
+        resp = requests.get(f"{self.model_url}/outcome", params=queryParams, timeout=60)
+        resp.raise_for_status()
+        idx = self._processFightPrediction(resp.json())
+        winning_fighter = fighter_a_id if idx == 1 else fighter_b_id
+        print(f"Prediction service believes {winning_fighter} will win: {idx}")
+        return winning_fighter
+
+    def _processFightPrediction(self, fightPrediction: List):
+        return fightPrediction[0][0]
