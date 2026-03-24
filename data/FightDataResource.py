@@ -1,17 +1,13 @@
 from fastapi import FastAPI, HTTPException, Query
 import uvicorn
-from cache.EventCache import EventCache
-from cache.EventInfoCache import EventInfoCache
-from cache.FightCache import FightCache
 from clean.fighter_vectors import latest_vectors
+from FightDataService import FightDataService
 
 class FightDataResource:
 
-    def __init__(self, eventCache: EventCache, eventInfoCache: EventInfoCache, fightCache: FightCache):
+    def __init__(self, fightDataService: FightDataService):
         self.app = FastAPI(title="UFC Fight Data API")
-        self.eventCache = eventCache
-        self.eventInfoCache = eventInfoCache
-        self.fightCache = fightCache
+        self.fightDataService = fightDataService
         self._registerEndpoints()
 
     def run(self):
@@ -40,27 +36,8 @@ class FightDataResource:
 
         @self.app.get("/fights/{name}")
         def get_fights_by_fighter(name: str):
-            """
-            Returns all fights where the fighter name contains the given string.
-            Case-insensitive.
-            """
-            name_lower = name.lower()
-
-            fights = self.fightCache.all()
-            matches = []
-            for fight in fights:
-                for fighter in fight:
-                    if name_lower in fighter.fighter.lower():
-                        matches.append(fighter)
-
-
-            if len(matches) == 0:
-                raise HTTPException(
-                    status_code=404,
-                    detail=f"No fights found for fighter containing '{name}'"
-                )
-
-            return {
-                    "totalMatches": len(matches),
-                    "matches": matches
-                }
+            return self.fightDataService.get_fights_by_fighter(name)
+        
+        @self.app.get("/event/next")
+        def get_next_event():
+            return self.fightDataService.get_next_event()

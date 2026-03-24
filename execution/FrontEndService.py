@@ -10,12 +10,15 @@ import requests
 
 class FrontEndService:
 
-    def __init__(self, model_url: str):
+    def __init__(self, model_url: str, data_url: str):
         self.model_url = model_url
+        self.data_url = data_url
 
     def getNextFights(self) -> List[EventInfo]:
-        # TODO - Query the data service to get the upcoming fights
-        return
+        # Query the data service to get the upcoming fights
+        resp = requests.get(f"{self.data_url}/event/next", timeout=10)
+        resp.raise_for_status()
+        return resp.json()
 
     def getLastFights(self) -> List[EventInfo]:
         # TODO - Query the data service to get the last completed fights
