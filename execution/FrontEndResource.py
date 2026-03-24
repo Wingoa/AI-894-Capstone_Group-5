@@ -8,7 +8,6 @@ from data_model.FighterStyle import FighterStyle
 from FrontEndService import FrontEndService
 
 
-
 class FrontEndResource:
 
     def __init__(self, front_end_service: FrontEndService):

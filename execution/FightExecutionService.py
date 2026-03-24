@@ -10,7 +10,6 @@ scheduler: BackgroundScheduler = None
 MODEL_URL = "http://localhost:8002" # TODO Change when hosted within a DOCKER container
 DATA_URL = "http://localhost:8000"
 
-
 def main():
     
     scheduler: BackgroundScheduler = BackgroundScheduler(timezone="America/New_York")

@@ -20,7 +20,6 @@ FIGHT_CSV_DEDUPE = "../resources/initial_data/fights_dedupe.csv"
 EVENT_CSV = "../resources/initial_data/events.csv"
 EVENT_INFO_CSV = "../resources/initial_data/events-info.csv"
 
-
 scheduler: BackgroundScheduler = None
 
 def main():
