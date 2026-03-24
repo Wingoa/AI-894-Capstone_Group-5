@@ -28,7 +28,7 @@ class FrontEndResource:
     def _register_endpoints(self):
 
         @self.app.get("/nextFights")
-        def getNextFights() -> List[EventInfo]:
+        def getNextFights() -> dict:
             return self.front_end_service.getNextFights()
 
         @self.app.get("/lastFights")
