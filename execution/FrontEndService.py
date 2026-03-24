@@ -8,6 +8,7 @@ from data_model.FighterStyle import FighterStyle
 
 import requests
 
+
 class FrontEndService:
 
     def __init__(self, model_url: str, data_url: str):

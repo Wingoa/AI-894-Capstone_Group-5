@@ -3,6 +3,7 @@ import uvicorn
 from clean.fighter_vectors import latest_vectors
 from FightDataService import FightDataService
 
+
 class FightDataResource:
 
     def __init__(self, fightDataService: FightDataService):

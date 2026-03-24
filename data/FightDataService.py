@@ -9,6 +9,7 @@ from cache.EventInfoCache import EventInfoCache
 from cache.FightCache import FightCache
 from scrapers.EventInfoScraper import scrapeEventInfo
 
+
 class FightDataService:
 
     def __init__(self, eventCache: EventCache, eventInfoCache: EventInfoCache, fightCache: FightCache):
