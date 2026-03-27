@@ -111,15 +111,47 @@ def run_trainer_if_available():
 
 
 def main():
+    failures = []
+    steps = [
+        ("scrape", run_scrape),
+        ("clean", run_clean),
+        ("style_vectors", run_style_vectors),
+        ("outcome_builder", run_outcome_builder),
+        ("trainer", run_trainer_if_available),
+    ]
+
+    for name, fn in steps:
+        try:
+            logging.info(f"Starting step: {name}")
+            fn()
+        except Exception:
+            logging.exception(f"Step failed: {name}")
+            failures.append(name)
+
+    # Write a status summary file for CI visibility
+    status_file = REPO_ROOT / "scripts" / "weekly_pipeline_status.txt"
     try:
-        run_scrape()
-        run_clean()
-        run_style_vectors()
-        run_outcome_builder()
-        run_trainer_if_available()
+        status_file.parent.mkdir(parents=True, exist_ok=True)
+        with open(status_file, "w") as fh:
+            if failures:
+                fh.write("FAILED STEPS:\n")
+                for s in failures:
+                    fh.write(f"- {s}\n")
+            else:
+                fh.write("ALL STEPS SUCCEEDED\n")
+        logging.info(f"Wrote status file to {status_file}")
     except Exception:
-        logging.exception("Weekly pipeline failed")
-        sys.exit(1)
+        logging.exception("Failed to write status file")
+
+    if failures:
+        # If running in CI (e.g., GitHub Actions) prefer to exit 0 so workflow can commit partial artifacts.
+        if os.environ.get("CI", "false").lower() == "true" or os.environ.get("CONTINUE_ON_ERROR", "false").lower() == "true":
+            logging.warning("Steps failed but continuing due to CI/CONTINUE_ON_ERROR; exiting 0 to allow artifacts to be committed")
+            sys.exit(0)
+        else:
+            logging.error("Weekly pipeline failed; exiting non-zero")
+            sys.exit(1)
+
     logging.info("Weekly pipeline completed successfully")
 
 

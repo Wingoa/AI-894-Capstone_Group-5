@@ -60,8 +60,8 @@ def compare(request: Request, red: str = "", blue: str = "") -> HTMLResponse:
     composition_red  = _composition_to_dict(fighter_red.composition  if fighter_red  else None)
     composition_blue = _composition_to_dict(fighter_blue.composition if fighter_blue else None)
     win_probability  = None
-    hth_stats        = List[dict] = []
-    matchup_stats    = dict   = {}
+    hth_stats: List[dict] = []
+    matchup_stats: dict = {}
     
     if fighter_red and fighter_blue:
         win_probability = _compute_win_probability(fighter_red, fighter_blue)
