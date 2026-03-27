@@ -62,4 +62,4 @@ win_df = df[["fight_id", "fighter_idx", "win"]].pivot(
 )
 match_df["y"] = (win_df[0] == 1).astype(int).values
 
-match_df.to_csv("test.csv", mode="a", index=False, header=True)
+match_df.to_csv("outcome_training_vectors.csv", mode="a", index=False, header=True)
