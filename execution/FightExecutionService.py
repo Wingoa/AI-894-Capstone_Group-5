@@ -8,12 +8,13 @@ import sys
 scheduler: BackgroundScheduler = None
 
 MODEL_URL = "http://localhost:8002" # TODO Change when hosted within a DOCKER container
+DATA_URL = "http://localhost:8000"
 
 def main():
     
     scheduler: BackgroundScheduler = BackgroundScheduler(timezone="America/New_York")
     
-    frontEndService: FrontEndService = FrontEndService(MODEL_URL) 
+    frontEndService: FrontEndService = FrontEndService(MODEL_URL, DATA_URL) 
     frontEndResource: FrontEndResource = FrontEndResource(frontEndService)
     scheduler.add_job(frontEndResource.run(), "data", run_date=datetime.now())
 

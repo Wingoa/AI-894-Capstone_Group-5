@@ -28,7 +28,7 @@ class FrontEndResource:
     def _register_endpoints(self):
 
         @self.app.get("/nextFights")
-        def getNextFights() -> List[EventInfo]:
+        def getNextFights() -> dict:
             return self.front_end_service.getNextFights()
 
         @self.app.get("/lastFights")
@@ -46,3 +46,7 @@ class FrontEndResource:
         @self.app.get("/fighter/style/{fighter_id}")
         def getFighterStyle(fighter_id: str) -> FighterStyle:
             return self.front_end_service.getFighterStyle(fighter_id)
+        
+        @self.app.get("/predict")
+        def predictFight(fighter_a_id: str, fighter_b_id: str):
+            return self.front_end_service.predictFight(fighter_a_id, fighter_b_id) 

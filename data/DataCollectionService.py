@@ -8,6 +8,7 @@ from RefreshDataService import RefreshDataService
 from scrapers.ScraperService import ScraperService
 
 from FightDataResource import FightDataResource
+from FightDataService import FightDataService
 
 from cache.FightCache import FightCache
 from cache.EventCache import EventCache
@@ -40,9 +41,10 @@ def main():
     scheduler.add_job(refreshDataService.refreshFightData, "date", run_date=datetime.now())
     scheduler.add_job(refreshDataService.refreshFightData, "cron", hour=8, minute=0) # Every day at 8:00 AM
     scheduler.add_job(refreshDataService.reloadIncompleteData, "date", run_date=datetime.now())
-    
+
     # Run the swagger page
-    fightDataResource: FightDataResource = FightDataResource(eventCache, eventInfoCache, fightCache)
+    fightDataService: FightDataService = FightDataService(eventCache, eventInfoCache, fightCache)
+    fightDataResource: FightDataResource = FightDataResource(fightDataService)
     scheduler.add_job(fightDataResource.run(), "data", run_date=datetime.now())
 
     running = True

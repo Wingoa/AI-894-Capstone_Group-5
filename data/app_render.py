@@ -8,6 +8,7 @@ from FightDataResource import FightDataResource
 from cache.EventCache import EventCache
 from cache.EventInfoCache import EventInfoCache
 from cache.FightCache import FightCache
+from FightDataService import FightDataService
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -22,7 +23,8 @@ event_cache = EventCache(str(EVENT_CSV))
 event_info_cache = EventInfoCache(str(EVENT_INFO_CSV))
 fight_cache = FightCache(str(FIGHT_CSV))
 
-resource = FightDataResource(event_cache, event_info_cache, fight_cache)
+fight_service = FightDataService(event_cache, event_info_cache, fight_cache)
+resource = FightDataResource(fight_service)
 app = resource.app
 
 

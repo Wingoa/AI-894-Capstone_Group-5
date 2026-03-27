@@ -1,0 +1,32 @@
+{
+  "csv_path": "./test.csv",
+  "label_col": "y",
+  "feature_order": [
+    "wrestling",
+    "grappling",
+    "muay_thai",
+    "boxing",
+    "pace",
+    "td_success",
+    "ctrl_share",
+    "n_fights_norm"
+  ],
+  "d_fighter": 8,
+  "matchup_vector": [
+    "fA",
+    "fB",
+    "fA-fB",
+    "fA*fB"
+  ],
+  "train_config": {
+    "test_size": 0.2,
+    "epochs": 40,
+    "batch_size": 256,
+    "lr": 0.001,
+    "weight_decay": 0.001,
+    "hidden": 128,
+    "dropout": 0.2,
+    "random_state": 42
+  },
+  "best_test_loss": 0.6870225277499876
+}

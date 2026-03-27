@@ -10,12 +10,15 @@ import requests
 
 class FrontEndService:
 
-    def __init__(self, model_url: str):
+    def __init__(self, model_url: str, data_url: str):
         self.model_url = model_url
+        self.data_url = data_url
 
     def getNextFights(self) -> List[EventInfo]:
-        # TODO - Query the data service to get the upcoming fights
-        return
+        # Query the data service to get the upcoming fights
+        resp = requests.get(f"{self.data_url}/event/next", timeout=10)
+        resp.raise_for_status()
+        return resp.json()
 
     def getLastFights(self) -> List[EventInfo]:
         # TODO - Query the data service to get the last completed fights
@@ -39,3 +42,18 @@ class FrontEndService:
         # TODO - On a browser refresh, this should be called to check if any
         #     data needs to be reloaded. If so, update the cache's
         return
+    
+    def predictFight(self, fighter_a_id: str, fighter_b_id: str):
+        queryParams = {
+            "fighter_a_id": fighter_a_id,
+            "fighter_b_id": fighter_b_id
+        }
+        resp = requests.get(f"{self.model_url}/outcome", params=queryParams, timeout=60)
+        resp.raise_for_status()
+        idx = self._processFightPrediction(resp.json())
+        winning_fighter = fighter_a_id if idx == 1 else fighter_b_id
+        print(f"Prediction service believes {winning_fighter} will win: {idx}")
+        return winning_fighter
+
+    def _processFightPrediction(self, fightPrediction: List):
+        return fightPrediction[0][0]
