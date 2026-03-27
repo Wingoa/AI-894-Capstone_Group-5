@@ -63,7 +63,7 @@
           <option value="High-Pace Fighter">Pace</option>
         </select>
         <button class="btn btn-red"
-          onclick="window.location.href='/compare?red={{ fighter_red.id if fighter_red else '' }}&blue={{ fighter_blue.id if fighter_blue else '' }}'">
+          onclick="compareFromDropdowns('{{ fighter_red.id if fighter_red else '' }}','{{ fighter_blue.id if fighter_blue else '' }}')">
           ⚡ Analyze
         </button>
       </div>
@@ -85,7 +85,7 @@
 
         <!-- Fighter Picker Bar -->
         <div class="fighter-select-bar">
-          <div class="fighter-picker" onclick="openFighterPicker('red')">
+          <div class="fighter-picker" data-corner="red" onclick="openFighterPicker('red')">
             <div class="picker-dot red"></div>
             <div>
               <div class="picker-name">
@@ -100,11 +100,21 @@
               </div>
             </div>
             <div class="picker-arrow">▾</div>
+            <select class="fighter-picker-select" id="fighter-select-red" onchange="syncPicker('red')" oninput="syncPicker('red')">
+              <option value="" data-sub="CHOOSE RED CORNER">Select Fighter</option>
+              {% for fighter in fighters %}
+                <option value="{{ fighter.id }}"
+                        data-sub="{{ fighter.archetype | upper }} · {{ fighter.fight_ids | length }} FIGHTS"
+                        {% if fighter_red and fighter.id == fighter_red.id %}selected{% endif %}>
+                  {{ fighter.name }}
+                </option>
+              {% endfor %}
+            </select>
           </div>
 
           <div class="vs-badge">VS</div>
 
-          <div class="fighter-picker" onclick="openFighterPicker('blue')">
+          <div class="fighter-picker" data-corner="blue" onclick="openFighterPicker('blue')">
             <div class="picker-dot blue"></div>
             <div>
               <div class="picker-name">
@@ -119,10 +129,20 @@
               </div>
             </div>
             <div class="picker-arrow">▾</div>
+            <select class="fighter-picker-select" id="fighter-select-blue" onchange="syncPicker('blue')" oninput="syncPicker('blue')">
+              <option value="" data-sub="CHOOSE BLUE CORNER">Select Fighter</option>
+              {% for fighter in fighters %}
+                <option value="{{ fighter.id }}"
+                        data-sub="{{ fighter.archetype | upper }} · {{ fighter.fight_ids | length }} FIGHTS"
+                        {% if fighter_blue and fighter.id == fighter_blue.id %}selected{% endif %}>
+                  {{ fighter.name }}
+                </option>
+              {% endfor %}
+            </select>
           </div>
 
           <button class="btn btn-red" style="margin-left:auto;"
-            onclick="window.location.href='/compare?red={{ fighter_red.id if fighter_red else '' }}&blue={{ fighter_blue.id if fighter_blue else '' }}'">
+            onclick="compareFromDropdowns('{{ fighter_red.id if fighter_red else '' }}','{{ fighter_blue.id if fighter_blue else '' }}')">
             ANALYZE MATCHUP
           </button>
         </div>
@@ -1067,14 +1087,55 @@
     });
   }
 
+  // Fighter Comparison Dropdowns
+  function compareFromDropdowns(fallbackRed, fallbackBlue) {
+    const redSelect  = document.getElementById('fighter-select-red');
+    const blueSelect = document.getElementById('fighter-select-blue');
+    const red  = (redSelect && redSelect.value)  ? redSelect.value  : (fallbackRed  || '');
+    const blue = (blueSelect && blueSelect.value) ? blueSelect.value : (fallbackBlue || '');
+    if (!red && !blue) return;
+
+    const params = new URLSearchParams();
+    if (red)  params.set('red', red);
+    if (blue) params.set('blue', blue);
+    const query = params.toString();
+    window.location.href = '/compare' + (query ? `?${query}` : '');
+  }
+
+  function syncPicker(corner) {
+    const select = document.getElementById(`fighter-select-${corner}`);
+    const picker = document.querySelector(`.fighter-picker[data-corner="${corner}"]`);
+    if (!select || !picker) return;
+    const nameEl = picker.querySelector('.picker-name');
+    const subEl  = picker.querySelector('.picker-sub');
+    const option = select.options[select.selectedIndex];
+    const optionText = (option && option.text) ? option.text : 'Select Fighter';
+    if (nameEl) nameEl.textContent = optionText.trim();
+    if (subEl)  subEl.textContent  = option?.getAttribute('data-sub')
+      || (corner === 'red' ? 'CHOOSE RED CORNER' : 'CHOOSE BLUE CORNER');
+  }
+
   // Fighter Picker
   // TODO: fetch /fighter/all → build searchable modal
   // → redirect to /compare?red=<Fighter.id>&blue=<Fighter.id>
   function openFighterPicker(corner) {
-    console.log('Picker for corner:', corner);
+    const targetId = corner === 'red' ? 'fighter-select-red' : 'fighter-select-blue';
+    const select = document.getElementById(targetId);
+    if (!select) return;
+    select.focus();
+    select.click();
   }
 
   // Init
+  (function initPickers() {
+    ['red', 'blue'].forEach(corner => {
+      const select = document.getElementById(`fighter-select-${corner}`);
+      if (!select) return;
+      select.addEventListener('change', () => syncPicker(corner));
+      select.addEventListener('input', () => syncPicker(corner));
+      syncPicker(corner);
+    });
+  })();
   if (activeScreen) showScreen(activeScreen);
 </script>
 
