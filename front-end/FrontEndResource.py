@@ -36,7 +36,7 @@ def homepage(request: Request) -> HTMLResponse:
     next_fights = service.getNextFightsWithEvents()
     last_fights = service.getLastFightsWithEvents()
 
-    return templates.TemplateResponse("index.html", {
+    return templates.TemplateResponse(request, "index.html", {
         "request":      request,
         "active_screen": "roster",
         # ── Roster (Fighter.name, Fighter.id, Fighter.fight_ids,
@@ -68,7 +68,7 @@ def compare(request: Request, red: str = "", blue: str = "") -> HTMLResponse:
         hth_stats       = _build_hth_stats(fighter_red, fighter_blue)
         matchup_stats   = _build_matchup_stats(fighter_red, fighter_blue)
 
-    return templates.TemplateResponse("index.html", {
+    return templates.TemplateResponse(request, "index.html", {
         "request":      request,
         "active_screen": "comparison",
         # Fighter profile data (name, id, fight_ids, derived fields)
@@ -106,7 +106,7 @@ def matchup(request: Request) -> HTMLResponse:
     next_fights = service.getNextFightsWithEvents()
     last_fights = service.getLastFightsWithEvents()
 
-    return templates.TemplateResponse("index.html", {
+    return templates.TemplateResponse(request, "index.html", {
         "request":       request,
         "active_screen": "matchup",
         "fighters":      [_fighter_to_template(f) for f in fighters],
@@ -130,7 +130,7 @@ def events(request: Request) -> HTMLResponse:
     next_fights = service.getNextFightsWithEvents()
     last_fights = service.getLastFightsWithEvents()
 
-    return templates.TemplateResponse("index.html", {
+    return templates.TemplateResponse(request, "index.html", {
         "request":       request,
         "active_screen": "events",
         "fighters":      [_fighter_to_template(f) for f in fighters],

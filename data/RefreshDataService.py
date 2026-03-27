@@ -64,20 +64,20 @@ class RefreshDataService:
         new_event_info = self.scraper_service.scrape_event_info(event_id)
         print(f"Found new event info: {new_event_info}")
         for event_info in new_event_info:
-            if event_info["fight_id"] == '':
+            if event_info.get("fight_id", "") == '':
                 # This is a future event, we will not process it this way
                 # TODO process future fights
-                fighter1: str = event_info["winner_name"]
-                fighter2: str = event_info["loser_name"]
+                fighter1: str = event_info.get("winner_name", "?")
+                fighter2: str = event_info.get("loser_name", "?")
                 print(f"Fight {fighter1} vs {fighter2} is in the future, will process separately")
                 continue
 
-            # Save all new event info objects
+            # Save this new event info object
             self.event_info_cache.save(event_info)
 
-            # For each new event info object, scrape for new fight info
-            for event_info in new_event_info:
-                fight_id = event_info["fight_id"]
+            # Scrape fight data for this event_info only (guarded non-empty fight_id)
+            fight_id = event_info.get("fight_id")
+            if fight_id:
                 self._scrapeFightData(fight_id)
 
     def _scrapeFightData(self, fight_id: str) -> None:
