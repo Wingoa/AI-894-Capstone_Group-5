@@ -1,6 +1,5 @@
 import pandas as pd
 import os
-import numpy as np
 
 DATA_DIR = "../resources/clean_data/"
 OUTPUT_DIR = "../resources/fighter_vectors/"
@@ -157,80 +156,75 @@ def latest_vectors(start_date=None, end_date=None, training_data_path: str = os.
     end = pd.to_datetime(end_date) if end_date is not None else None
     start = pd.to_datetime(start_date) if start_date is not None else None
 
-    # If a single fighter is requested, filter early to reduce work
-    if fighter_id is not None:
-        td = td[td['fighter_id'] == fighter_id]
+    # build per-fight profiles
+    fight_level = []
+    for fight_id in td['fight_id'].unique():
+        fight_rows = td[td['fight_id'] == fight_id]
+        if len(fight_rows) < 2:
+            continue
+        max_ctrl = fight_rows['ctrl_seconds'].fillna(0).max()
+        duration = max(max_ctrl / 60, 5.0)
+        for _, row in fight_rows.iterrows():
+            if fighter_id != None and row['fighter_id'] != fighter_id:
+                continue
 
-    # Keep only fights that have two rows (two fighters)
-    fight_counts = td.groupby('fight_id').size()
-    valid_fights = fight_counts[fight_counts >= 2].index
-    td = td[td['fight_id'].isin(valid_fights)].copy()
+            profile = {'fighter': row['fighter'], 'fighter_id': row['fighter_id'], 'fight_id': row['fight_id'], 'event_date': pd.to_datetime(row['event_date']), 'weight_class': row.get('weight_class', None), 'outcome': row.get('outcome', None)}
+            profile['sig_str_per_min'] = row.get('sig_str_landed', 0) / duration if pd.notna(row.get('sig_str_landed', 0)) else 0
+            profile['td_att_per_min'] = row.get('td_attempted', 0) / duration if pd.notna(row.get('td_attempted', 0)) else 0
+            profile['td_success_per_min'] = row.get('td_landed', 0) / duration if pd.notna(row.get('td_landed', 0)) else 0
+            profile['ctrl_sec_per_min'] = row.get('ctrl_seconds', 0) / duration if pd.notna(row.get('ctrl_seconds', 0)) else 0
+            profile['kd_per_min'] = row.get('kd', 0) / duration if pd.notna(row.get('kd', 0)) else 0
+            profile['distance_str_per_min'] = row.get('distance_landed', 0) / duration if pd.notna(row.get('distance_landed', 0)) else 0
+            profile['clinch_str_per_min'] = row.get('clinch_landed', 0) / duration if pd.notna(row.get('clinch_landed', 0)) else 0
+            profile['ground_str_per_min'] = row.get('ground_landed', 0) / duration if pd.notna(row.get('ground_landed', 0)) else 0
+            profile['sub_att_per_min'] = row.get('sub_att', 0) / duration if pd.notna(row.get('sub_att', 0)) else 0
+            sig_landed = row.get('sig_str_landed', 0) if pd.notna(row.get('sig_str_landed', 0)) and row.get('sig_str_landed', 0) > 0 else 0
+            if sig_landed > 0:
+                profile['distance_strike_ratio'] = row.get('distance_landed', 0) / sig_landed if pd.notna(row.get('distance_landed', 0)) else 0
+                profile['clinch_strike_ratio'] = row.get('clinch_landed', 0) / sig_landed if pd.notna(row.get('clinch_landed', 0)) else 0
+                profile['ground_strike_ratio'] = row.get('ground_landed', 0) / sig_landed if pd.notna(row.get('ground_landed', 0)) else 0
+                profile['head_target_ratio'] = row.get('head_landed', 0) / sig_landed if pd.notna(row.get('head_landed', 0)) else 0
+                profile['body_target_ratio'] = row.get('body_landed', 0) / sig_landed if pd.notna(row.get('body_landed', 0)) else 0
+                profile['leg_target_ratio'] = row.get('leg_landed', 0) / sig_landed if pd.notna(row.get('leg_landed', 0)) else 0
+            else:
+                profile['distance_strike_ratio'] = 0
+                profile['clinch_strike_ratio'] = 0
+                profile['ground_strike_ratio'] = 0
+                profile['head_target_ratio'] = 0
+                profile['body_target_ratio'] = 0
+                profile['leg_target_ratio'] = 0
+            fight_level.append(profile)
 
-    if td.empty:
-        return pd.DataFrame([])
-
-    # compute duration (minutes) per fight in a vectorized way
-    max_ctrl = td.groupby('fight_id')['ctrl_seconds'].max().fillna(0)
-    durations = (max_ctrl / 60.0).clip(lower=5.0)
-    td['duration_min'] = td['fight_id'].map(durations)
-
-    # per-minute features
-    td['sig_str_per_min'] = td['sig_str_landed'].fillna(0) / td['duration_min']
-    td['td_att_per_min'] = td['td_attempted'].fillna(0) / td['duration_min']
-    td['td_success_per_min'] = td['td_landed'].fillna(0) / td['duration_min']
-    td['ctrl_sec_per_min'] = td['ctrl_seconds'].fillna(0) / td['duration_min']
-    td['kd_per_min'] = td['kd'].fillna(0) / td['duration_min']
-    td['distance_str_per_min'] = td['distance_landed'].fillna(0) / td['duration_min']
-    td['clinch_str_per_min'] = td['clinch_landed'].fillna(0) / td['duration_min']
-    td['ground_str_per_min'] = td['ground_landed'].fillna(0) / td['duration_min']
-    td['sub_att_per_min'] = td['sub_att'].fillna(0) / td['duration_min']
-
-    # strike-target ratios (guard against zero sig landed)
-    sig_landed = td['sig_str_landed'].fillna(0)
-    mask = sig_landed > 0
-    td['distance_strike_ratio'] = 0.0
-    td['clinch_strike_ratio'] = 0.0
-    td['ground_strike_ratio'] = 0.0
-    td['head_target_ratio'] = 0.0
-    td['body_target_ratio'] = 0.0
-    td['leg_target_ratio'] = 0.0
-
-    td.loc[mask, 'distance_strike_ratio'] = td.loc[mask, 'distance_landed'].fillna(0) / sig_landed[mask]
-    td.loc[mask, 'clinch_strike_ratio'] = td.loc[mask, 'clinch_landed'].fillna(0) / sig_landed[mask]
-    td.loc[mask, 'ground_strike_ratio'] = td.loc[mask, 'ground_landed'].fillna(0) / sig_landed[mask]
-    td.loc[mask, 'head_target_ratio'] = td.loc[mask, 'head_landed'].fillna(0) / sig_landed[mask]
-    td.loc[mask, 'body_target_ratio'] = td.loc[mask, 'body_landed'].fillna(0) / sig_landed[mask]
-    td.loc[mask, 'leg_target_ratio'] = td.loc[mask, 'leg_landed'].fillna(0) / sig_landed[mask]
-
-    # Build fight-level dataframe with only the columns we need
-    fight_level_df = td[['fighter', 'fighter_id', 'fight_id', 'event_date', 'weight_class', 'outcome'] + FEATURE_COLS].copy()
-
-    # Apply global date window filter (vectorized)
-    prior_df = fight_level_df
-    if end is not None:
-        prior_df = prior_df[prior_df['event_date'] < end]
-    if start is not None:
-        prior_df = prior_df[prior_df['event_date'] >= start]
-
-    fighters_all = fight_level_df['fighter_id'].unique()
-    fighters_with_history = prior_df['fighter_id'].unique()
+    fight_level_df = pd.DataFrame(fight_level)
 
     results = []
+    for fighter_id, group in fight_level_df.groupby('fighter_id'):
+        # apply date window: start <= date < end
+        prior = group
+        if end is not None:
+            prior = prior[prior['event_date'] < end]
+        if start is not None:
+            prior = prior[prior['event_date'] >= start]
+        prior = prior.sort_values('event_date')
 
-    # Aggregate for fighters that have history in the window
-    for fighter, group in prior_df.groupby('fighter_id'):
-        group = group.sort_values('event_date')
-        most_recent_row = group.iloc[-1]
-        outcomes = group['outcome'].values
-        agg = {
-            'fighter': most_recent_row['fighter'],
-            'fighter_id': fighter,
-            'event_date': end,
-            'weight_class': most_recent_row.get('weight_class', None),
-        }
+        if prior.shape[0] == 0:
+            if not include_no_history:
+                continue
+            agg = {'fighter_id': fighter_id, 'fighter': None, 'event_date': end, 'weight_class': None}
+            agg['win_rate'] = fill_value
+            agg['total_fights'] = 0
+            agg['current_streak'] = 0
+            for col in FEATURE_COLS:
+                agg[col] = fill_value
+            results.append(agg)
+            continue
+
+        most_recent_row = prior.iloc[-1]
+        agg = {'fighter': most_recent_row['fighter'], 'fighter_id': fighter_id, 'event_date': end, 'weight_class': most_recent_row.get('weight_class', None)}
+        outcomes = prior['outcome'].values
         agg['win_rate'] = outcomes.mean()
         agg['total_fights'] = len(outcomes)
-        # streak
+        # compute streak
         streak = 0
         if len(outcomes) > 0:
             most_recent = outcomes[-1]
@@ -242,28 +236,9 @@ def latest_vectors(start_date=None, end_date=None, training_data_path: str = os.
             if most_recent == 0:
                 streak = -streak
         agg['current_streak'] = streak
-
-        # feature means
-        means = group[FEATURE_COLS].mean()
         for col in FEATURE_COLS:
-            agg[col] = means.get(col, fill_value)
-
+            agg[col] = prior[col].mean()
         results.append(agg)
-
-    # Optionally append fighters with no history in the window
-    if include_no_history:
-        missing = set(fighters_all) - set(fighters_with_history)
-        for fid in missing:
-            results.append({
-                'fighter_id': fid,
-                'fighter': None,
-                'event_date': end,
-                'weight_class': None,
-                'win_rate': fill_value,
-                'total_fights': 0,
-                'current_streak': 0,
-                **{col: fill_value for col in FEATURE_COLS}
-            })
 
     return pd.DataFrame(results).reset_index(drop=True)
 
