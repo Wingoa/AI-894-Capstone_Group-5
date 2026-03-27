@@ -31,3 +31,15 @@ This will open access to the data living in our repo from the site.
 Test end point - Get fights by fighter name
 
 https://ai-894-capstone-group-5.onrender.com/fights/poirier
+
+---
+
+Weekly automation
+
+What it does: Scrapes UFC stats, runs the cleaning/vector pipeline, retrains the outcome model, and commits updated CSVs/artifacts back to the repo.
+
+Where it runs: GitHub Actions workflow /.github/workflows/weekly_pipeline.yml (weekly)
+
+Entrypoint: weekly_pipeline.py
+
+Outputs: Training CSV model/fight/outcome_training_vectors.csv, vectors resources/fighter_vectors/outcome_vectors.csv, and model artifacts in model/fight/outcome_artifacts_32.
