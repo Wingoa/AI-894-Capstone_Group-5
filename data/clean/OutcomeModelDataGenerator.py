@@ -86,7 +86,7 @@ with open(FIGHT_CSV, newline="", encoding="utf-8") as f:
             fighter = row["fighter"]
             event_info = getEventInfo(fight_id)
             event = getEvent(event_info["event_id"])
-            date = subtractDay(event["event_date"])
+            date = event["event_date"]
             if (isDateOld(date)):
                 print(f"Date {date} is too far in the past, not processing for fighter {fighter}")
                 continue
@@ -96,7 +96,7 @@ with open(FIGHT_CSV, newline="", encoding="utf-8") as f:
                 print(f"Fight was no contest, refusing to further process")
                 continue
                 
-            vector = latest_vectors(None, date, training_data_path=TRAINING_CSV, fighter_id=fighter_id)
+            vector = latest_vectors(None, subtractDay(date), training_data_path=TRAINING_CSV, fighter_id=fighter_id)
             if vector.empty:
                 print("Fighter had no prior experience, refusing to further process")
                 continue
