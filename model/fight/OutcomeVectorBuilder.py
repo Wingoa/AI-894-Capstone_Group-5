@@ -6,18 +6,18 @@ This class serves to combine the data from outcome_vectors into single rows of f
 
 import pandas as pd
 
-df = pd.read_csv("../../resources/fighter_vectors/outcome_vectors.csv")
+df = pd.read_csv("../../resources/fighter_vectors/outcome_vectors_2.csv")
 
 # Drop fights that happened over 10 years ago
 df = df[pd.to_datetime(df["event_date"]) >= (pd.Timestamp.today() - pd.DateOffset(years=10))]
 
 # Drop fights where fighters had too little data
-df = df[df["n_fights_norm"] <= 0.2]
+df = df[df["n_fights_norm"] >= 0.2]
 
 # Explicit feature vectors
 feature_cols = [
     "muay_thai",
-    "boxing",
+    "boxing", 
     "wrestling",
     "grappling",
     "pace",
@@ -62,4 +62,4 @@ win_df = df[["fight_id", "fighter_idx", "win"]].pivot(
 )
 match_df["y"] = (win_df[0] == 1).astype(int).values
 
-match_df.to_csv("outcome_training_vectors.csv", mode="a", index=False, header=True)
+match_df.to_csv("outcome_training_vectors_2.csv", mode="a", index=False, header=True)

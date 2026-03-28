@@ -22,9 +22,9 @@ from torch.utils.data import Dataset, DataLoader
 # ----------------------------
 @dataclass
 class Config:
-    csv_path: str = "./outcome_training_vectors.csv"
+    csv_path: str = "./outcome_training_vectors_2.csv"
     label_col: str = "y"
-    out_dir: str = "./outcome_artifacts_32_retrain"
+    out_dir: str = "./outcome_artifacts_32_retrain_2_test"
 
     test_size: float = 0.15
     val_size: float = 0.15
@@ -240,6 +240,7 @@ def main():
     # 1) Load & validate
     df = load_and_validate(CFG.csv_path, CFG.label_col)
     print(f"Loaded {len(df)} fights from {CFG.csv_path}")
+    print(df)
 
     # 2) Split into train / temp
     train_df, temp_df = train_test_split(

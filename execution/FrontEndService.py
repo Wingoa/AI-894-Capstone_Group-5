@@ -50,10 +50,6 @@ class FrontEndService:
         }
         resp = requests.get(f"{self.model_url}/outcome", params=queryParams, timeout=60)
         resp.raise_for_status()
-        idx = self._processFightPrediction(resp.json())
-        winning_fighter = fighter_a_id if idx == 1 else fighter_b_id
-        print(f"Prediction service believes {winning_fighter} will win: {idx}")
-        return winning_fighter
-
-    def _processFightPrediction(self, fightPrediction: List):
-        return fightPrediction[0][0]
+        fight_prediction = resp.json()
+        print(f"Fight prediction for {fighter_a_id} v {fighter_b_id}: {fight_prediction}")
+        return fight_prediction
