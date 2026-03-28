@@ -31,6 +31,7 @@
 import csv
 import pandas as pd
 from fighter_vectors import latest_vectors
+from datetime import datetime, timedelta
 
 FIGHT_CSV = "../../resources/initial_data/fights.csv"
 EVENT_CSV = "../../resources/initial_data/events.csv"
@@ -51,13 +52,27 @@ def getEvent(event_id: str):
         for row in reader:
             if row["event_id"] == event_id:
                 return row
+            
+def subtractDay(date_str: str):
+    # Convert string to datetime
+    date_obj = datetime.strptime(date_str, "%B %d, %Y")
+
+    # Subtract one day
+    new_date = date_obj - timedelta(days=1)
+
+    # Convert back to string if needed
+    return new_date.strftime("%B %d, %Y")
+
+def isDateOld(date_str: str):
+    date_obj = datetime.strptime(date_str, "%B %d, %Y")
+    return date_obj.year < 2015
 
 
-# df = pd.read_csv(EVENT_INFO_CSV)
+df = pd.read_csv(EVENT_INFO_CSV)
 
-# unique_values = df["method"].unique()
+unique_values = df["method"].unique()
 
-# print(f"Unique fight outcomes: {unique_values}")
+print(f"Unique fight outcomes: {unique_values}")
 
 
 counter = 0
@@ -71,7 +86,10 @@ with open(FIGHT_CSV, newline="", encoding="utf-8") as f:
             fighter = row["fighter"]
             event_info = getEventInfo(fight_id)
             event = getEvent(event_info["event_id"])
-            date = event["event_date"]
+            date = subtractDay(event["event_date"])
+            if (isDateOld(date)):
+                print(f"Date {date} is too far in the past, not processing for fighter {fighter}")
+                continue
             print(f"{counter}. Getting fight vector for {fighter} on {date}")
             method = event_info["method"]
             if method == "CNC":
