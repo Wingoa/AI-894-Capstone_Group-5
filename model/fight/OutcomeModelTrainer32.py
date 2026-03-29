@@ -22,7 +22,7 @@ from torch.utils.data import Dataset, DataLoader
 # ----------------------------
 @dataclass
 class Config:
-    csv_path: str = "./outcome_training_vectors.csv"
+    csv_path: str = "./outcome_training_vectors_2.csv"
     label_col: str = "y"
     out_dir: str = "./outcome_artifacts_32"
 
@@ -30,7 +30,7 @@ class Config:
     random_state: int = 42
 
     batch_size: int = 256
-    epochs: int = 40
+    epochs: int = 15
     lr: float = 1e-3
     weight_decay: float = 1e-3
     grad_clip: float = 1.0
@@ -148,6 +148,23 @@ def build_matchup_matrix(
         scaler.fit(X_raw)
 
     X = scaler.transform(X_raw).astype(np.float32)
+
+    scaled_flat = X[0]
+    raw_flat = X_raw[0]
+
+    # for i, (raw_val, scaled_val) in enumerate(zip(raw_flat, scaled_flat)):
+    #     print(i, raw_val, scaled_val)
+
+    feature_names = (
+        [f"{c}_A" for c in FEATURE_ORDER]
+        + [f"{c}_B" for c in FEATURE_ORDER]
+        + [f"{c}_A_minus_B" for c in FEATURE_ORDER]
+        + [f"{c}_A_times_B" for c in FEATURE_ORDER]
+    )
+
+    for name, raw_val, scaled_val in zip(feature_names, raw_flat, scaled_flat):
+        print(f"{name}: raw={raw_val}, scaled={scaled_val}")
+
     return X, y, scaler
 
 
@@ -196,6 +213,7 @@ def main():
 
     df = load_and_validate(CFG.csv_path, CFG.label_col)
     print(f"Loaded {len(df)} fights from {CFG.csv_path}")
+    print(df["n_fights_norm_A"].describe())
 
     train_df, test_df = train_test_split(
         df,

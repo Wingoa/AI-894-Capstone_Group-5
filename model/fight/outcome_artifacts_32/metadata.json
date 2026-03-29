@@ -1,5 +1,5 @@
 {
-  "csv_path": "./test.csv",
+  "csv_path": "./outcome_training_vectors_2.csv",
   "label_col": "y",
   "feature_order": [
     "wrestling",
@@ -49,7 +49,7 @@
   ],
   "train_config": {
     "test_size": 0.2,
-    "epochs": 40,
+    "epochs": 15,
     "batch_size": 256,
     "lr": 0.001,
     "weight_decay": 0.001,
@@ -57,5 +57,5 @@
     "dropout": 0.2,
     "random_state": 42
   },
-  "best_test_loss": 0.6802318716394729
+  "best_test_loss": 0.6682662751264633
 }

@@ -27,6 +27,7 @@ import numpy as np
 from datetime import datetime
 from typing import List
 from style.StylePredictor import StylePredictor
+from datetime import datetime, timedelta
 
 FIGHT_VECTOR_CSV = "../resources/fighter_vectors/fight_vectors_dated.csv"
 
@@ -62,6 +63,16 @@ def loadData():
     event_data = pd.read_csv(EVENT_CSV)
     event_data["event_date"] = pd.to_datetime(event_data["event_date"])
     event_info_data = pd.read_csv(EVENT_INFO_CSV)
+
+def addDayToDate(date_str: str):
+    # Convert string → datetime
+    date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+
+    # Add one day
+    new_date = date_obj + timedelta(days=1)
+
+    # Convert back to string
+    return new_date.strftime("%Y-%m-%d")
 
 def getEventIdByDate(date: str):
     return event_data.loc[event_data["event_date"] == date, "event_id"].iloc[0]
@@ -119,7 +130,7 @@ def generateOutcomeVectorTrainingData():
         for row in reader:
             fighter = row["fighter"]
             fighter_id = row["fighter_id"]
-            date = row["event_date"]
+            date = addDayToDate(row["event_date"])
             try:
                 # Calculate style vector
                 style = getStyleVector(row)
@@ -148,3 +159,6 @@ def generateOutcomeVectorTrainingData():
 
 
     dedupe_csv("test.csv", "outcome_vectors.csv")
+
+if __name__ == "__main__":
+    generateOutcomeVectorTrainingData()

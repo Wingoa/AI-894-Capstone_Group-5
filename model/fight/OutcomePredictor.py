@@ -7,11 +7,22 @@ import torch
 import joblib
 import numpy as np
 
+FEATURE_ORDER: List[str] = [
+    "wrestling",
+    "grappling",
+    "muay_thai",
+    "boxing",
+    "pace",
+    "td_success",
+    "ctrl_share",
+    "n_fights_norm",
+]
+
 
 class OutcomePredictor:
 
-    MODEL_WEIGHT_PATH = "./fight/outcome_artifacts_32/outcome_model.pt"
-    SCALER_PATH = "./fight/outcome_artifacts_32/scaler.pkl"
+    MODEL_WEIGHT_PATH = "./fight/outcome_artifacts_32_2/outcome_model.pt"
+    SCALER_PATH = "./fight/outcome_artifacts_32_2/scaler.pkl"
     MAP_LOCATION = "cuda" if torch.cuda.is_available() else "cpu"
     
     def __init__(self):
@@ -38,6 +49,7 @@ class OutcomePredictor:
         X_raw = np.array(features).reshape(1, -1)
         X_scaled = self._scaler.transform(X_raw)
 
+        print("Max abs scaled value:", np.abs(X_scaled).max())
         with torch.no_grad():
             logits = self._model(torch.tensor(X_scaled, dtype=torch.float32))
             probs = torch.sigmoid(logits)

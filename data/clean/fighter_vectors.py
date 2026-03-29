@@ -160,11 +160,11 @@ def latest_vectors(start_date=None, end_date=None, training_data_path: str = os.
     # If a single fighter is requested, filter early to reduce work
     if fighter_id is not None:
         td = td[td['fighter_id'] == fighter_id]
-
-    # Keep only fights that have two rows (two fighters)
-    fight_counts = td.groupby('fight_id').size()
-    valid_fights = fight_counts[fight_counts >= 2].index
-    td = td[td['fight_id'].isin(valid_fights)].copy()
+    else:
+        # Keep only fights that have two rows (two fighters)
+        fight_counts = td.groupby('fight_id').size()
+        valid_fights = fight_counts[fight_counts >= 2].index
+        td = td[td['fight_id'].isin(valid_fights)].copy()
 
     if td.empty:
         return pd.DataFrame([])
