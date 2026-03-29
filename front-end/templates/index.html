@@ -20,21 +20,24 @@
       <div class="nav">
         <div class="nav-label">Analysis</div>
         <div class="nav-item {{ 'active' if active_screen == 'comparison' else '' }}"
-          onclick="showScreen('comparison')">
+          data-screen="comparison">
           <span class="nav-icon">⚔</span> Fighter Comparison
         </div>
         <div class="nav-item {{ 'active' if active_screen == 'simulation' else '' }}"
-          onclick="showScreen('simulation')">
+          data-screen="simulation">
           <span class="nav-icon">⚙</span> Simulation
         </div>
-        <div class="nav-item {{ 'active' if active_screen == 'matchup' else '' }}" onclick="showScreen('matchup')">
+        <div class="nav-item {{ 'active' if active_screen == 'matchup' else '' }}"
+          data-screen="matchup">
           <span class="nav-icon">◈</span> Style Matchup
         </div>
         <div class="nav-label">Data</div>
-        <div class="nav-item {{ 'active' if active_screen == 'roster' else '' }}" onclick="showScreen('roster')">
+        <div class="nav-item {{ 'active' if active_screen == 'roster' else '' }}"
+          data-screen="roster">
           <span class="nav-icon">☰</span> Fighter Roster
         </div>
-        <div class="nav-item {{ 'active' if active_screen == 'events' else '' }}" onclick="showScreen('events')">
+        <div class="nav-item {{ 'active' if active_screen == 'events' else '' }}"
+          data-screen="events">
           <span class="nav-icon">📅</span> Events
         </div>
       </div>
@@ -49,21 +52,6 @@
       <!-- Top Bar -->
       <div class="topbar">
         <div class="page-title" id="page-title">FIGHTER COMPARISON</div>
-        <div class="topbar-right">
-          {# Style filter — derived from FighterComposition, no division field exists yet #}
-          <select class="weight-selector" id="style-filter" onchange="filterRoster()">
-            <option value="">All Archetypes</option>
-            <option value="Pressure Striker">Striker</option>
-            <option value="Muay Thai Specialist">Muay Thai</option>
-            <option value="Dominant Wrestler">Wrestler</option>
-            <option value="Submission Hunter">Grappler</option>
-            <option value="High-Pace Fighter">Pace</option>
-          </select>
-          <button class="btn btn-red"
-            onclick="window.location.href='/compare?red={{ fighter_red.id if fighter_red else '' }}&blue={{ fighter_blue.id if fighter_blue else '' }}'">
-            ⚡ Analyze
-          </button>
-        </div>
       </div>
 
       <div class="content">
@@ -94,7 +82,6 @@
                   CHOOSE RED CORNER
                 {% endif %}
               </div>
-              <div class="picker-arrow">▾</div>
             </div>
             <div class="picker-arrow">▾</div>
             <select class="fighter-picker-select" id="fighter-select-red" onchange="syncPicker('red')" oninput="syncPicker('red')">
@@ -124,7 +111,6 @@
                   CHOOSE BLUE CORNER
                 {% endif %}
               </div>
-              <div class="picker-arrow">▾</div>
             </div>
             <div class="picker-arrow">▾</div>
             <select class="fighter-picker-select" id="fighter-select-blue" onchange="syncPicker('blue')" oninput="syncPicker('blue')">
@@ -144,226 +130,224 @@
             ANALYZE MATCHUP
           </button>
         </div>
+          {% if fighter_red and fighter_blue %}
 
-            <button class="btn btn-red" style="margin-left: auto"
-              onclick="window.location.href='/compare?red={{ fighter_red.id if fighter_red else '' }}&blue={{ fighter_blue.id if fighter_blue else '' }}'">
-              ANALYZE MATCHUP
-            </button>
-          </div>
-
-          {% if fighter_red and fighter_blue %} {# ── Fighter Profile Cards
-          ────────────────────────────────────────── Only fields available from Fighter + derived
-          values: Fighter.name, Fighter.fight_ids derived: archetype, primary_styles, secondary_styles,
-          exploitability_score NOTE: wins/losses/division/country are NOT in Fighter dataclass yet.
-          fight_ids length is used as the only available record proxy. #}
-          <div class="grid-2 mb16">
-            <div class="fighter-card red">
-              <div class="fighter-avatar red">{{ fighter_red.name[:2] | upper }}</div>
-              <div class="fighter-name">{{ fighter_red.name }}</div>
-              <div class="fighter-meta">{{ fighter_red.fight_ids | length }} fights in dataset</div>
-              <div class="archetype-pill">⬡ {{ fighter_red.archetype }}</div>
-              <div class="style-tags mt8">
-                {% for style in fighter_red.primary_styles %}
+        {# ── Fighter Profile Cards ──────────────────────────────────────────
+           Only fields available from Fighter + derived values: Fighter.name, Fighter.fight_ids
+              derived: archetype, primary_styles, secondary_styles, exploitability_score
+           NOTE: wins/losses/division/country are NOT in Fighter dataclass yet.
+                 fight_ids length is used as the only available record proxy.
+        #}
+        <div class="grid-2 mb16">
+          <div class="fighter-card red">
+            <!-- split the figter name into parts to create initials for avatar -->
+            {% set red_parts = fighter_red.name.split() %}
+            <div class="fighter-avatar red">
+              {% if red_parts|length > 1 %}
+                {{ (red_parts[0][0] ~ red_parts[-1][0]) | upper }}
+              {% else %}
+                {{ fighter_red.name[:2] | upper }}
+              {% endif %}
+            </div>
+            <div class="fighter-name">{{ fighter_red.name }}</div>
+            <div class="fighter-meta">
+              {{ fighter_red.fight_ids | length }} fights in dataset
+            </div>
+            <div class="archetype-pill">⬡ {{ fighter_red.archetype }}</div>
+            <div class="style-tags mt8">
+              {% for style in fighter_red.primary_styles %}
                 <span class="style-tag primary">{{ style }}</span>
-                {% endfor %} {% for style in fighter_red.secondary_styles %}
+              {% endfor %}
+              {% for style in fighter_red.secondary_styles %}
                 <span class="style-tag">{{ style }}</span>
-                {% endfor %}
-              </div>
-              <div class="exploit-score mt8">
-                <span class="exploit-label">EXPLOIT SCORE</span>
-                <span
-                  class="exploit-val {{ 'high' if fighter_red.exploitability_score >= 70 else 'med' if fighter_red.exploitability_score >= 40 else 'low' }}">
-                  {{ fighter_red.exploitability_score }}
-                </span>
-              </div>
+              {% endfor %}
             </div>
+          </div>
 
-            <div class="fighter-card blue">
-              <div class="fighter-avatar blue">{{ fighter_blue.name[:2] | upper }}</div>
-              <div class="fighter-name">{{ fighter_blue.name }}</div>
-              <div class="fighter-meta">{{ fighter_blue.fight_ids | length }} fights in dataset</div>
-              <div class="archetype-pill archetype-blue">⬡ {{ fighter_blue.archetype }}</div>
-              <div class="style-tags mt8">
-                {% for style in fighter_blue.primary_styles %}
+          <div class="fighter-card blue">
+            {% set blue_parts = fighter_blue.name.split() %}
+            <div class="fighter-avatar blue">
+              {% if blue_parts|length > 1 %}
+                {{ (blue_parts[0][0] ~ blue_parts[-1][0]) | upper }}
+              {% else %}
+                {{ fighter_blue.name[:2] | upper }}
+              {% endif %}
+            </div>
+            <div class="fighter-name">{{ fighter_blue.name }}</div>
+            <div class="fighter-meta">
+              {{ fighter_blue.fight_ids | length }} fights in dataset
+            </div>
+            <div class="archetype-pill archetype-blue">⬡ {{ fighter_blue.archetype }}</div>
+            <div class="style-tags mt8">
+              {% for style in fighter_blue.primary_styles %}
                 <span class="style-tag primary-blue">{{ style }}</span>
-                {% endfor %} {% for style in fighter_blue.secondary_styles %}
+              {% endfor %}
+              {% for style in fighter_blue.secondary_styles %}
                 <span class="style-tag">{{ style }}</span>
-                {% endfor %}
-              </div>
-              <div class="exploit-score mt8">
-                <span class="exploit-label">EXPLOIT SCORE</span>
-                <span
-                  class="exploit-val {{ 'high' if fighter_blue.exploitability_score >= 70 else 'med' if fighter_blue.exploitability_score >= 40 else 'low' }}">
-                  {{ fighter_blue.exploitability_score }}
-                </span>
-              </div>
+              {% endfor %}
             </div>
           </div>
+        </div>
 
-          {# ── Win Probability win_probability from _compute_win_probability() — stub until model
-          wired #} {% if win_probability %}
-          <div class="card mb16">
+        {# ── Win Probability
+           win_probability from _compute_win_probability() — stub until model wired
+        #}
+        {% if win_probability %}
+        <div class="card mb16 win-prob-card">
+          <div class="card-title">
+            AI Win Probability
+            <span class="annotation">{{ win_probability.model }}</span>
+          </div>
+          <div class="win-prob-labels">
+            <span class="prob-red">{{ win_probability.red_pct }}%</span>
+            <span class="prob-center">WIN PROBABILITY</span>
+            <span class="prob-blue">{{ win_probability.blue_pct }}%</span>
+          </div>
+          <div class="win-prob-bar dual-fill">
+            <div class="win-prob-red"  style="width:{{ win_probability.red_pct }}%"></div>
+            <div class="win-prob-blue" style="width:{{ win_probability.blue_pct }}%"></div>
+          </div>
+          <div class="win-prob-footer">
+            <span class="prob-name red">{{ fighter_red.name }}</span>
+            <span class="prob-meta">AUC: {{ win_probability.auc }} · Model Confidence: {{ win_probability.confidence }}</span>
+            <span class="prob-name blue">{{ fighter_blue.name }}</span>
+          </div>
+        </div>
+        {% else %}
+        <div class="card mb16 pending-card">
+          <div class="card-title">AI Win Probability</div>
+          <div class="pending-msg">
+            Model not yet connected — implement <code>_compute_win_probability()</code>
+            in FrontEndResource.py
+          </div>
+        </div>
+        {% endif %}
+
+        {# ── Head-to-Head Stats + Radar ────────────────────────────────────
+           hth_stats built from FighterComposition:
+             pace, boxing (→ Striking), muay_thai, wrestling, grappling
+           composition_red/blue normalised 0–1 for radar
+        #}
+        <div class="grid-2 mb16">
+          <div class="card">
+            <div class="card-title">Composition — Head to Head</div>
+            <div class="hth-header">
+              <span style="color:var(--red);">{{ fighter_red.name | upper }}</span>
+              <span>METRIC</span>
+              <span style="color:#5b9eff;">{{ fighter_blue.name | upper }}</span>
+            </div>
+            <div id="hth-stats"></div>
+          </div>
+
+          <div class="card">
             <div class="card-title">
-              AI Win Probability
-              <span class="annotation">XGBoost Model</span>
-              <span class="annotation">AUC: {{ win_probability.auc }}</span>
-              <span class="annotation">{{ win_probability.confidence }}</span>
+              Style Radar
+              <span class="annotation">NMF · 5 Dimensions</span>
             </div>
-            <div class="win-prob-labels">
-              <span class="prob-red">{{ win_probability.red_pct }}%</span>
-              <span class="prob-center">WIN PROBABILITY</span>
-              <span class="prob-blue">{{ win_probability.blue_pct }}%</span>
+            <div class="radar-wrap">
+              <canvas id="radarCanvas" width="260" height="240"></canvas>
             </div>
-            <div class="win-prob-bar">
-              <div class="win-prob-red" style="width:{{ win_probability.red_pct }}%"></div>
-              <div class="win-prob-blue" style="width:{{ win_probability.blue_pct }}%"></div>
-            </div>
-            <div class="win-prob-footer">
-              <span>{{ fighter_red.name }}</span>
-              <span>{{ fighter_blue.name }}</span>
-            </div>
-          </div>
-          {% else %}
-          <div class="card mb16 pending-card">
-            <div class="card-title">AI Win Probability</div>
-            <div class="pending-msg">
-              Model not yet connected — implement <code>_compute_win_probability()</code>
-              in FrontEndResource.py
-            </div>
-          </div>
-          {% endif %} {# ── Head-to-Head Stats + Radar ──────────────────────────────────── hth_stats
-          built from FighterComposition: pace, boxing (→ Striking), muay_thai, wrestling, grappling
-          composition_red/blue normalised 0–1 for radar #}
-          <div class="grid-2 mb16">
-            <div class="card">
-              <div class="card-title">Composition — Head to Head</div>
-              <div class="hth-header">
-                <span style="color: var(--red)">{{ fighter_red.name | upper }}</span>
-                <span>METRIC</span>
-                <span style="color: #5b9eff">{{ fighter_blue.name | upper }}</span>
+            <div class="radar-legend">
+              <div class="legend-item">
+                <div class="legend-dot red"></div>
+                <span style="color:var(--red);">{{ fighter_red.name | upper }}</span>
               </div>
-              <div id="hth-stats"></div>
+              <div class="legend-item">
+                <div class="legend-dot blue"></div>
+                <span style="color:#5b9eff;">{{ fighter_blue.name | upper }}</span>
+              </div>
             </div>
+          </div>
+        </div>
 
-            <div class="card">
-              <div class="card-title">
-                Style Radar
-                <span class="annotation">NMF · 5 Dimensions</span>
-              </div>
-              <div class="radar-wrap">
-                <canvas id="radarCanvas" width="260" height="240"></canvas>
-              </div>
-              <div class="radar-legend">
-                <div class="legend-item">
-                  <div class="legend-dot red"></div>
-                  <span style="color: var(--red)">{{ fighter_red.name | upper }}</span>
+        {# ── Composition Breakdown Bars ─────────────────────────────────────
+           composition_red/blue keys map from FighterComposition:
+           boxing → striking | muay_thai | wrestling | grappling | pace
+           All normalised 0–1 by _composition_to_dict()
+        #}
+        <div class="card mb16">
+          <div class="card-title">
+            Style Composition Breakdown
+            <span class="annotation">NMF Decomposition</span>
+          </div>
+          <div class="grid-2">
+            <div>
+              <div class="comp-fighter-label red">{{ fighter_red.name | upper }}</div>
+              {% if composition_red %}
+              {% for dim, color in [
+                  ('striking',  '#e8001d'),
+                  ('muay_thai', '#ff6b35'),
+                  ('wrestling', '#f5c518'),
+                  ('grappling', '#00c853'),
+                  ('pace',      '#1a6dff')
+              ] %}
+              <div class="comp-row">
+                <div class="comp-label">{{ dim | replace('_',' ') | title }}</div>
+                <div class="comp-track">
+                  <div class="comp-fill"
+                       style="width:{{ (composition_red[dim] * 100) | round | int }}%;background:{{ color }};"></div>
                 </div>
-                <div class="legend-item">
-                  <div class="legend-dot blue"></div>
-                  <span style="color: #5b9eff">{{ fighter_blue.name | upper }}</span>
-                </div>
+                <div class="comp-pct">{{ (composition_red[dim] * 100) | round | int }}%</div>
               </div>
+              {% endfor %}
+              {% endif %}
+            </div>
+            <div>
+              <div class="comp-fighter-label blue">{{ fighter_blue.name | upper }}</div>
+              {% if composition_blue %}
+              {% for dim, color in [
+                  ('striking',  '#e8001d'),
+                  ('muay_thai', '#ff6b35'),
+                  ('wrestling', '#f5c518'),
+                  ('grappling', '#00c853'),
+                  ('pace',      '#1a6dff')
+              ] %}
+              <div class="comp-row">
+                <div class="comp-label">{{ dim | replace('_',' ') | title }}</div>
+                <div class="comp-track">
+                  <div class="comp-fill"
+                       style="width:{{ (composition_blue[dim] * 100) | round | int }}%;background:{{ color }};"></div>
+                </div>
+                <div class="comp-pct">{{ (composition_blue[dim] * 100) | round | int }}%</div>
+              </div>
+              {% endfor %}
+              {% endif %}
             </div>
           </div>
+        </div>
 
-          {# ── Composition Breakdown Bars ───────────────────────────────────── composition_red/blue
-          keys map from FighterComposition: boxing → striking | muay_thai | wrestling | grappling |
-          pace All normalised 0–1 by _composition_to_dict() #}
-          <div class="card mb16">
-            <div class="card-title">
-              Style Composition Breakdown
-              <span class="annotation">NMF Decomposition</span>
+        {# ── Fight Count Summary ────────────────────────────────────────────
+           fight_ids is the only record data Fighter carries right now
+        #}
+        <div class="card mt16">
+          <div class="card-title">Dataset Coverage</div>
+          <div class="grid-2">
+            <div class="fight-count-box red">
+              <div class="fight-count-name">{{ fighter_red.name }}</div>
+              <div class="fight-count-num">{{ fighter_red.fight_ids | length }}</div>
+              <div class="fight-count-label">FIGHTS IN DATASET</div>
             </div>
-            <div class="grid-2">
-              <div>
-                <div class="comp-fighter-label red">{{ fighter_red.name | upper }}</div>
-                {% if composition_red %} {% for dim, color in [ ('striking', '#e8001d'), ('muay_thai',
-                '#ff6b35'), ('wrestling', '#f5c518'), ('grappling', '#00c853'), ('pace', '#1a6dff') ]
-                %}
-                <div class="comp-row">
-                  <div class="comp-label">{{ dim | replace('_',' ') | title }}</div>
-                  <div class="comp-track">
-                    <div class="comp-fill"
-                      style="width:{{ (composition_red[dim] * 100) | round | int }}%;background:{{ color }};"></div>
-                  </div>
-                  <div class="comp-pct">{{ (composition_red[dim] * 100) | round | int }}%</div>
-                </div>
-                {% endfor %} {% endif %}
-              </div>
-              <div>
-                <div class="comp-fighter-label blue">{{ fighter_blue.name | upper }}</div>
-                {% if composition_blue %} {% for dim, color in [ ('striking', '#e8001d'), ('muay_thai',
-                '#ff6b35'), ('wrestling', '#f5c518'), ('grappling', '#00c853'), ('pace', '#1a6dff') ]
-                %}
-                <div class="comp-row">
-                  <div class="comp-label">{{ dim | replace('_',' ') | title }}</div>
-                  <div class="comp-track">
-                    <div class="comp-fill"
-                      style="width:{{ (composition_blue[dim] * 100) | round | int }}%;background:{{ color }};"></div>
-                  </div>
-                  <div class="comp-pct">{{ (composition_blue[dim] * 100) | round | int }}%</div>
-                </div>
-                {% endfor %} {% endif %}
-              </div>
+            <div class="fight-count-box blue">
+              <div class="fight-count-name">{{ fighter_blue.name }}</div>
+              <div class="fight-count-num">{{ fighter_blue.fight_ids | length }}</div>
+              <div class="fight-count-label">FIGHTS IN DATASET</div>
             </div>
           </div>
+        </div>
 
-          {# Matchup Summary Chips matchup_stats from _build_matchup_stats() using FighterComposition
-          only #} {% if matchup_stats %}
-          <div class="grid-4">
-            <div class="stat-chip">
-              <div class="stat-label">Boxing Differential</div>
-              <div class="stat-value {{ 'positive' if matchup_stats.str_acc_diff > 0 else 'negative' }}">
-                {{ '+' if matchup_stats.str_acc_diff > 0 else '' }}{{ matchup_stats.str_acc_diff }}
-              </div>
-              <div class="stat-sub">Red vs Blue (boxing score)</div>
-            </div>
-            <div class="stat-chip">
-              <div class="stat-label">Wrestling Score</div>
-              <div class="stat-value">{{ matchup_stats.td_success_rate }}</div>
-              <div class="stat-sub">Red corner avg</div>
-            </div>
-            <div class="stat-chip">
-              <div class="stat-label">Grappling Index</div>
-              <div class="stat-value">{{ matchup_stats.sub_attempts }}</div>
-              <div class="stat-sub">Per 10 fights (est.)</div>
-            </div>
-            <div class="stat-chip">
-              <div class="stat-label">Exploit Score</div>
-              <div class="stat-value gold">{{ matchup_stats.exploitability_score }}</div>
-              <div class="stat-sub">{{ matchup_stats.exploitability_label }}</div>
-            </div>
+        {% else %}
+        <div class="empty-state">
+          <div class="empty-icon">⚔</div>
+          <div class="empty-title">SELECT TWO FIGHTERS TO COMPARE</div>
+          <div class="empty-sub">
+            Use the pickers above to choose red and blue corners, then click Analyze Matchup.
           </div>
-          {% endif %} {# ── Fight Count Summary ──────────────────────────────────────────── fight_ids
-          is the only record data Fighter carries right now #}
-          <div class="card mt16">
-            <div class="card-title">Dataset Coverage</div>
-            <div class="grid-2">
-              <div class="fight-count-box red">
-                <div class="fight-count-name">{{ fighter_red.name }}</div>
-                <div class="fight-count-num">{{ fighter_red.fight_ids | length }}</div>
-                <div class="fight-count-label">FIGHTS IN DATASET</div>
-              </div>
-              <div class="fight-count-box blue">
-                <div class="fight-count-name">{{ fighter_blue.name }}</div>
-                <div class="fight-count-num">{{ fighter_blue.fight_ids | length }}</div>
-                <div class="fight-count-label">FIGHTS IN DATASET</div>
-              </div>
-            </div>
-          </div>
-
-          {% else %}
-          <div class="empty-state">
-            <div class="empty-icon">⚔</div>
-            <div class="empty-title">SELECT TWO FIGHTERS TO COMPARE</div>
-            <div class="empty-sub">
-              Use the pickers above to choose red and blue corners, then click Analyze Matchup.
-            </div>
-            <button class="btn btn-red" style="margin-top: 16px" onclick="showScreen('roster')">
-              BROWSE ROSTER
-            </button>
-          </div>
-          {% endif %}
+          <button class="btn btn-red" style="margin-top:16px;"
+                  onclick="showScreen('roster')">
+            BROWSE ROSTER
+          </button>
+        </div>
+        {% endif %}
         </div>
         {# /screen-comparison #}
 
@@ -413,7 +397,7 @@
                 </button>
               </div>
 
-              <div class="card">
+              <!-- <div class="card">
                 <div class="card-title">
                   SHAP Feature Impact
                   <span class="annotation">Model Explainability</span>
@@ -440,7 +424,7 @@
                   SHAP values appear here once the XGBoost / LightGBM model is connected.
                 </div>
                 {% endif %}
-              </div>
+              </div> -->
             </div>
 
             <div>
@@ -513,7 +497,7 @@
                 </div>
               </div>
 
-              <div class="card">
+              <!-- <div class="card">
                 <div class="card-title">
                   AI Narrative Insight
                   <span class="annotation">Generated</span>
@@ -522,10 +506,7 @@
                   {{ sim_narrative if sim_narrative else 'Run an analysis to generate AI insights for
                   this matchup.' }}
                 </div>
-                <button class="btn btn-outline mt16" style="width: 100%">
-                  + ADD TO COACHING REPORT
-                </button>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -656,23 +637,20 @@
           </div>
 
           <div class="card">
-            <div style="display: flex; gap: 10px; margin-bottom: 16px; align-items: center">
-              <input type="text" id="roster-search" placeholder="Search by name…" oninput="filterRoster()"
-                class="search-input" />
-              <label for="roster-sort" style="margin-left: 8px; color: var(--muted); font-size: 13px">Sort:</label>
+            <div style="display:flex;gap:10px;margin-bottom:16px;align-items:center;">
+              <input type="text" id="roster-search"
+                     placeholder="Search by name…"
+                     oninput="filterRoster()"
+                     class="search-input">
+              <label for="roster-sort" style="margin-left:8px;color:var(--muted);font-size:13px;">Sort:</label>
               <select id="roster-sort" onchange="sortRosterBy(this.value)" class="search-input"
-                style="height: 36px !important; background: var(--surface2) !important">
+                      style="height:36px !important;background:var(--surface2) !important;">
                 <option value="name">Name</option>
                 <option value="fights">Fights</option>
-                <option value="exploit">Exploit Score</option>
                 <option value="archetype">Archetype</option>
               </select>
-              <button id="roster-sort-dir" onclick="toggleSortDir()" title="Toggle sort direction" style="
-										height: 36px !important;
-										padding: 4px 20px;
-										margin-left: 6px;
-										background: var(--surface2) !important;
-									">
+              <button id="roster-sort-dir" onclick="toggleSortDir()" title="Toggle sort direction"
+                      style="height:36px !important;padding:4px 20px;margin-left:6px;background:var(--surface2) !important;">
                 ▼
               </button>
             </div>
@@ -681,55 +659,50 @@
                 <tr>
                   <th>
                     Fighter
-                    <span class="info-icon"><span class="info-mark">i</span><span class="tooltip-text">Full fighter
-                        name; click Analyze to view matchup details.</span></span>
+                    <span class="info-icon"><span class="info-mark">i</span><span class="tooltip-text">
+                      Full fighter name; click Analyze to view matchup details.
+                    </span></span>
                   </th>
                   <th>
                     Archetype
-                    <span class="info-icon"><span class="info-mark">i</span><span class="tooltip-text">Primary
-                        style/archetype derived from NMF decomposition.</span></span>
+                    <span class="info-icon"><span class="info-mark">i</span><span class="tooltip-text">
+                      Primary style/archetype derived from NMF decomposition.
+                    </span></span>
                   </th>
                   {# fight_ids | length is the only record proxy available in Fighter #}
                   <th>
                     Fights in Dataset
-                    <span class="info-icon"><span class="info-mark">i</span><span class="tooltip-text">Number of fights
-                        for this fighter in the dataset.</span></span>
+                    <span class="info-icon"><span class="info-mark">i</span><span class="tooltip-text">
+                      Number of fights for this fighter in the dataset.
+                    </span></span>
                   </th>
                   <th>
                     Composition
-                    <span class="info-icon"><span class="info-mark">i</span><span class="tooltip-text">Mini visual
-                        showing exploitability/composition.</span></span>
+                    <span class="info-icon"><span class="info-mark">i</span><span class="tooltip-text">
+                      Mini visual showing composition.
+                    </span></span>
                   </th>
-                  <th style="text-align: right">
-                    Exploit Score
-                    <span class="info-icon"><span class="info-mark">i</span><span class="tooltip-text">Higher means more
-                        exploitable tendencies for coaches to target.</span></span>
-                  </th>
-                  <th style="text-align: right">Action</th>
+                  <th style="text-align:right;">Action</th>
                 </tr>
               </thead>
               <tbody id="roster-body">
                 {% for fighter in fighters %}
-                <tr class="data-row roster-row" data-name="{{ fighter.name | lower }}"
-                  data-style="{{ fighter.primary_style }}">
+                <tr class="data-row roster-row"
+                    data-name="{{ fighter.name | lower }}"
+                    data-style="{{ fighter.primary_style }}">
                   <td class="fighter-name-cell">{{ fighter.name }}</td>
                   <td><span class="style-tag">{{ fighter.archetype }}</span></td>
-                  <td style="color: var(--muted)">{{ fighter.fight_ids | length }}</td>
+                  <td style="color:var(--muted);">{{ fighter.fight_ids | length }}</td>
                   <td>
-                    {# Mini bar visualising exploitability as composition proxy #}
+                    {# Mini bar visualising composition proxy #}
                     <div class="mini-comp-bar">
-                      <div class="mini-comp-fill" style="width:{{ fighter.exploitability_score }}%;"></div>
+                      <div class="mini-comp-fill"
+                           style="width:{{ fighter.exploitability_score }}%;"></div>
                     </div>
                   </td>
-                  <td style="text-align: right">
-                    <span
-                      class="exploit-badge {{ 'high' if fighter.exploitability_score >= 70 else 'med' if fighter.exploitability_score >= 40 else 'low' }}">
-                      {{ fighter.exploitability_score }}
-                    </span>
-                  </td>
-                  <td style="text-align: right">
+                  <td style="text-align:right;">
                     <a href="/compare?red={{ fighter.id }}">
-                      <button class="btn btn-outline" style="padding: 5px 10px; font-size: 11px">
+                      <button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">
                         ANALYZE
                       </button>
                     </a>
@@ -739,8 +712,7 @@
               </tbody>
             </table>
           </div>
-        </div>
-        {# /screen-roster #}
+        </div>{# /screen-roster #}
 
         <!-- SCREEN 5: EVENTS
            Data model fields used:
@@ -898,18 +870,31 @@
     };
 
     function showScreen(id) {
-      document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
+      document.querySelectorAll(".screen").forEach((s) => {
+        s.classList.remove("active");
+        s.style.display = "none";
+      });
       document.querySelectorAll(".nav-item").forEach((n) => n.classList.remove("active"));
       const screen = document.getElementById("screen-" + id);
-      if (screen) screen.classList.add("active");
+      if (screen) {
+        screen.classList.add("active");
+        screen.style.display = "block";
+      }
       document.querySelectorAll(".nav-item").forEach((n) => {
-        if (n.getAttribute("onclick")?.includes(`'${id}'`)) n.classList.add("active");
+        if (n.dataset.screen === id) n.classList.add("active");
       });
       const title = document.getElementById("page-title");
       if (title) title.textContent = pageTitles[id] || "";
-      if (id === "comparison") drawRadar();
-      if (id === "matchup") buildHeatmap();
+      if (id === "comparison" && typeof drawRadar === "function") drawRadar();
+      if (id === "matchup" && typeof buildHeatmap === "function") buildHeatmap();
     }
+
+    (function initNav() {
+      document.querySelectorAll(".nav-item[data-screen]").forEach((item) => {
+        item.addEventListener("click", () => showScreen(item.dataset.screen));
+      });
+      if (activeScreen) showScreen(activeScreen);
+    })();
 
     // Head-to-Head Stats
     // Metrics come from FighterComposition: Pace Score, Boxing Accuracy, Muay Thai Ratio, Wrestling TD%, Grappling Score
@@ -1128,12 +1113,6 @@
           const bv = parseInt(text(2, b)) || 0;
           return (bv - av) * dir;
         }
-        if (key === "exploit") {
-          // exploit score is in column 5
-          const av = parseInt(text(4, a)) || 0;
-          const bv = parseInt(text(4, b)) || 0;
-          return (bv - av) * dir;
-        }
         if (key === "archetype") {
           const av = text(1, a).toLowerCase();
           const bv = text(1, b).toLowerCase();
@@ -1141,61 +1120,58 @@
         }
         return 0;
       });
+      rows.forEach((row) => tbody.appendChild(row));
+    }
 
-  // Fighter Comparison Dropdowns
-  function compareFromDropdowns(fallbackRed, fallbackBlue) {
-    const redSelect  = document.getElementById('fighter-select-red');
-    const blueSelect = document.getElementById('fighter-select-blue');
-    const red  = (redSelect && redSelect.value)  ? redSelect.value  : (fallbackRed  || '');
-    const blue = (blueSelect && blueSelect.value) ? blueSelect.value : (fallbackBlue || '');
-    if (!red && !blue) return;
+    // Fighter Comparison Dropdowns
+    function compareFromDropdowns(fallbackRed, fallbackBlue) {
+      const redSelect  = document.getElementById('fighter-select-red');
+      const blueSelect = document.getElementById('fighter-select-blue');
+      const red  = (redSelect && redSelect.value)  ? redSelect.value  : (fallbackRed  || '');
+      const blue = (blueSelect && blueSelect.value) ? blueSelect.value : (fallbackBlue || '');
+      if (!red && !blue) return;
 
-    const params = new URLSearchParams();
-    if (red)  params.set('red', red);
-    if (blue) params.set('blue', blue);
-    const query = params.toString();
-    window.location.href = '/compare' + (query ? `?${query}` : '');
-  }
+      const params = new URLSearchParams();
+      if (red)  params.set('red', red);
+      if (blue) params.set('blue', blue);
+      const query = params.toString();
+      window.location.href = '/compare' + (query ? `?${query}` : '');
+    }
 
-  function syncPicker(corner) {
-    const select = document.getElementById(`fighter-select-${corner}`);
-    const picker = document.querySelector(`.fighter-picker[data-corner="${corner}"]`);
-    if (!select || !picker) return;
-    const nameEl = picker.querySelector('.picker-name');
-    const subEl  = picker.querySelector('.picker-sub');
-    const option = select.options[select.selectedIndex];
-    const optionText = (option && option.text) ? option.text : 'Select Fighter';
-    if (nameEl) nameEl.textContent = optionText.trim();
-    if (subEl)  subEl.textContent  = option?.getAttribute('data-sub')
-      || (corner === 'red' ? 'CHOOSE RED CORNER' : 'CHOOSE BLUE CORNER');
-  }
-
-  // Fighter Picker
-  // TODO: fetch /fighter/all → build searchable modal
-  // → redirect to /compare?red=<Fighter.id>&blue=<Fighter.id>
-  function openFighterPicker(corner) {
-    const targetId = corner === 'red' ? 'fighter-select-red' : 'fighter-select-blue';
-    const select = document.getElementById(targetId);
-    if (!select) return;
-    select.focus();
-    select.click();
-  }
-
-  // Init
-  (function initPickers() {
-    ['red', 'blue'].forEach(corner => {
+    function syncPicker(corner) {
       const select = document.getElementById(`fighter-select-${corner}`);
+      const picker = document.querySelector(`.fighter-picker[data-corner="${corner}"]`);
+      if (!select || !picker) return;
+      const nameEl = picker.querySelector('.picker-name');
+      const subEl  = picker.querySelector('.picker-sub');
+      const option = select.options[select.selectedIndex];
+      const optionText = (option && option.text) ? option.text : 'Select Fighter';
+      if (nameEl) nameEl.textContent = optionText.trim();
+      if (subEl)  subEl.textContent  = option?.getAttribute('data-sub')
+        || (corner === 'red' ? 'CHOOSE RED CORNER' : 'CHOOSE BLUE CORNER');
+    }
+
+    // Fighter Picker
+    // TODO: fetch /fighter/all → build searchable modal
+    // → redirect to /compare?red=<Fighter.id>&blue=<Fighter.id>
+    function openFighterPicker(corner) {
+      const targetId = corner === 'red' ? 'fighter-select-red' : 'fighter-select-blue';
+      const select = document.getElementById(targetId);
       if (!select) return;
-      select.addEventListener('change', () => syncPicker(corner));
-      select.addEventListener('input', () => syncPicker(corner));
-      syncPicker(corner);
-    });
-  })();
-  if (activeScreen) showScreen(activeScreen);
-</script>
+      select.focus();
+      select.click();
+    }
 
     // Init
-    if (activeScreen) showScreen(activeScreen);
-  </script>
+    (function initPickers() {
+      ['red', 'blue'].forEach(corner => {
+        const select = document.getElementById(`fighter-select-${corner}`);
+        if (!select) return;
+        select.addEventListener('change', () => syncPicker(corner));
+        select.addEventListener('input', () => syncPicker(corner));
+        syncPicker(corner);
+      });
+    })();
+</script>
 </body>
 </html>

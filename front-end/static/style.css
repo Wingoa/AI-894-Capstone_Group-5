@@ -646,34 +646,6 @@ body {
 	border-color: rgba(26, 109, 255, 0.3);
 }
 
-/* Exploit Score */
-.exploit-score {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-}
-.exploit-label {
-	font-family: "Barlow Condensed", sans-serif;
-	font-size: 10px;
-	letter-spacing: 2px;
-	color: var(--muted);
-	text-transform: uppercase;
-}
-.exploit-val {
-	font-family: "Bebas Neue", cursive;
-	font-size: 22px;
-	letter-spacing: 1px;
-}
-.exploit-val.high {
-	color: var(--red);
-}
-.exploit-val.med {
-	color: var(--gold);
-}
-.exploit-val.low {
-	color: var(--green);
-}
-
 .exploit-badge {
 	font-family: "Bebas Neue", cursive;
 	font-size: 18px;
@@ -699,17 +671,19 @@ body {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 8px;
+	margin-bottom: 10px;
 }
 .prob-red {
 	font-family: "Bebas Neue", cursive;
-	font-size: 28px;
+	font-size: 32px;
 	color: var(--red);
+	letter-spacing: 1px;
 }
 .prob-blue {
 	font-family: "Bebas Neue", cursive;
-	font-size: 28px;
+	font-size: 32px;
 	color: #5b9eff;
+	letter-spacing: 1px;
 }
 .prob-center {
 	font-family: "Barlow Condensed", sans-serif;
@@ -719,11 +693,12 @@ body {
 	text-transform: uppercase;
 }
 .win-prob-bar {
-	height: 12px;
-	border-radius: 6px;
-	background: var(--surface2);
+	height: 16px;
+	border-radius: 999px;
+	background: #11131a;
 	overflow: hidden;
 	display: flex;
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 .win-prob-red {
 	background: linear-gradient(to right, var(--red), #cc0018);
@@ -736,11 +711,30 @@ body {
 .win-prob-footer {
 	display: flex;
 	justify-content: space-between;
+	align-items: center;
 	font-size: 11px;
 	color: var(--muted);
 	font-family: "Barlow Condensed", sans-serif;
 	letter-spacing: 1px;
-	margin-top: 6px;
+	margin-top: 8px;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+.prob-name {
+	text-transform: uppercase;
+}
+.prob-name.red {
+	color: var(--red);
+}
+.prob-name.blue {
+	color: #5b9eff;
+}
+.prob-meta {
+	flex: 1;
+	text-align: center;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	font-size: 10px;
 }
 
 /* Head-to-Head Bar */

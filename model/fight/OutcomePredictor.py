@@ -1,11 +1,12 @@
-from fight.OutcomeNet import OutcomeNet
 from fight.OutcomeVectorCombiner import combine_features
 from fight.OutcomeModelTrainer32 import OutcomeNet32
+from fight.OutcomeModelTrainer32Retrain import OutcomeNet32 as OutcomeNet32Retrain
 from typing import List
 
 import torch
 import joblib
 import numpy as np
+from pathlib import Path
 
 FEATURE_ORDER: List[str] = [
     "wrestling",
@@ -21,23 +22,42 @@ FEATURE_ORDER: List[str] = [
 
 class OutcomePredictor:
 
-    MODEL_WEIGHT_PATH = "./fight/outcome_artifacts_32_2/outcome_model.pt"
-    SCALER_PATH = "./fight/outcome_artifacts_32_2/scaler.pkl"
     MAP_LOCATION = "cuda" if torch.cuda.is_available() else "cpu"
     
     def __init__(self):
+        self._model_path, self._scaler_path, self._artifact_tag = self._resolve_artifacts()
         self._model = self._recreate_model()
         self._scaler = self._load_scaler()
-        print("Successfully reloaded StyleNet model")
+        print("Successfully reloaded Outcome model")
+
+    def _resolve_artifacts(self):
+        fight_dir = Path(__file__).resolve().parent
+        candidates = [
+            ("outcome_artifacts_32_2", "32"),
+            ("outcome_artifacts_32", "32"),
+            ("outcome_artifacts_32_retrain", "32_retrain"),
+            ("outcome_artifacts", "32"),
+            ("metadata", "32"),
+        ]
+        for dirname, tag in candidates:
+            candidate = fight_dir / dirname
+            model_path = candidate / "outcome_model.pt"
+            scaler_path = candidate / "scaler.pkl"
+            if model_path.exists() and scaler_path.exists():
+                return str(model_path), str(scaler_path), tag
+        raise FileNotFoundError("No outcome_model.pt/scaler.pkl artifacts found.")
 
     def _recreate_model(self):
-        model = OutcomeNet32()
-        model.load_state_dict(torch.load(self.MODEL_WEIGHT_PATH, map_location=self.MAP_LOCATION))
+        if self._artifact_tag == "32_retrain":
+            model = OutcomeNet32Retrain()
+        else:
+            model = OutcomeNet32()
+        model.load_state_dict(torch.load(self._model_path, map_location=self.MAP_LOCATION))
         model.eval()
         return model
     
     def _load_scaler(self):
-        return joblib.load(self.SCALER_PATH)
+        return joblib.load(self._scaler_path)
     
     def predict(self, fighter_a_features: dict, fighter_b_features: dict):
         # Combine fighter features

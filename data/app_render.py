@@ -1,6 +1,14 @@
 import os
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+REPO_ROOT = BASE_DIR.parent
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -10,9 +18,6 @@ from cache.EventInfoCache import EventInfoCache
 from cache.FightCache import FightCache
 from FightDataService import FightDataService
 
-
-BASE_DIR = Path(__file__).resolve().parent
-REPO_ROOT = BASE_DIR.parent
 
 EVENT_CSV = REPO_ROOT / "resources" / "initial_data" / "events.csv"
 EVENT_INFO_CSV = REPO_ROOT / "resources" / "initial_data" / "events-info.csv"
