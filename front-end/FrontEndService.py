@@ -240,6 +240,13 @@ class FrontEndService:
             )
             for fighter_id, agg in aggregates.items()
         }
+    
+    def calculateEV(odds_of_winning: float, betting_odds: float, unit: float = 100):
+        payoutMultiplier = 100 / betting_odds
+        winningPayout = unit * payoutMultiplier
+        odds_of_losing = 1 - odds_of_winning
+        losingPayout = -1 * unit
+        return odds_of_winning * winningPayout - odds_of_losing * losingPayout
 
     @staticmethod
     def _parse_event_date(value: str) -> Optional[date]:
