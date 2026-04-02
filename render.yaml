@@ -19,9 +19,8 @@ services:
     branch: main-Deployment
     # Install full set including ML libraries
     buildCommand: pip install -r requirements-api.txt
-    # Single worker API; ensure correct working dir and PYTHONPATH
-    startCommand: >
-      bash -lc "cd data && PYTHONPATH=.:../data_model/src gunicorn -k uvicorn.workers.UvicornWorker app_render:app --workers 1 --threads 2 --bind 0.0.0.0:$PORT"
+    # Single worker API; use launcher script to avoid nested-quote issues
+    startCommand: bash data/start.sh
     healthCheckPath: /meta
     envVars:
       - key: CORS_ALLOWED_ORIGINS
