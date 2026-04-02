@@ -1,5 +1,11 @@
 from __future__ import annotations
 from pathlib import Path
+import json
+import math
+import os
+import urllib.request
+import urllib.error
+import urllib.parse
 import sys
 from typing import Dict, List, Optional, Tuple
 from fastapi import FastAPI, HTTPException, Request
@@ -9,6 +15,7 @@ from fastapi.templating import Jinja2Templates
 
 BASE_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = BASE_DIR.parent
+PREDICTION_SERVICE_URL = os.getenv("PREDICTION_SERVICE_URL", "http://localhost:8002").rstrip("/")
 
 # Allow importing project modules when running from front-end directory; this way, we can reuse data models and services without needing to duplicate code or set up a separate package
 if str(PROJECT_ROOT) not in sys.path:
@@ -349,11 +356,47 @@ def _sim_defaults(fighter: Optional[Fighter]) -> dict:
 # ═════════════════════════════════════════════════════════════════════════════
 # MATCHUP HELPERS
 # ═════════════════════════════════════════════════════════════════════════════
+
+def _prob_confidence(prob: float) -> str:
+    """
+    Convert model probability into a simple confidence label.
+    """
+    edge = abs(prob - 0.5)
+    if edge >= 0.20:
+        return "HIGH"
+    if edge >= 0.10:
+        return "MEDIUM"
+    return "LOW"
+
+def _get_outcome_prediction(red_id: str, blue_id: str) -> Optional[dict]:
+    """
+    Call the PredictionService /outcome endpoint for win probabilities.
+    Returns dict with prob_red/prob_blue or None on failure.
+    """
+    if not red_id or not blue_id:
+        return None
+    try:
+        query = urllib.parse.urlencode({
+            "fighter_a_id": red_id,
+            "fighter_b_id": blue_id,
+        })
+        url = f"{PREDICTION_SERVICE_URL}/outcome?{query}"
+        with urllib.request.urlopen(url, timeout=1.2) as resp:
+            if resp.status != 200:
+                return None
+            data = json.loads(resp.read().decode("utf-8"))
+            prob_red = float(data.get("fighter_a_prob", 0.0))
+            prob_blue = float(data.get("fighter_b_prob", 0.0))
+            if math.isnan(prob_red) or math.isnan(prob_blue):
+                return None
+            return {"prob_red": prob_red, "prob_blue": prob_blue}
+    except (urllib.error.URLError, urllib.error.HTTPError, ValueError, TimeoutError):
+        return None
+
+
 def _compute_win_probability(red: Fighter, blue: Fighter,) -> dict:
     """
-    Compute win probability for the red corner vs blue corner.
-
-    TODO: replace the stub return with your trained XGBoost / LightGBM call:
+    Compute win probability for the red fighter vs blue fighter.
 
         features = build_feature_vector(red.composition, blue.composition)
         prob_red = model.predict_proba([features])[0][1]
@@ -368,11 +411,24 @@ def _compute_win_probability(red: Fighter, blue: Fighter,) -> dict:
         red.composition.pace, boxing, muay_thai, wrestling, grappling
         blue.composition.pace, boxing, muay_thai, wrestling, grappling
     """
+    outcome = _get_outcome_prediction(red.id, blue.id)
+    if outcome:
+        prob_red = max(0.0, min(1.0, outcome["prob_red"]))
+        red_pct = max(1, min(99, round(prob_red * 100)))
+        return {
+            "red_pct":    red_pct,
+            "blue_pct":   100 - red_pct,
+            "auc":        "OutcomeNet32",
+            "confidence": _prob_confidence(prob_red),
+            "model":      "Outcome Model",
+        }
+
     return {
         "red_pct":    50,
         "blue_pct":   50,
         "auc":        "N/A",
         "confidence": "PENDING",
+        "model":      "Model Pending",
     }
 
 def _build_hth_stats(red: Fighter, blue: Fighter) -> List[dict]:

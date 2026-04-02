@@ -1,3 +1,11 @@
+from pathlib import Path
+import sys
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+import os
 from apscheduler.schedulers.background import BackgroundScheduler
 from PredictionResource import PredictionResource
 from style.StylePredictionService import StylePredictionService
@@ -9,7 +17,7 @@ from datetime import datetime
 
 import sys
 
-DATA_URL = "http://localhost:8000"
+DATA_URL = os.getenv("DATA_URL", os.getenv("DATA_API_URL", "http://localhost:8000"))
 scheduler: BackgroundScheduler = None
 fight_style_csv_path: str = "../resources/fighter_vectors/fighter_style_predictions.csv" 
 

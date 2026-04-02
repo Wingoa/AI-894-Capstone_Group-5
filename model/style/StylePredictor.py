@@ -1,5 +1,6 @@
 from style.StyleNet import StyleNet
 from typing import List
+from pathlib import Path
 
 import torch
 import joblib
@@ -8,23 +9,24 @@ import numpy as np
 
 class StylePredictor:
 
-    MODEL_WEIGHT_PATH = "./style/metadata/style_model.pt"
-    SCALER_PATH = "./style/metadata/scaler.pkl"
     MAP_LOCATION = "cuda" if torch.cuda.is_available() else "cpu"
     
     def __init__(self):
+        metadata_dir = Path(__file__).resolve().parent / "metadata"
+        self._model_path = str(metadata_dir / "style_model.pt")
+        self._scaler_path = str(metadata_dir / "scaler.pkl")
         self._model = self._recreate_model()
         self._scaler = self._load_scaler()
         print("Successfully reloaded StyleNet model")
 
     def _recreate_model(self):
         model = StyleNet(d_in=15)
-        model.load_state_dict(torch.load(self.MODEL_WEIGHT_PATH, map_location=self.MAP_LOCATION))
+        model.load_state_dict(torch.load(self._model_path, map_location=self.MAP_LOCATION))
         model.eval()
         return model
     
     def _load_scaler(self):
-        return joblib.load(self.SCALER_PATH)
+        return joblib.load(self._scaler_path)
     
     def predict(self, features: List):
         X_raw = np.array(features).reshape(1, -1)

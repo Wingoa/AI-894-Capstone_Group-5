@@ -1,7 +1,10 @@
 import pandas as pd
 import os
+from pathlib import Path
 
-DATA_DIR = "../resources/clean_data/"
+BASE_DIR = Path(__file__).resolve().parent
+REPO_ROOT = BASE_DIR.parents[1]
+DATA_DIR = str(REPO_ROOT / "resources" / "clean_data")
 OUTPUT_DIR = "../resources/fighter_vectors/"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
