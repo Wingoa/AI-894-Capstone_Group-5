@@ -1,3 +1,5 @@
+# This file lists the Python dependencies for the UFC Fighter Optimizer project.
+# It includes both the API and frontend dependencies, but have been split into separate files for deployment to optimize resource usage.
 fastapi
 jinja2
 uvicorn
