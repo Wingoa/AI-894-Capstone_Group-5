@@ -2,17 +2,25 @@ services:
   - type: web
     name: UFC-Fighter-Optimizer
     env: python
-    branch: main
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
+    branch: main-Deployment
+    # Install a lightweight set of deps for the frontend to avoid heavy ML libs
+    buildCommand: pip install -r requirements-frontend.txt
+    # Run with a single Gunicorn worker to reduce memory use
+    startCommand: gunicorn -k uvicorn.workers.UvicornWorker app:app --workers 1 --threads 4 --bind 0.0.0.0:$PORT
     healthCheckPath: /
+    envVars:
+      - key: PREDICTION_SERVICE_URL
+        # Use the public API URL
+        value: "https://ai-894-capstone-group-5.onrender.com"
 
   - type: web
     name: AI-894-Capstone_UFC_API
     env: python
-    branch: main
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn data.app_render:app --host 0.0.0.0 --port $PORT
+    branch: main-Deployment
+    # Install full set including ML libraries
+    buildCommand: pip install -r requirements-api.txt
+    # Single worker API; ensure correct working dir and PYTHONPATH
+    startCommand: "bash -lc 'cd data && PYTHONPATH=.:../data_model/src gunicorn -k uvicorn.workers.UvicornWorker app_render:app --workers 1 --threads 2 --bind 0.0.0.0:$PORT'"
     healthCheckPath: /meta
     envVars:
       - key: CORS_ALLOWED_ORIGINS
