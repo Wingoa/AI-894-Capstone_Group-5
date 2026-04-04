@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+apscheduler
+pandas
+requests
+beautifulsoup4
+lxml
+numpy
+scikit-learn
+joblib
+boto3
+gunicorn
+
