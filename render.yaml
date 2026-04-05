@@ -18,10 +18,14 @@ services:
     env: python
     branch: main-Deployment
     # Install full set including ML libraries
-    buildCommand: pip install -r requirements-api.txt
+    # Install full set including ML libraries. Use the official PyTorch CPU wheel index
+    # so pip can find compatible torch wheels in the Render environment.
+    buildCommand: pip install -r requirements-api.txt -f https://download.pytorch.org/whl/cpu/torch_stable.html
     # Single worker API; use launcher script to avoid nested-quote issues
     startCommand: bash data/start.sh
     healthCheckPath: /meta
     envVars:
       - key: CORS_ALLOWED_ORIGINS
         value: "*"
+      - key: PUBLIC_API_URL
+        value: "https://ai-894-capstone-group-5.onrender.com"

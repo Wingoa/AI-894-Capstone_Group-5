@@ -32,6 +32,17 @@ Test end point - Get fights by fighter name
 
 https://ai-894-capstone-group-5.onrender.com/fights/poirier
 
+**API Endpoints**
+
+- **GET /meta:** API health and dataset metadata.
+- **GET /latest/{fighter_id}:** Returns the latest fight vector for a fighter (data service).
+- **GET /fights/{name}:** Returns fights for a fighter by name.
+- **GET /event/next:** Returns the next scheduled event's fights.
+- **GET /style/{fighter_id}:** Returns the fighter style vector (prediction service).
+- **GET /outcome?fighter_a_id=<id>&fighter_b_id=<id>:** Returns win probabilities for a fighter pair (prediction service).
+
+Note: The prediction endpoints are served from the same API base when the model artifacts and ML dependencies are available locally or in the deployment.
+
 ---
 
 Weekly automation
