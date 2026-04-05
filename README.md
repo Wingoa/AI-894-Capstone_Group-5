@@ -39,7 +39,15 @@ https://ai-894-capstone-group-5.onrender.com/fights/poirier
 - **GET /fights/{name}:** Returns fights for a fighter by name.
 - **GET /event/next:** Returns the next scheduled event's fights.
 - **GET /style/{fighter_id}:** Returns the fighter style vector (prediction service).
-- **GET /outcome?fighter_a_id=<id>&fighter_b_id=<id>:** Returns win probabilities for a fighter pair (prediction service).
+- **GET /outcome?fighter_a_id={fighter_id}&fighter_b_id={fighter_id}:** Returns win probabilities for a fighter pair (prediction service).
+
+Examples:
+
+https://ai-894-capstone-group-5.onrender.com/meta
+
+https://ai-894-capstone-group-5.onrender.com/style/c3c23c99477c041b
+
+https://ai-894-capstone-group-5.onrender.com/outcome?fighter_a_id=b27a1fcb56a3035a&fighter_b_id=319fa1bd3176bded
 
 Note: The prediction endpoints are served from the same API base when the model artifacts and ML dependencies are available locally or in the deployment.
 

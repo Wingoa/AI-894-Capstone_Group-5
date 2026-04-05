@@ -29,3 +29,5 @@ services:
         value: "*"
       - key: PUBLIC_API_URL
         value: "https://ai-894-capstone-group-5.onrender.com"
+      - key: DATA_URL
+        value: "https://ai-894-capstone-group-5.onrender.com"
