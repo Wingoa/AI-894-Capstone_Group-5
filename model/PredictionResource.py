@@ -7,8 +7,16 @@ from fight.OutcomePredictionService import OutcomePredictionService
 
 class PredictionResource:
 
-    def __init__(self, styleService: StylePredictionService, predictionService: OutcomePredictionService):
-        self.app = FastAPI(title="PredictionService API")
+    def __init__(self, styleService: StylePredictionService, predictionService: OutcomePredictionService, app: FastAPI = None):
+        # If an existing FastAPI app is provided, register endpoints on it.
+        # Otherwise, create a standalone app (backwards compatible).
+        if app is None:
+            self.app = FastAPI(title="PredictionService API")
+            self._created_app = True
+        else:
+            self.app = app
+            self._created_app = False
+
         self.styleService = styleService
         self.predictionService = predictionService
         self._register_endpoints()

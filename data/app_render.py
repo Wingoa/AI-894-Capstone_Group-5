@@ -18,6 +18,11 @@ from cache.EventInfoCache import EventInfoCache
 from cache.FightCache import FightCache
 from FightDataService import FightDataService
 
+# Make model subpackages importable as top-level "style" / "fight" packages
+MODEL_DIR = REPO_ROOT / "model"
+if str(MODEL_DIR) not in sys.path:
+    sys.path.insert(0, str(MODEL_DIR))
+
 
 EVENT_CSV = REPO_ROOT / "resources" / "initial_data" / "events.csv"
 EVENT_INFO_CSV = REPO_ROOT / "resources" / "initial_data" / "events-info.csv"
@@ -32,6 +37,44 @@ fight_service = FightDataService(event_cache, event_info_cache, fight_cache)
 resource = FightDataResource(fight_service)
 app = resource.app
 
+# Register prediction endpoints on the same app so /outcome and /style are available
+try:
+    from PredictionResource import PredictionResource
+    from style.StylePredictor import StylePredictor
+    from style.StylePredictionService import StylePredictionService
+    from fight.OutcomePredictor import OutcomePredictor
+    from fight.OutcomePredictionService import OutcomePredictionService
+    from client.DataApiClient import DataApiClient
+
+    # Build services with artifacts/CSV paths relative to the repo
+    PORT = os.getenv("PORT", "8002")
+    data_url = f"http://127.0.0.1:{PORT}"
+
+    fight_style_csv = str(REPO_ROOT / "resources" / "fighter_vectors" / "fighter_style_predictions.csv")
+
+    style_predictor = StylePredictor()
+    style_service = StylePredictionService(style_predictor, fight_style_csv)
+
+    outcome_predictor = OutcomePredictor()
+    data_api_client = DataApiClient(data_url)
+    outcome_service = OutcomePredictionService(outcome_predictor, style_service, data_api_client)
+
+    # Instantiate PredictionResource using the existing app so routes are mounted at root
+    PredictionResource(style_service, outcome_service, app=app)
+except Exception as e:
+    print(f"Warning: could not register PredictionResource routes: {e}")
+    # If prediction services couldn't be instantiated (missing ML deps or artifacts),
+    # register stub endpoints so the routes exist and return a clear 503 error.
+    from fastapi import HTTPException
+
+    @app.get("/style/{fighter_id}")
+    def _style_unavailable(fighter_id: str):
+        raise HTTPException(status_code=503, detail="Prediction model unavailable: missing dependencies or artifacts")
+
+    @app.get("/outcome")
+    def _outcome_unavailable(fighter_a_id: str, fighter_b_id: str):
+        raise HTTPException(status_code=503, detail="Prediction model unavailable: missing dependencies or artifacts")
+
 
 origins_env = os.getenv("CORS_ALLOWED_ORIGINS", "")
 allowed_origins = [origin.strip() for origin in origins_env.split(",") if origin.strip()]
@@ -44,6 +87,14 @@ if allowed_origins:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+# Print an externally-routable URL if provided (Render sets PUBLIC_API_URL in render.yaml)
+PUBLIC_API_URL = os.getenv("PUBLIC_API_URL")
+PORT = os.getenv("PORT", "8002")
+if PUBLIC_API_URL:
+    print(f"API public URL: {PUBLIC_API_URL}")
+else:
+    print(f"API listening on 0.0.0.0:{PORT} (set PUBLIC_API_URL to show the external URL)")
 
 
 @app.get("/meta")
