@@ -579,7 +579,7 @@
           {# Upcoming fights — EventInfo.winner_name / loser_name used as fighter A/B since upcoming
           rows may not have a determined winner yet #} {% if next_fights %}
           <div class="card">
-            <div class="card-title">Upcoming Fights — Style Preview</div>
+            <div class="card-title">Upcoming Bouts — Style Preview</div>
             <table class="data-table">
               <thead>
                 <tr>
@@ -589,10 +589,6 @@
                   <th>Weight Class</th>
                   <th>Date</th>
                   <th>Location</th>
-                  <th style="text-align: right">A Odds</th>
-                  <th style="text-align: right">A EV</th>
-                  <th style="text-align: right">B Odds</th>
-                  <th style="text-align: right">B EV</th>
                   <th style="text-align: right">Action</th>
                 </tr>
               </thead>
@@ -600,36 +596,19 @@
                 {% for fight in next_fights %}
                 <tr class="data-row">
                   <td>
-                    {% set event_label = fight.red_fighter ~ " vs " ~ fight.blue_fighter %}
-                    {% if fight.fight_url %}
-                    <a href="{{ fight.fight_url }}" target="_blank" class="event-link">
-                      {{ event_label }}
-                    </a>
-                    {% elif fight.event_url %}
+                    {% if fight.event_url %}
                     <a href="{{ fight.event_url }}" target="_blank" class="event-link">
-                      {{ event_label }}
+                      {{ fight.event_name }}
                     </a>
-                    {% else %}{{ event_label }}{% endif %}
+                    {% else %}{{ fight.event_name }}{% endif %}
                   </td>
                   <td style="color: var(--red)">{{ fight.red_fighter }}</td>
                   <td style="color: #5b9eff">{{ fight.blue_fighter }}</td>
                   <td>{{ fight.weight_class }}</td>
                   <td style="color: var(--muted)">{{ fight.date }}</td>
                   <td style="color: var(--muted)">{{ fight.location }}</td>
-                  <td class="odds-cell">
-                    {% if fight.red_odds is not none %}${{ "%.2f"|format(fight.red_odds) }}{% else %}—{% endif %}
-                  </td>
-                  <td class="ev-cell {{ 'positive' if fight.red_ev is not none and fight.red_ev >= 0 else 'negative' if fight.red_ev is not none else '' }}">
-                    {% if fight.red_ev is not none %}{{ "%+.2f"|format(fight.red_ev) }}{% else %}—{% endif %}
-                  </td>
-                  <td class="odds-cell">
-                    {% if fight.blue_odds is not none %}${{ "%.2f"|format(fight.blue_odds) }}{% else %}—{% endif %}
-                  </td>
-                  <td class="ev-cell {{ 'positive' if fight.blue_ev is not none and fight.blue_ev >= 0 else 'negative' if fight.blue_ev is not none else '' }}">
-                    {% if fight.blue_ev is not none %}{{ "%+.2f"|format(fight.blue_ev) }}{% else %}—{% endif %}
-                  </td>
                   <td style="text-align: right">
-                    <a href="/compare?red={{ fight.red_id }}&blue={{ fight.blue_id }}">
+                    <a href="/compare?red={{ fight.red_id }}">
                       <button class="btn btn-outline" style="padding: 5px 10px; font-size: 11px">
                         ANALYZE
                       </button>
@@ -757,10 +736,6 @@
                   <th>Weight Class</th>
                   <th>Date</th>
                   <th>Location</th>
-                  <th style="text-align: right">A Odds</th>
-                  <th style="text-align: right">A EV</th>
-                  <th style="text-align: right">B Odds</th>
-                  <th style="text-align: right">B EV</th>
                   <th style="text-align: right">Action</th>
                 </tr>
               </thead>
@@ -768,32 +743,17 @@
                 {% for fight in next_fights %}
                 <tr class="data-row">
                   <td>
-                    {% set event_label = fight.red_fighter ~ " vs " ~ fight.blue_fighter %}
-                    {% if fight.fight_url %}<a href="{{ fight.fight_url }}" target="_blank" class="event-link">{{
-                      event_label }}</a>
-                    {% elif fight.event_url %}<a href="{{ fight.event_url }}" target="_blank" class="event-link">{{
-                      event_label }}</a>
-                    {% else %}{{ event_label }}{% endif %}
+                    {% if fight.event_url %}<a href="{{ fight.event_url }}" target="_blank" class="event-link">{{
+                      fight.event_name }}</a>
+                    {% else %}{{ fight.event_name }}{% endif %}
                   </td>
                   <td style="color: var(--red)">{{ fight.red_fighter }}</td>
                   <td style="color: #5b9eff">{{ fight.blue_fighter }}</td>
                   <td>{{ fight.weight_class }}</td>
                   <td style="color: var(--muted)">{{ fight.date }}</td>
                   <td style="color: var(--muted)">{{ fight.location }}</td>
-                  <td class="odds-cell">
-                    {% if fight.red_odds is not none %}${{ "%.2f"|format(fight.red_odds) }}{% else %}—{% endif %}
-                  </td>
-                  <td class="ev-cell {{ 'positive' if fight.red_ev is not none and fight.red_ev >= 0 else 'negative' if fight.red_ev is not none else '' }}">
-                    {% if fight.red_ev is not none %}{{ "%+.2f"|format(fight.red_ev) }}{% else %}—{% endif %}
-                  </td>
-                  <td class="odds-cell">
-                    {% if fight.blue_odds is not none %}${{ "%.2f"|format(fight.blue_odds) }}{% else %}—{% endif %}
-                  </td>
-                  <td class="ev-cell {{ 'positive' if fight.blue_ev is not none and fight.blue_ev >= 0 else 'negative' if fight.blue_ev is not none else '' }}">
-                    {% if fight.blue_ev is not none %}{{ "%+.2f"|format(fight.blue_ev) }}{% else %}—{% endif %}
-                  </td>
                   <td style="text-align: right">
-                    <a href="/compare?red={{ fight.red_id }}&blue={{ fight.blue_id }}">
+                    <a href="/compare?red={{ fight.red_id }}">
                       <button class="btn btn-outline" style="padding: 5px 10px; font-size: 11px">
                         ANALYZE
                       </button>
@@ -828,12 +788,9 @@
                 {% for fight in last_fights %}
                 <tr class="data-row">
                   <td>
-                    {% set event_label = fight.red_fighter ~ " vs " ~ fight.blue_fighter %}
-                    {% if fight.fight_url %}<a href="{{ fight.fight_url }}" target="_blank" class="event-link">{{
-                      event_label }}</a>
-                    {% elif fight.event_url %}<a href="{{ fight.event_url }}" target="_blank" class="event-link">{{
-                      event_label }}</a>
-                    {% else %}{{ event_label }}{% endif %}
+                    {% if fight.event_url %}<a href="{{ fight.event_url }}" target="_blank" class="event-link">{{
+                      fight.event_name }}</a>
+                    {% else %}{{ fight.event_name }}{% endif %}
                   </td>
                   <td class="winner-cell">{{ fight.red_fighter }}</td>
                   <td style="color: var(--muted)">{{ fight.blue_fighter }}</td>

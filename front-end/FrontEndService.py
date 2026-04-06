@@ -5,8 +5,6 @@ from pathlib import Path
 import sys
 from typing import Dict, List, Optional, Tuple
 import csv
-import re
-import unicodedata
 
 BASE_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = BASE_DIR.parent
@@ -18,7 +16,6 @@ from data_model.Event import Event
 from data_model.EventInfo import EventInfo
 from data_model.Fighter import Fighter
 from data_model.FighterComposition import FighterComposition
-from data.clients.KalshiClient import KalshiClient
 
 
 class FrontEndService:
@@ -28,8 +25,6 @@ class FrontEndService:
         self._events_info_csv = project_root / "resources" / "initial_data" / "events-info.csv"
         self._fights_csv = project_root / "resources" / "initial_data" / "fights.csv"
         self._training_csv = project_root / "resources" / "clean_data" / "training_data.csv"
-        self._kalshi_client = KalshiClient()
-        self._fighter_id_by_name: Optional[Dict[str, str]] = None
 
     def getNextFights(self) -> List[EventInfo]:
         events_by_id = self._load_event_dates()
@@ -224,6 +219,17 @@ class FrontEndService:
                 agg["muay_thai_sum"] += muay_thai_ratio
                 agg["wrestling_sum"] += td_success
                 agg["grappling_sum"] += (sub_att * 10.0) + (rev * 10.0) + (ctrl_pct * 0.25)
+        compositions: Dict[str, FighterComposition] = {}
+        for fighter_id, agg in aggregates.items():
+            count = max(agg["count"], 1.0)
+            compositions[fighter_id] = FighterComposition(
+                pace=agg["pace_sum"] / count,
+                boxing=agg["boxing_sum"] / count,
+                muay_thai=agg["muay_thai_sum"] / count,
+                wrestling=agg["wrestling_sum"] / count,
+                grappling=agg["grappling_sum"] / count,
+            )
+        
         return {
             fighter_id: FighterComposition(
                 pace      = agg["pace_sum"]       / max(agg["count"], 1.0),
@@ -235,80 +241,12 @@ class FrontEndService:
             for fighter_id, agg in aggregates.items()
         }
     
-    @staticmethod
     def calculateEV(odds_of_winning: float, betting_odds: float, unit: float = 100):
-        if betting_odds is None or betting_odds == 0:
-            return None
         payoutMultiplier = 100 / betting_odds
         winningPayout = unit * payoutMultiplier
         odds_of_losing = 1 - odds_of_winning
         losingPayout = -1 * unit
         return odds_of_winning * winningPayout - odds_of_losing * losingPayout
-
-    def getKalshiMarketMap(self) -> Dict[str, dict]:
-        try:
-            markets = self._kalshi_client.getLatest()
-        except Exception:
-            return {}
-        market_map: Dict[str, dict] = {}
-        for market in markets:
-            fighter = (market.get("fighter") or "").strip()
-            odds = market.get("yes_money")
-            fight_date = market.get("fight_date")
-            if not fighter or odds is None:
-                continue
-            key = self._normalize_name(fighter)
-            if not key:
-                continue
-            if key not in market_map:
-                market_map[key] = {
-                    "odds": float(odds),
-                    "fight_date": fight_date,
-                }
-        return market_map
-
-    def getKalshiMarketForFighter(self, fighter_name: str, market_map: Dict[str, dict]) -> Optional[dict]:
-        if not fighter_name:
-            return None
-        key = self._normalize_name(fighter_name)
-        if key in market_map:
-            return market_map[key]
-        last_name = key.split(" ")[-1]
-        for name, market in market_map.items():
-            if last_name and (name == last_name or name.endswith(f" {last_name}")):
-                return market
-        return None
-
-    @staticmethod
-    def _normalize_name(value: str) -> str:
-        if not value:
-            return ""
-        text = unicodedata.normalize("NFKD", value)
-        text = "".join(ch for ch in text if ch.isalnum() or ch.isspace())
-        text = re.sub(r"\s+", " ", text).strip().lower()
-        return text
-
-    def getFighterIdByName(self, fighter_name: str) -> Optional[str]:
-        if not fighter_name:
-            return None
-        if self._fighter_id_by_name is None:
-            mapping: Dict[str, str] = {}
-            with self._fights_csv.open("r", newline="", encoding="utf-8") as csvfile:
-                reader = csv.DictReader(csvfile)
-                for row in reader:
-                    name = (row.get("fighter") or "").strip()
-                    fighter_id = (row.get("fighter_id") or "").strip()
-                    if name and fighter_id and name.lower() not in mapping:
-                        mapping[name.lower()] = fighter_id
-            self._fighter_id_by_name = mapping
-        key = fighter_name.strip().lower()
-        if key in self._fighter_id_by_name:
-            return self._fighter_id_by_name[key]
-        last_name = key.split(" ")[-1]
-        for name, fighter_id in self._fighter_id_by_name.items():
-            if last_name and last_name in name:
-                return fighter_id
-        return None
 
     @staticmethod
     def _parse_event_date(value: str) -> Optional[date]:
