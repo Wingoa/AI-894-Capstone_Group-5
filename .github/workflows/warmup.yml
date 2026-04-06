@@ -1,0 +1,21 @@
+name: Warmup Render services
+
+on:
+  schedule:
+    - cron: "*/10 * * * *" # every 10 minutes
+  workflow_dispatch: {}
+  push:
+    branches:
+      - main
+
+jobs:
+  warmup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping API meta
+        run: |
+          curl --max-time 10 -fsS https://ai-894-capstone-group-5.onrender.com/meta || true
+
+      - name: Ping front-end root
+        run: |
+          curl --max-time 10 -fsS https://ufc-fighter-optimizer.onrender.com/ || true
