@@ -1208,6 +1208,19 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .data-row td {
 	padding: 11px 10px;
 }
+.odds-cell,
+.ev-cell {
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+}
+.ev-cell.positive {
+	color: var(--green);
+	font-weight: 600;
+}
+.ev-cell.negative {
+	color: var(--red);
+	font-weight: 600;
+}
 
 .fighter-name-cell {
 	font-weight: 600;
