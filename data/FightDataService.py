@@ -41,6 +41,7 @@ class FightDataService:
         event_info = scrapeEventInfo(event["event_id"])
         # Enrich event info with betting info
         latest_lines = pd.DataFrame(self.kalshiClient.getLatest())
+        print(f"Latest odds from Kalshi: {latest_lines}")
         for fight in event_info:
             fight["fighter_a"] = fight["winner_name"]
             del fight["winner_name"]
@@ -49,6 +50,12 @@ class FightDataService:
             fight["fighter_b"] = fight["loser_name"]
             del fight["loser_name"]
             fight["fighter_b_odds"] = self._getOdds(fight["fighter_b"], latest_lines)
+
+            # Clean up if odds were not offered to one fighter
+            if fight["fighter_a_odds"] != -1 and fight["fighter_b_odds"] == -1:
+                fight["fighter_b_odds"] = 1 - fight["fighter_a_odds"]
+            elif fight["fighter_b_odds"] != -1 and fight["fighter_a_odds"] == -1:
+                fight["fighter_a_odds"] = 1 - fight["fighter_b_odds"]
         
         return {
             "event": event,
@@ -57,13 +64,19 @@ class FightDataService:
     
     def _getOdds(self, fighter_name: str, df: pd.DataFrame):
         try:
-            return df[df["fighter"] == fighter_name]["yes_money"].iloc[0]
+            odds = df[df["fighter"] == fighter_name]["yes_money"]
+            return odds.iloc[0] if not odds.empty else self._getOddsFromLastName(fighter_name, df)
         except IndexError:
             # Probably a name mismatch from Kalshi to UFC stats, search for just last name
-            last_name = fighter_name.split(" ")[-1]
-            odds = df[df["fighter"].str.contains(last_name)]["yes_money"].iloc[0]
-            print(f"last name: {last_name}, odds: {odds}")
-            return odds
+            return self._getOddsFromLastName(fighter_name, df)
+            
+
+    def _getOddsFromLastName(self, fighter_name: str, df: pd.DataFrame):
+        last_name = fighter_name.split(" ")[-1]
+        print(f"Could not find odds from fighter {fighter_name}, attempting to match last name {last_name}")
+        odds = df[df["fighter"].str.contains(last_name)]["yes_money"]
+        print(f"last name: {last_name}, odds: {odds}")
+        return odds.iloc[0] if not odds.empty else -1
 
     def get_fights_by_fighter(self, name: str):
         """
