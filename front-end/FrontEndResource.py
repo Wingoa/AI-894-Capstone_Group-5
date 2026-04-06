@@ -376,21 +376,24 @@ def _get_outcome_prediction(red_id: str, blue_id: str) -> Optional[dict]:
     if not red_id or not blue_id:
         return None
     try:
-        query = urllib.parse.urlencode({
-            "fighter_a_id": red_id,
-            "fighter_b_id": blue_id,
-        })
-        url = f"{PREDICTION_SERVICE_URL}/outcome?{query}"
-        with urllib.request.urlopen(url, timeout=1.2) as resp:
-            if resp.status != 200:
-                return None
-            data = json.loads(resp.read().decode("utf-8"))
-            prob_red = float(data.get("fighter_a_prob", 0.0))
-            prob_blue = float(data.get("fighter_b_prob", 0.0))
-            if math.isnan(prob_red) or math.isnan(prob_blue):
-                return None
-            return {"prob_red": prob_red, "prob_blue": prob_blue}
-    except (urllib.error.URLError, urllib.error.HTTPError, ValueError, TimeoutError):
+        import requests
+
+        url = f"{PREDICTION_SERVICE_URL}/outcome"
+        params = {"fighter_a_id": red_id, "fighter_b_id": blue_id}
+        # Increase timeout to allow for model loading/latency in deployed envs
+        resp = requests.get(url, params=params, timeout=5.0)
+        if resp.status_code != 200:
+            print(f"Prediction call failed: {resp.status_code} {resp.text}")
+            return None
+        data = resp.json()
+        prob_red = float(data.get("fighter_a_prob", 0.0))
+        prob_blue = float(data.get("fighter_b_prob", 0.0))
+        if math.isnan(prob_red) or math.isnan(prob_blue):
+            print("Prediction returned NaN probabilities")
+            return None
+        return {"prob_red": prob_red, "prob_blue": prob_blue}
+    except Exception as e:
+        print(f"Exception calling prediction service: {e}")
         return None
 
 
