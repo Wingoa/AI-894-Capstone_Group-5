@@ -3,6 +3,7 @@ from pathlib import Path
 import json
 import math
 import os
+import csv
 import urllib.request
 import urllib.error
 import urllib.parse
@@ -32,13 +33,15 @@ app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 templates = Jinja2Templates(directory=BASE_DIR / "templates")
 service = FrontEndService()
 
+_STYLE_MATCHUP_CACHE: Dict[str, object] = {
+    "mtimes": None,
+    "heatmap": None,
+    "patterns": None,
+}
+
 @app.get("/", response_class=HTMLResponse)
 def homepage(request: Request) -> HTMLResponse:
-    """
-    Landing page — shows the Fighter Roster screen.
-    Loads all fighters and upcoming events.
-    No fighter comparison data is populated.
-    """
+    # Render the landing page with the roster screen active
     fighters    = service.getAllFighters()
     next_fights = service.getNextFightsWithEvents()
     last_fights = service.getLastFightsWithEvents()
@@ -49,8 +52,8 @@ def homepage(request: Request) -> HTMLResponse:
         # ── Roster (Fighter.name, Fighter.id, Fighter.fight_ids,
         #            Fighter.composition → derived fields)
         "fighters":     [_fighter_to_template(f) for f in fighters],
-        # ── Events (EventInfo + Event joined)
-        "next_fights":  [_event_to_template(info, event) for info, event in next_fights],
+        # ── Events (API payload normalized in FrontEndService)
+        "next_fights":  next_fights,
         "last_fights":  [_event_to_template(info, event) for info, event in last_fights],
         # ── Null out all comparison / simulation fields
         **_empty_comparison(),
@@ -58,6 +61,7 @@ def homepage(request: Request) -> HTMLResponse:
 
 @app.get("/compare", response_class=HTMLResponse)
 def compare(request: Request, red: str = "", blue: str = "") -> HTMLResponse:
+    # Render the comparison screen for the selected fighters
     fighter_red  = service.getFighter(red)  if red  else None
     fighter_blue = service.getFighter(blue) if blue else None
     fighters     = service.getAllFighters()
@@ -94,7 +98,7 @@ def compare(request: Request, red: str = "", blue: str = "") -> HTMLResponse:
         # Roster
         "fighters": [_fighter_to_template(f) for f in fighters],
         # Events
-        "next_fights": [_event_to_template(i, e) for i, e in next_fights],
+        "next_fights": next_fights,
         "last_fights":  [_event_to_template(i, e) for i, e in last_fights],
         # Model outputs (empty until model is connected)
         "shap_features": [],
@@ -109,6 +113,7 @@ def compare(request: Request, red: str = "", blue: str = "") -> HTMLResponse:
 
 @app.get("/matchup", response_class=HTMLResponse)
 def matchup(request: Request) -> HTMLResponse:
+    # Render the style matchup screen
     fighters    = service.getAllFighters()
     next_fights = service.getNextFightsWithEvents()
     last_fights = service.getLastFightsWithEvents()
@@ -117,7 +122,7 @@ def matchup(request: Request) -> HTMLResponse:
         "request":       request,
         "active_screen": "matchup",
         "fighters":      [_fighter_to_template(f) for f in fighters],
-        "next_fights":   [_event_to_template(i, e) for i, e in next_fights],
+        "next_fights":   next_fights,
         "last_fights":   [_event_to_template(i, e) for i, e in last_fights],
         "heatmap_data":  _build_heatmap_data(),
         "top_patterns":  _build_top_patterns(),
@@ -126,13 +131,7 @@ def matchup(request: Request) -> HTMLResponse:
 
 @app.get("/events", response_class=HTMLResponse)
 def events(request: Request) -> HTMLResponse:
-    """
-    Events screen.
-    Shows all upcoming and past EventInfo rows joined with their parent Event.
-    EventInfo fields used: winner_name, loser_name, weight_class, method,
-                           round, time, fight_url
-    Event fields used:     event_name, event_date, event_location, event_url
-    """
+    # Render the events screen with upcoming and past fights
     fighters    = service.getAllFighters()
     next_fights = service.getNextFightsWithEvents()
     last_fights = service.getLastFightsWithEvents()
@@ -141,7 +140,7 @@ def events(request: Request) -> HTMLResponse:
         "request":       request,
         "active_screen": "events",
         "fighters":      [_fighter_to_template(f) for f in fighters],
-        "next_fights":   [_event_to_template(i, e) for i, e in next_fights],
+        "next_fights":   next_fights,
         "last_fights":   [_event_to_template(i, e) for i, e in last_fights],
         "heatmap_data":  _build_heatmap_data(),
         "top_patterns":  _build_top_patterns(),
@@ -150,18 +149,22 @@ def events(request: Request) -> HTMLResponse:
 
 @app.get("/nextFights", response_model=List[EventInfo])
 def getNextFights() -> List[EventInfo]:
+    # Return upcoming fights from the data service
     return service.getNextFights()
 
 @app.get("/lastFights", response_model=List[EventInfo])
 def getLastFights() -> List[EventInfo]:
+    # Return completed fights from the data service
     return service.getLastFights()
 
 @app.get("/fighter/all", response_model=List[Fighter])
 def getAllFighters() -> List[Fighter]:
+    # Return all fighters from the data service
     return service.getAllFighters()
 
 @app.get("/fighter/{fighter_id}", response_model=Fighter)
 def getFighter(fighter_id: str):
+    # Return a single fighter by id or raise 404
     fighter = service.getFighter(fighter_id)
     if not fighter:
         raise HTTPException(
@@ -172,11 +175,7 @@ def getFighter(fighter_id: str):
 
 # Helpers
 def _fighter_to_template(fighter: Optional[Fighter]) -> Optional[dict]:
-    """
-    Convert Fighter dataclass → plain dict for Jinja.
-    Derives archetype and primary_styles from FighterComposition since
-    Fighter has no division/country/archetype fields yet.
-    """
+    # Convert a Fighter into a Jinja-friendly dict with derived fields
     if fighter is None:
         return None
 
@@ -199,11 +198,7 @@ def _fighter_to_template(fighter: Optional[Fighter]) -> Optional[dict]:
 
 
 def _composition_to_dict(composition: Optional[FighterComposition]) -> Optional[dict]:
-    """
-    Convert FighterComposition to plain dict for Jinja/tojson.
-    Map 'boxing' to 'striking' to match the UI label.
-    All values normalized for the radar chart.
-    """
+    # Normalize FighterComposition into a dict for charts and JSON
     if composition is None:
         return None
     max_val = max(
@@ -224,12 +219,7 @@ def _composition_to_dict(composition: Optional[FighterComposition]) -> Optional[
 
 
 def _event_to_template(info: EventInfo, event: Optional[Event]=None,) -> dict:
-    """
-    Convert EventInfo to plain dict for Jinja.
-    EventInfo uses winner_name/loser_name — mapped to red/blue for the UI.
-    fight_id is used as red_id so the Analyze button links to /compare?red=...
-    (swap for actual fighter IDs once EventInfo carries them).
-    """
+    # Convert EventInfo (+ optional Event) into a UI-friendly dict
     return {
         # Event-level fields — fall back to event_id if Event not joined
         "event_name": event.event_name     if event else info.event_id,
@@ -249,10 +239,7 @@ def _event_to_template(info: EventInfo, event: Optional[Event]=None,) -> dict:
     }
     
 def _empty_comparison() -> dict:
-    """
-    Return null values for all comparison / simulation template variables.
-    Used by routes that don't show the comparison screen.
-    """
+    # Return empty/default values for comparison/simulation fields
     return {
         "fighter_red":      None,
         "fighter_blue":     None,
@@ -269,16 +256,7 @@ def _empty_comparison() -> dict:
     }
 
 def _derive_style_labels(c: FighterComposition,) -> Tuple[str, List[str], List[str]]:
-    """
-    Derive human-readable style labels from raw FighterComposition scores.
-
-    FighterComposition fields used: boxing, muay_thai, wrestling, grappling, pace
-
-    Returns:
-        archetype       — single label for the dominant dimension
-        primary_styles  — dimensions scoring >= 70% of the max
-        secondary_styles— dimensions scoring >= 40% but < 70% of the max
-    """
+    # Derive archetype and style labels from FighterComposition scores
     scores: Dict[str, float] = {
         "Striking":  c.boxing,
         "Muay Thai": c.muay_thai,
@@ -303,17 +281,7 @@ def _derive_style_labels(c: FighterComposition,) -> Tuple[str, List[str], List[s
     return archetype_map.get(top_key, top_key), primary, secondary
 
 def _exploitability_score(c: FighterComposition) -> int:
-    """
-    Estimate how one-dimensional / exploitable a fighter is (0–99).
-
-    Uses FighterComposition fields: boxing, muay_thai, wrestling, grappling, pace.
-
-    Logic: a fighter who is extremely dominant in one dimension and weak in
-    others is more exploitable (higher score) than a well-rounded fighter.
-    Ratio of max-dimension to average-across-all drives the score.
-
-    TODO: replace with your model's exploitability output once available.
-    """
+    # Estimate how one-dimensional a fighter is on a 0–99 scale
     scores = [c.boxing, c.muay_thai, c.wrestling, c.grappling, c.pace]
     max_val = max(scores, default=1.0) or 1.0
     avg_val = (sum(scores) / len(scores)) if scores else 1.0
@@ -326,20 +294,7 @@ def _exploitability_score(c: FighterComposition) -> int:
 # SIMULATION HELPERS
 # ═════════════════════════════════════════════════════════════════════════════
 def _sim_defaults(fighter: Optional[Fighter]) -> dict:
-    """
-    Seed the simulation sliders from a fighter's real FighterComposition values.
-
-    Mapping (raw score → slider range):
-        td     ← wrestling  / 10   (slider range 1–12)
-        str    ← boxing     / 10   (slider range 1–10)
-        pace   ← pace       / 10   (slider range 1–10)
-        clinch ← muay_thai  / 10   (slider range 1–10)
-        def    ← 5.0 fixed         (no defensive stat in FighterComposition yet)
-
-    Division by 10 is a rough normalisation since composition scores are raw
-    averages (e.g. boxing ≈ sig_str_accuracy × 100 ≈ 0–100).
-    Revisit these divisors once you normalise your NMF output.
-    """
+    # Seed simulation sliders from a fighter's composition scores
     if fighter is None or fighter.composition is None:
         return {"td": 5.0, "str": 4.0, "pace": 5.0, "def": 5.0, "clinch": 4.0}
 
@@ -358,9 +313,7 @@ def _sim_defaults(fighter: Optional[Fighter]) -> dict:
 # ═════════════════════════════════════════════════════════════════════════════
 
 def _prob_confidence(prob: float) -> str:
-    """
-    Convert model probability into a simple confidence label.
-    """
+    # Convert a probability into a simple confidence label
     edge = abs(prob - 0.5)
     if edge >= 0.20:
         return "HIGH"
@@ -369,10 +322,7 @@ def _prob_confidence(prob: float) -> str:
     return "LOW"
 
 def _get_outcome_prediction(red_id: str, blue_id: str) -> Optional[dict]:
-    """
-    Call the PredictionService /outcome endpoint for win probabilities.
-    Returns dict with prob_red/prob_blue or None on failure.
-    """
+    # Fetch outcome probabilities from the prediction service
     if not red_id or not blue_id:
         return None
     try:
@@ -398,22 +348,7 @@ def _get_outcome_prediction(red_id: str, blue_id: str) -> Optional[dict]:
 
 
 def _compute_win_probability(red: Fighter, blue: Fighter,) -> dict:
-    """
-    Compute win probability for the red fighter vs blue fighter.
-
-        features = build_feature_vector(red.composition, blue.composition)
-        prob_red = model.predict_proba([features])[0][1]
-        return {
-            "red_pct":    round(prob_red * 100),
-            "blue_pct":   round((1 - prob_red) * 100),
-            "auc":        "0.74",
-            "confidence": "HIGH",
-        }
-
-    FighterComposition fields available for feature engineering:
-        red.composition.pace, boxing, muay_thai, wrestling, grappling
-        blue.composition.pace, boxing, muay_thai, wrestling, grappling
-    """
+    # Compute win probability for red vs blue using the outcome service
     outcome = _get_outcome_prediction(red.id, blue.id)
     if outcome:
         prob_red = max(0.0, min(1.0, outcome["prob_red"]))
@@ -435,22 +370,11 @@ def _compute_win_probability(red: Fighter, blue: Fighter,) -> dict:
     }
 
 def _build_hth_stats(red: Fighter, blue: Fighter) -> List[dict]:
-    """
-    Build head-to-head stat rows for the comparison screen.
-
-    Each row needs: label, red (display value), blue (display value),
-                    red_pct (0–100 bar width), blue_pct (0–100 bar width).
-
-    All values come directly from FighterComposition:
-        pace, boxing (→ Striking), muay_thai, wrestling, grappling
-
-    red_pct / blue_pct normalise each metric so the larger of the two = 100%,
-    giving proportional bar widths rather than raw values.
-    """
+    # Build head-to-head comparison rows from FighterComposition
     rc, bc = red.composition, blue.composition
 
     def norm(a: float, b: float) -> Tuple[int, int]:
-        """Scale both values so max(a, b) = 100%."""
+        # Scale both values so max(a, b) = 100%
         m = max(a, b, 0.001)
         return round(a / m * 100), round(b / m * 100)
 
@@ -473,16 +397,7 @@ def _build_hth_stats(red: Fighter, blue: Fighter) -> List[dict]:
     return rows
 
 def _build_matchup_stats(red: Fighter, blue: Fighter) -> dict:
-    """
-    Build summary chip data for the comparison screen.
-    All values derived from FighterComposition.
-
-    str_acc_diff        ← red.boxing  - blue.boxing
-    td_success_rate     ← red.wrestling  (red corner's raw wrestling score)
-    sub_attempts        ← red.grappling / 10  (scaled estimate)
-    exploitability_score← _exploitability_score(red.composition)
-    exploitability_label← "High" / "Moderate" based on score
-    """
+    # Build summary chip values from FighterComposition
     rc, bc = red.composition, blue.composition
     exploit = _exploitability_score(rc)
     return {
@@ -495,41 +410,161 @@ def _build_matchup_stats(red: Fighter, blue: Fighter) -> dict:
 
 # ═════════════════════════════════════════════════════════════════════════════
 # HEATMAP / PATTERN DATA
-# Placeholder values — replace with real aggregations over fights.csv
-# once each fighter has a style label attached.
 # ═════════════════════════════════════════════════════════════════════════════
 
 def _build_heatmap_data() -> dict:
-    """
-    Style-vs-style win rate matrix.
-    Rows and columns correspond to the 5 FighterComposition dimensions.
-
-    TODO: replace static values with real win-rate aggregation:
-        For each pair of style archetypes (derived from _derive_style_labels),
-        count wins/total from fights.csv where red archetype = row,
-        blue archetype = column.
-    """
-    return {
-        "styles": ["Striker", "Muay Thai", "Wrestler", "Grappler", "Pace"],
-        "data": [
-            [50, 48, 27, 35, 52],
-            [52, 50, 32, 44, 55],
-            [73, 68, 50, 71, 62],
-            [65, 56, 29, 50, 48],
-            [48, 45, 38, 52, 50],
-        ],
-    }
+    # Return the style-vs-style win rate matrix
+    heatmap, _ = _compute_style_matchups()
+    return heatmap
 
 def _build_top_patterns() -> List[dict]:
-    """
-    Top exploitable style matchup patterns.
-    Each dict needs: label, win_rate (int), fight_count (int).
+    # Return top exploitable style matchup patterns
+    _, patterns = _compute_style_matchups()
+    return patterns
 
-    TODO: derive from real data — aggregate wins by style pair,
-    sort by win_rate descending, return top N.
-    """
-    return [
-        {"label": "Wrestling vs Pure Striker",       "win_rate": 73, "fight_count": 112},
-        {"label": "Muay Thai vs Pure Wrestler",      "win_rate": 68, "fight_count": 87},
-        {"label": "Grappling vs High-Pace Fighter",  "win_rate": 65, "fight_count": 63},
-    ]
+def _compute_style_matchups() -> Tuple[dict, List[dict]]:
+    # Compute style matchups and top patterns from fight data
+    cache = _STYLE_MATCHUP_CACHE
+    input_paths = [service._events_info_csv, service._fights_csv, service._training_csv]
+    mtimes = tuple(p.stat().st_mtime if p.exists() else 0 for p in input_paths)
+    if cache["mtimes"] == mtimes and cache["heatmap"] and cache["patterns"] is not None:
+        return cache["heatmap"], cache["patterns"]
+
+    style_keys = ["Striking", "Muay Thai", "Wrestling", "Grappling"]
+    style_display = {
+        "Striking": "Striker",
+        "Muay Thai": "Muay Thai",
+        "Wrestling": "Wrestler",
+        "Grappling": "Grappler",
+    }
+    key_index = {k: i for i, k in enumerate(style_keys)}
+
+    try:
+        name_to_id = _load_fighter_name_map()
+        style_by_id = _load_style_by_fighter_id()
+
+        n = len(style_keys)
+        wins = [[0 for _ in range(n)] for _ in range(n)]
+        totals = [[0 for _ in range(n)] for _ in range(n)]
+        seen_fights: set = set()
+
+        with service._events_info_csv.open("r", newline="", encoding="utf-8") as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                fight_id = (row.get("fight_id") or "").strip()
+                if not fight_id or fight_id in seen_fights:
+                    continue
+                seen_fights.add(fight_id)
+                winner_name = (row.get("winner_name") or "").strip()
+                loser_name = (row.get("loser_name") or "").strip()
+                if not winner_name or not loser_name:
+                    continue
+                winner_id = name_to_id.get(_norm_name(winner_name))
+                loser_id = name_to_id.get(_norm_name(loser_name))
+                if not winner_id or not loser_id:
+                    continue
+                winner_style = style_by_id.get(winner_id)
+                loser_style = style_by_id.get(loser_id)
+                if not winner_style or not loser_style:
+                    continue
+                wi = key_index[winner_style]
+                li = key_index[loser_style]
+                totals[wi][li] += 1
+                totals[li][wi] += 1
+                wins[wi][li] += 1
+
+        data: List[List[int]] = []
+        for i in range(n):
+            row: List[int] = []
+            for j in range(n):
+                total = totals[i][j]
+                if total == 0:
+                    row.append(50)
+                else:
+                    row.append(round((wins[i][j] / total) * 100))
+            data.append(row)
+
+        patterns: List[dict] = []
+        for i in range(n):
+            for j in range(n):
+                if i == j:
+                    continue
+                total = totals[i][j]
+                if total == 0:
+                    continue
+                win_rate = round((wins[i][j] / total) * 100)
+                patterns.append({
+                    "label": f"{style_display[style_keys[i]]} vs {style_display[style_keys[j]]}",
+                    "win_rate": win_rate,
+                    "fight_count": total,
+                })
+
+        patterns.sort(key=lambda p: (p["win_rate"], p["fight_count"]), reverse=True)
+        top_patterns = patterns[:3]
+
+        heatmap = {
+            "styles": [style_display[k] for k in style_keys],
+            "data": data,
+        }
+
+        cache["mtimes"] = mtimes
+        cache["heatmap"] = heatmap
+        cache["patterns"] = top_patterns
+        return heatmap, top_patterns
+    except Exception as e:
+        print(f"Failed to compute style matchups: {e}")
+        fallback_heatmap = {
+            "styles": ["Striker", "Muay Thai", "Wrestler", "Grappler", "Pace"],
+            "data": [
+                [50, 50, 50, 50, 50],
+                [50, 50, 50, 50, 50],
+                [50, 50, 50, 50, 50],
+                [50, 50, 50, 50, 50],
+                [50, 50, 50, 50, 50],
+            ],
+        }
+        return fallback_heatmap, []
+
+def _load_fighter_name_map() -> Dict[str, str]:
+    # Build a name-to-fighter_id map from fights.csv
+    counts: Dict[str, Dict[str, int]] = {}
+    with service._fights_csv.open("r", newline="", encoding="utf-8") as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            fighter_id = (row.get("fighter_id") or "").strip()
+            fighter_name = (row.get("fighter") or "").strip()
+            if not fighter_id or not fighter_name:
+                continue
+            key = _norm_name(fighter_name)
+            if key not in counts:
+                counts[key] = {}
+            counts[key][fighter_id] = counts[key].get(fighter_id, 0) + 1
+    return {
+        name: max(id_counts, key=id_counts.get)
+        for name, id_counts in counts.items()
+        if id_counts
+    }
+
+def _load_style_by_fighter_id() -> Dict[str, str]:
+    # Map fighter_id to primary style derived from composition
+    compositions = service._compute_fighter_compositions()
+    return {
+        fighter_id: _primary_style_key(comp)
+        for fighter_id, comp in compositions.items()
+        if comp is not None
+    }
+
+def _primary_style_key(c: FighterComposition) -> str:
+    # Return the dominant style key for a composition
+    scores: Dict[str, float] = {
+        "Striking":  c.boxing,
+        "Muay Thai": c.muay_thai,
+        "Wrestling": c.wrestling,
+        "Grappling": c.grappling,
+        "Pace":      c.pace,
+    }
+    return max(scores, key=lambda k: scores[k])
+
+def _norm_name(name: str) -> str:
+    # Normalize a fighter name for matching
+    return " ".join(name.strip().lower().split())
