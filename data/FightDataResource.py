@@ -2,13 +2,32 @@ from fastapi import FastAPI, HTTPException, Query
 import uvicorn
 from clean.fighter_vectors import latest_vectors
 from FightDataService import FightDataService
+from RefreshDataService import RefreshDataService
+
+from contextlib import asynccontextmanager
+from apscheduler.schedulers.background import BackgroundScheduler
+import datetime
 
 class FightDataResource:
 
-    def __init__(self, fightDataService: FightDataService):
-        self.app = FastAPI(title="UFC Fight Data API")
+    def __init__(self, fightDataService: FightDataService, refreshDataService: RefreshDataService):
         self.fightDataService = fightDataService
+        self.refreshDataService = refreshDataService
+
+        # Manage scheduler lifecycle
+        @asynccontextmanager
+        async def lifespan(app: FastAPI):
+            scheduler = BackgroundScheduler()
+            # Refresh data on start
+            scheduler.add_job(refreshDataService.refreshFightData, 'interval', hours=1, next_run_time=datetime.datetime.now())
+            scheduler.add_job(refreshDataService.reloadIncompleteData, 'interval', hours=24, next_run_time=datetime.datetime.now())
+            scheduler.start()
+            yield
+            scheduler.shutdown()
+
+        self.app = FastAPI(title="UFC Fight Data API", lifespan=lifespan)
         self._registerEndpoints()
+
 
     def run(self):
         uvicorn.run(

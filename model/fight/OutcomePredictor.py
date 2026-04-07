@@ -25,6 +25,7 @@ class OutcomePredictor:
     MAP_LOCATION = "cuda" if torch.cuda.is_available() else "cpu"
     
     def __init__(self):
+        print(f"Numpy Version {np.__version__}")
         self._model_path, self._scaler_path, self._artifact_tag = self._resolve_artifacts()
         self._model = self._recreate_model()
         self._scaler = self._load_scaler()

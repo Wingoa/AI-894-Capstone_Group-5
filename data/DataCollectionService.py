@@ -1,4 +1,3 @@
-from typing import Dict, List
 import sys
 from datetime import datetime
 
@@ -34,17 +33,13 @@ def main():
     scraperService: ScraperService = ScraperService()
     
     refreshDataService: RefreshDataService = RefreshDataService(fightCache, eventCache, eventInfoCache, scraperService)
-    # Refresh data on start
-    refreshDataService.refreshFightData()
 
-    scheduler: BackgroundScheduler = BackgroundScheduler(timezone="America/New_York")
-    scheduler.add_job(refreshDataService.refreshFightData, "date", run_date=datetime.now())
-    scheduler.add_job(refreshDataService.refreshFightData, "cron", hour=8, minute=0) # Every day at 8:00 AM
-    scheduler.add_job(refreshDataService.reloadIncompleteData, "date", run_date=datetime.now())
 
     # Run the swagger page
     fightDataService: FightDataService = FightDataService(eventCache, eventInfoCache, fightCache)
-    fightDataResource: FightDataResource = FightDataResource(fightDataService)
+    fightDataResource: FightDataResource = FightDataResource(fightDataService, refreshDataService)
+
+    scheduler: BackgroundScheduler = BackgroundScheduler(timezone="America/New_York")
     scheduler.add_job(fightDataResource.run(), "data", run_date=datetime.now())
 
     running = True

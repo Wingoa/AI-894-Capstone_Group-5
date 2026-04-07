@@ -107,7 +107,10 @@ class RefreshDataService:
         fight_ids: List[str] = []
         for event in events:
             for eventInfo in event:
-                fight_ids.append(eventInfo.getFightId())
+                if isinstance(eventInfo, EventInfo):
+                    fight_ids.append(eventInfo.getFightId())
+                else:
+                    print(f"EventInfo was not of the expected type: {eventInfo}")
         return fight_ids
     
     def _getFightIdsFromFightData(self, fights: List[List[FightStatLine]]) -> List[str]:
