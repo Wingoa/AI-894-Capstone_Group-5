@@ -5,8 +5,8 @@ from pathlib import Path
 import sys
 from typing import Dict, List, Optional, Tuple
 import csv
-import re
-import unicodedata
+import os
+import requests
 
 BASE_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = BASE_DIR.parent
@@ -18,20 +18,20 @@ from data_model.Event import Event
 from data_model.EventInfo import EventInfo
 from data_model.Fighter import Fighter
 from data_model.FighterComposition import FighterComposition
-from data.clients.KalshiClient import KalshiClient
 
 
 class FrontEndService:
     def __init__(self) -> None:
+        # Initialize CSV paths and API base URL used by the front-end
         project_root = Path(__file__).resolve().parent.parent
         self._events_csv = project_root / "resources" / "initial_data" / "events.csv"
         self._events_info_csv = project_root / "resources" / "initial_data" / "events-info.csv"
         self._fights_csv = project_root / "resources" / "initial_data" / "fights.csv"
         self._training_csv = project_root / "resources" / "clean_data" / "training_data.csv"
-        self._kalshi_client = KalshiClient()
-        self._fighter_id_by_name: Optional[Dict[str, str]] = None
+        self._data_api_url = os.getenv("DATA_API_URL", "http://localhost:8001").rstrip("/")
 
     def getNextFights(self) -> List[EventInfo]:
+        # Return upcoming fights based on event dates or missing fight_id
         events_by_id = self._load_event_dates()
         upcoming_ids = {
             event_id
@@ -47,6 +47,7 @@ class FrontEndService:
         return upcoming
 
     def getLastFights(self) -> List[EventInfo]:
+        # Return completed fights (past events with fight_id present)
         events_by_id = self._load_event_dates()
         completed_ids = {
             event_id
@@ -61,6 +62,7 @@ class FrontEndService:
         return completed
     
     def getAllEvents(self) -> List[Event]:
+        # Load all events from the events CSV
         events: List[Event] = []
         with self._events_csv.open("r", newline="", encoding="utf-8") as f:
             for row in csv.DictReader(f):
@@ -81,35 +83,80 @@ class FrontEndService:
         )
 
     def getEventById(self, event_id: str) -> Optional[Event]:
+        # Lookup a single event by id
         for event in self.getAllEvents():
             if event.event_id == event_id:
                 return event
         return None
 
-    def getNextFightsWithEvents(self) -> List[Tuple[EventInfo, Optional[Event]]]:
-        events_by_id = {e.event_id: e for e in self.getAllEvents()}
-        return [
-            (info, events_by_id.get(info.event_id))
-            for info in self.getNextFights()
-        ]
+    def getNextFightsWithEvents(self) -> List[dict]:
+        # Fetch upcoming fights from the data API and normalize them
+        api_fights = self._get_next_fights_from_api()
+        return api_fights or []
 
     def getLastFightsWithEvents(self) -> List[Tuple[EventInfo, Optional[Event]]]:
+        # Return past fights paired with their event metadata
         events_by_id = {e.event_id: e for e in self.getAllEvents()}
         return [
             (info, events_by_id.get(info.event_id))
             for info in self.getLastFights()
         ]
 
+    def _get_next_fights_from_api(self) -> Optional[List[dict]]:
+        # Call the data API /event/next endpoint and normalize the response
+        try:
+            resp = requests.get(f"{self._data_api_url}/event/next", timeout=2.5)
+            if resp.status_code != 200:
+                return None
+            payload = resp.json()
+        except Exception:
+            return None
+
+        event = payload.get("event") or {}
+        fights = payload.get("fights") or []
+        if not fights:
+            return None
+
+        event_name = (event.get("event_name") or event.get("event") or "").strip()
+        event_date = (event.get("event_date") or event.get("date") or "").strip()
+        event_location = (event.get("event_location") or event.get("location") or "").strip()
+        event_url = (event.get("event_url") or event.get("url") or "").strip() or None
+        event_id = (event.get("event_id") or event.get("id") or "").strip()
+
+        normalized: List[dict] = []
+        for fight in fights:
+            red_name = (fight.get("fighter_a") or fight.get("winner_name") or "").strip()
+            blue_name = (fight.get("fighter_b") or fight.get("loser_name") or "").strip()
+            normalized.append({
+                "event_name": event_name or event_id,
+                "date": event_date or "—",
+                "location": event_location or "—",
+                "event_url": event_url,
+                "red_fighter": red_name,
+                "blue_fighter": blue_name,
+                "red_id": "",
+                "blue_id": "",
+                "weight_class": (fight.get("weight_class") or "").strip(),
+                "method": (fight.get("method") or "").strip() or None,
+                "round": fight.get("round"),
+                "time": (fight.get("time") or "").strip() or None,
+                "fight_url": (fight.get("fight_url") or "").strip() or None,
+            })
+        return normalized
+
     def loadEventInfo(self, event_id: str) -> Optional[EventInfo]:
+        # Return the first EventInfo row matching event_id, if any
         for row in self._load_event_info_rows():
             if row.event_id == event_id:
                 return row
         return None
 
     def loadEventInfoRows(self) -> List[EventInfo]:
+        # Load all EventInfo rows from CSV
         return self._load_event_info_rows()
     
     def getAllFighters(self) -> List[Fighter]:
+        # Build Fighter objects with composition and fight_id history
         fights_by_fighter: Dict[str, List[str]] = defaultdict(list)
         names_by_id: Dict[str, str] = {}
         with self._fights_csv.open("r", newline="", encoding="utf-8") as csvfile:
@@ -146,15 +193,18 @@ class FrontEndService:
         return sorted(fighters, key=lambda fighter: fighter.name)
 
     def getFighter(self, fighter_id: str) -> Optional[Fighter]:
+        # Find a fighter by id
         for fighter in self.getAllFighters():
             if fighter.id == fighter_id:
                 return fighter
         return None
 
     def reloadData(self) -> None:
+        # Placeholder for future reload logic
         return
 
     def _load_event_dates(self) -> Dict[str, date]:
+        # Parse event dates from the events CSV into a dict
         event_dates: Dict[str, date] = {}
         with self._events_csv.open("r", newline="", encoding="utf-8") as csvfile:
             reader = csv.DictReader(csvfile)
@@ -167,6 +217,7 @@ class FrontEndService:
         return event_dates
 
     def _load_event_info_rows(self) -> List[EventInfo]:
+        # Load EventInfo rows from events-info CSV
         rows: List[EventInfo] = []
         with self._events_info_csv.open("r", newline="", encoding="utf-8") as csvfile:
             reader = csv.DictReader(csvfile)
@@ -187,6 +238,7 @@ class FrontEndService:
         return rows
 
     def _compute_fighter_compositions(self) -> Dict[str, FighterComposition]:
+        # Aggregate training data into per-fighter composition scores
         aggregates: Dict[str, Dict[str, float]] = defaultdict(
             lambda: {
                 "count": 0.0,
@@ -224,6 +276,17 @@ class FrontEndService:
                 agg["muay_thai_sum"] += muay_thai_ratio
                 agg["wrestling_sum"] += td_success
                 agg["grappling_sum"] += (sub_att * 10.0) + (rev * 10.0) + (ctrl_pct * 0.25)
+        compositions: Dict[str, FighterComposition] = {}
+        for fighter_id, agg in aggregates.items():
+            count = max(agg["count"], 1.0)
+            compositions[fighter_id] = FighterComposition(
+                pace=agg["pace_sum"] / count,
+                boxing=agg["boxing_sum"] / count,
+                muay_thai=agg["muay_thai_sum"] / count,
+                wrestling=agg["wrestling_sum"] / count,
+                grappling=agg["grappling_sum"] / count,
+            )
+        
         return {
             fighter_id: FighterComposition(
                 pace      = agg["pace_sum"]       / max(agg["count"], 1.0),
@@ -235,83 +298,17 @@ class FrontEndService:
             for fighter_id, agg in aggregates.items()
         }
     
-    @staticmethod
     def calculateEV(odds_of_winning: float, betting_odds: float, unit: float = 100):
-        if betting_odds is None or betting_odds == 0:
-            return None
+        # Calculate expected value for a bet given win probability and odds
         payoutMultiplier = 100 / betting_odds
         winningPayout = unit * payoutMultiplier
         odds_of_losing = 1 - odds_of_winning
         losingPayout = -1 * unit
         return odds_of_winning * winningPayout - odds_of_losing * losingPayout
 
-    def getKalshiMarketMap(self) -> Dict[str, dict]:
-        try:
-            markets = self._kalshi_client.getLatest()
-        except Exception:
-            return {}
-        market_map: Dict[str, dict] = {}
-        for market in markets:
-            fighter = (market.get("fighter") or "").strip()
-            odds = market.get("yes_money")
-            fight_date = market.get("fight_date")
-            if not fighter or odds is None:
-                continue
-            key = self._normalize_name(fighter)
-            if not key:
-                continue
-            if key not in market_map:
-                market_map[key] = {
-                    "odds": float(odds),
-                    "fight_date": fight_date,
-                }
-        return market_map
-
-    def getKalshiMarketForFighter(self, fighter_name: str, market_map: Dict[str, dict]) -> Optional[dict]:
-        if not fighter_name:
-            return None
-        key = self._normalize_name(fighter_name)
-        if key in market_map:
-            return market_map[key]
-        last_name = key.split(" ")[-1]
-        for name, market in market_map.items():
-            if last_name and (name == last_name or name.endswith(f" {last_name}")):
-                return market
-        return None
-
-    @staticmethod
-    def _normalize_name(value: str) -> str:
-        if not value:
-            return ""
-        text = unicodedata.normalize("NFKD", value)
-        text = "".join(ch for ch in text if ch.isalnum() or ch.isspace())
-        text = re.sub(r"\s+", " ", text).strip().lower()
-        return text
-
-    def getFighterIdByName(self, fighter_name: str) -> Optional[str]:
-        if not fighter_name:
-            return None
-        if self._fighter_id_by_name is None:
-            mapping: Dict[str, str] = {}
-            with self._fights_csv.open("r", newline="", encoding="utf-8") as csvfile:
-                reader = csv.DictReader(csvfile)
-                for row in reader:
-                    name = (row.get("fighter") or "").strip()
-                    fighter_id = (row.get("fighter_id") or "").strip()
-                    if name and fighter_id and name.lower() not in mapping:
-                        mapping[name.lower()] = fighter_id
-            self._fighter_id_by_name = mapping
-        key = fighter_name.strip().lower()
-        if key in self._fighter_id_by_name:
-            return self._fighter_id_by_name[key]
-        last_name = key.split(" ")[-1]
-        for name, fighter_id in self._fighter_id_by_name.items():
-            if last_name and last_name in name:
-                return fighter_id
-        return None
-
     @staticmethod
     def _parse_event_date(value: str) -> Optional[date]:
+        # Parse a human-readable event date string
         if not value:
             return None
         try:
@@ -321,6 +318,7 @@ class FrontEndService:
 
     @staticmethod
     def _nullable_str(value: Optional[str]) -> Optional[str]:
+        # Strip a string or return None if empty
         if value is None:
             return None
         cleaned = value.strip()
@@ -328,6 +326,7 @@ class FrontEndService:
 
     @staticmethod
     def _nullable_int(value: Optional[str]) -> Optional[int]:
+        # Parse an int-like string or return None if empty/invalid
         if value is None:
             return None
         cleaned = value.strip()
@@ -340,6 +339,7 @@ class FrontEndService:
 
     @staticmethod
     def _float_or_zero(value: Optional[str]) -> float:
+        # Parse a float-like string, defaulting to 0.0
         if value is None:
             return 0.0
         cleaned = value.strip()
