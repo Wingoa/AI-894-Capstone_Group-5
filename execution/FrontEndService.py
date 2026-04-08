@@ -18,30 +18,47 @@ class FrontEndService:
         # Query the data service to get the upcoming fights
         resp = requests.get(f"{self.data_url}/event/next", timeout=10)
         resp.raise_for_status()
-        return resp.json()
+        return resp.json() 
 
     def getLastFights(self) -> List[EventInfo]:
-        # TODO - Query the data service to get the last completed fights
-        return
+        # Query the data service to get the last completed fights
+        resp = requests.get(f"{self.data_url}/latest", timeout=10)
+        resp.raise_for_status()
+        return resp.json()
     
     def getAllFighters(self) -> List[Fighter]:
-        # TODO - Query the data service to get all Fighters
-        return
+        # Query the data service to get all Fighters
+        resp = requests.get(f"{self.data_url}/fighter", timeout=10)
+        resp.raise_for_status()
+
+        # Unsure this will be efficient or useful
+
+        return resp.json()
     
     def getFighter(self, fighter_id) -> Fighter:
-        # TODO - Query the data service for the specific fighter info
-        return
+        # Query the data service for the specific fighter info
+        fighter_metadata_resp = requests.get(f"{self.data_url}/fighter/{fighter_id}")
+        fighter_metadata_resp.raise_for_status()
+        data = fighter_metadata_resp.json()
+        fighter_style = self.getFighterStyle(fighter_id)
+        return Fighter(data["name"], fighter_id, self._getFighterComposition(fighter_style), data["fight_ids"])
     
+    def _getFighterComposition(self, fighter_style: FighterStyle) -> FighterComposition:
+        return FighterComposition(None, fighter_style.boxing, fighter_style.muayThai, fighter_style.wrestling, fighter_style.grappling)
+
     def getFighterStyle(self, fighter_id) -> FighterStyle:
         resp = requests.get(f"{self.model_url}/style/{fighter_id}", timeout=10)
         resp.raise_for_status()
         data = resp.json()
         return FighterStyle(data["fighter_id"], data["fighter"], float(data["muayThai"]), float(data["boxing"]), float(data["wrestling"]), float(data["grappling"]))
     
-    def reloadData(self) -> None:
-        # TODO - On a browser refresh, this should be called to check if any
+    def refreshData(self):
+        # On a browser refresh, this should be called to check if any
         #     data needs to be reloaded. If so, update the cache's
-        return
+        resp = requests.get(f"{self.data_url}/refresh", timeout=10)
+        resp.raise_for_status()
+        data = resp.json()
+        return data
     
     def predictFight(self, fighter_a_id: str, fighter_b_id: str):
         queryParams = {

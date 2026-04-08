@@ -46,12 +46,28 @@ class FightDataResource:
             return {
                     "status": "ok", 
                     "message": "API is running. Go to http://localhost:8080/docs for the interactive swagger page"
-                    }
+                    } 
         
+        @self.app.get("/refresh")
+        def refresh_data():
+            return self.refreshDataService.refreshFightData()
+        
+        @self.app.get("/latest")
+        def get_latest_fights():
+            return self.fightDataService.getLastFights()
+
         @self.app.get("/latest/{fighter_id}")
         def get_latest_fight_vector(fighter_id: str):
             data = latest_vectors(fighter_id=fighter_id, include_no_history=True)
             return data.iloc[0].to_dict()
+        
+        @self.app.get("/fighter")
+        def get_all_fighters():
+            return self.fightDataService.getAllFighters()
+        
+        @self.app.get("/fighter/{fighter_id}")
+        def get_fighter_metadata(fighter_id: str):
+            return self.fightDataService.getFighterMetadata(fighter_id)
 
         @self.app.get("/fights/{name}")
         def get_fights_by_fighter(name: str):
