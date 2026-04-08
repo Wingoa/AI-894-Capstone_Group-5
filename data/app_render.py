@@ -11,6 +11,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import PlainTextResponse
 
 from FightDataResource import FightDataResource
 from cache.EventCache import EventCache
@@ -132,3 +133,10 @@ def get_meta():
             "fightGroups": len(fight_cache.all()),
         },
     }
+
+
+@app.head("/health")
+@app.get("/health")
+def health() -> PlainTextResponse:
+    """Lightweight health check for uptime monitors (responds to HEAD/GET)."""
+    return PlainTextResponse("OK", status_code=200)

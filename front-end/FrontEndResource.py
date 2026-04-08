@@ -10,7 +10,7 @@ import sys
 from typing import Dict, List, Optional, Tuple
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.templating import Jinja2Templates
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -31,6 +31,13 @@ app = FastAPI(title="UFC Fighter Optimizer Dashboard")
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 templates = Jinja2Templates(directory=BASE_DIR / "templates")
 service = FrontEndService()
+
+
+@app.head("/health")
+@app.get("/health")
+def health() -> PlainTextResponse:
+    """Lightweight health check for uptime monitors (responds to HEAD/GET)."""
+    return PlainTextResponse("OK", status_code=200)
 
 @app.get("/", response_class=HTMLResponse)
 def homepage(request: Request) -> HTMLResponse:
