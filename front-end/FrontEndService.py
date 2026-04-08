@@ -18,33 +18,27 @@ from data_model.Event import Event
 from data_model.EventInfo import EventInfo
 from data_model.Fighter import Fighter
 from data_model.FighterComposition import FighterComposition
+from data_model.FighterStyle import FighterStyle
 
 
 class FrontEndService:
     def __init__(self) -> None:
-        # Initialize CSV paths and API base URL used by the front-end
+        # Initialize CSV paths and API URLs
         project_root = Path(__file__).resolve().parent.parent
         self._events_csv = project_root / "resources" / "initial_data" / "events.csv"
         self._events_info_csv = project_root / "resources" / "initial_data" / "events-info.csv"
         self._fights_csv = project_root / "resources" / "initial_data" / "fights.csv"
         self._training_csv = project_root / "resources" / "clean_data" / "training_data.csv"
-        self._data_api_url = os.getenv("DATA_API_URL", "http://localhost:8001").rstrip("/")
+        
+        # API URLs: Execution Service for upcoming fights, Prediction Service for fighter styles/predictions
+        self._execution_api_url = os.getenv("EXECUTION_SERVICE_URL", "http://localhost:8003").rstrip("/")
+        self._prediction_service_url = os.getenv("PREDICTION_SERVICE_URL", "http://localhost:8002").rstrip("/")
 
-    def getNextFights(self) -> List[EventInfo]:
-        # Return upcoming fights based on event dates or missing fight_id
-        events_by_id = self._load_event_dates()
-        upcoming_ids = {
-            event_id
-            for event_id, event_date in events_by_id.items()
-            if event_date >= date.today()
-        }
-        # Some rows may not have full fight data yet so they are treated as upcoming
-        rows = self._load_event_info_rows()
-        upcoming = []
-        for row in rows:
-            if row.event_id in upcoming_ids or not row.fight_id:
-                upcoming.append(row)
-        return upcoming
+    def getNextFights(self) -> dict:
+        """Get upcoming fights from the Execution Service."""
+        resp = requests.get(f"{self._execution_api_url}/nextFights", timeout=10)
+        resp.raise_for_status()
+        return resp.json()
 
     def getLastFights(self) -> List[EventInfo]:
         # Return completed fights (past events with fight_id present)
@@ -82,13 +76,6 @@ class FrontEndService:
             reverse=True,
         )
 
-    def getEventById(self, event_id: str) -> Optional[Event]:
-        # Lookup a single event by id
-        for event in self.getAllEvents():
-            if event.event_id == event_id:
-                return event
-        return None
-
     def getNextFightsWithEvents(self) -> List[dict]:
         # Fetch upcoming fights from the data API and normalize them
         api_fights = self._get_next_fights_from_api()
@@ -105,42 +92,37 @@ class FrontEndService:
     def _get_next_fights_from_api(self) -> Optional[List[dict]]:
         # Call the data API /event/next endpoint and normalize the response
         try:
-            resp = requests.get(f"{self._data_api_url}/event/next", timeout=2.5)
+            resp = requests.get(f"{self._execution_api_url}/nextFights", timeout=2.5)
             if resp.status_code != 200:
                 return None
             payload = resp.json()
         except Exception:
             return None
 
-        event = payload.get("event") or {}
+        events_by_id = {e.event_id: e for e in self.getAllEvents()}
         fights = payload.get("fights") or []
         if not fights:
             return None
 
-        event_name = (event.get("event_name") or event.get("event") or "").strip()
-        event_date = (event.get("event_date") or event.get("date") or "").strip()
-        event_location = (event.get("event_location") or event.get("location") or "").strip()
-        event_url = (event.get("event_url") or event.get("url") or "").strip() or None
-        event_id = (event.get("event_id") or event.get("id") or "").strip()
-
         normalized: List[dict] = []
         for fight in fights:
-            red_name = (fight.get("fighter_a") or fight.get("winner_name") or "").strip()
-            blue_name = (fight.get("fighter_b") or fight.get("loser_name") or "").strip()
+            event_id = fight.get("event_id") or ""
+            event = events_by_id.get(event_id) if event_id else None
+            
             normalized.append({
-                "event_name": event_name or event_id,
-                "date": event_date or "—",
-                "location": event_location or "—",
-                "event_url": event_url,
-                "red_fighter": red_name,
-                "blue_fighter": blue_name,
+                "event_name": (event.event_name if event else fight.get("event_name")) or event_id,
+                "date": (event.event_date if event else fight.get("date")) or "—",
+                "location": (event.event_location if event else fight.get("location")) or "—",
+                "event_url": event.event_url if event else fight.get("event_url"),
+                "red_fighter": fight.get("red_fighter") or "",
+                "blue_fighter": fight.get("blue_fighter") or "",
                 "red_id": "",
                 "blue_id": "",
-                "weight_class": (fight.get("weight_class") or "").strip(),
-                "method": (fight.get("method") or "").strip() or None,
+                "weight_class": fight.get("weight_class") or "",
+                "method": fight.get("method"),
                 "round": fight.get("round"),
-                "time": (fight.get("time") or "").strip() or None,
-                "fight_url": (fight.get("fight_url") or "").strip() or None,
+                "time": fight.get("time"),
+                "fight_url": fight.get("fight_url"),
             })
         return normalized
 
@@ -199,9 +181,33 @@ class FrontEndService:
                 return fighter
         return None
 
-    def reloadData(self) -> None:
-        # Placeholder for future reload logic
-        return
+    def getFighterStyle(self, fighter_id: str) -> FighterStyle:
+        """Query the Prediction Service for fighter style weights."""
+        resp = requests.get(f"{self._prediction_service_url}/style/{fighter_id}", timeout=10)
+        resp.raise_for_status()
+        data = resp.json()
+        return FighterStyle(
+            data["fighter_id"],
+            data["fighter"],
+            float(data["muayThai"]),
+            float(data["boxing"]),
+            float(data["wrestling"]),
+            float(data["grappling"]),
+        )
+
+    def predictFight(self, fighter_a_id: str, fighter_b_id: str):
+        """Query the Prediction Service for a fight outcome prediction."""
+        queryParams = {
+            "fighter_a_id": fighter_a_id,
+            "fighter_b_id": fighter_b_id,
+        }
+        resp = requests.get(
+            f"{self._prediction_service_url}/outcome",
+            params=queryParams,
+            timeout=60,
+        )
+        resp.raise_for_status()
+        return resp.json()
 
     def _load_event_dates(self) -> Dict[str, date]:
         # Parse event dates from the events CSV into a dict
@@ -276,16 +282,6 @@ class FrontEndService:
                 agg["muay_thai_sum"] += muay_thai_ratio
                 agg["wrestling_sum"] += td_success
                 agg["grappling_sum"] += (sub_att * 10.0) + (rev * 10.0) + (ctrl_pct * 0.25)
-        compositions: Dict[str, FighterComposition] = {}
-        for fighter_id, agg in aggregates.items():
-            count = max(agg["count"], 1.0)
-            compositions[fighter_id] = FighterComposition(
-                pace=agg["pace_sum"] / count,
-                boxing=agg["boxing_sum"] / count,
-                muay_thai=agg["muay_thai_sum"] / count,
-                wrestling=agg["wrestling_sum"] / count,
-                grappling=agg["grappling_sum"] / count,
-            )
         
         return {
             fighter_id: FighterComposition(
