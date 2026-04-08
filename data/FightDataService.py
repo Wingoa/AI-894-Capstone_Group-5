@@ -20,10 +20,7 @@ class FightDataService:
 
     def get_next_event(self):
         # Convert all entries to a DF
-        df = pd.DataFrame([
-            asdict(event) if is_dataclass(event) else event
-            for event in self.eventCache.all()
-        ])
+        df = self.getAllEvents()
         # Parse the string dates
         df["event_date_parsed"] = pd.to_datetime(df["event_date"], format="%B %d, %Y")
         # Current date
@@ -103,3 +100,52 @@ class FightDataService:
                 "totalMatches": len(matches),
                 "matches": matches
             }
+    
+    def getLastFights(self) -> list:
+        # Convert all entries to a DF
+        df = self.getAllEvents()
+        # Parse the string dates
+        df["event_date_parsed"] = pd.to_datetime(df["event_date"], format="%B %d, %Y")
+        # Current date
+        today = pd.Timestamp(datetime.now().date())
+        # Keep only past events
+        past_events = df[df["event_date_parsed"] <= today]
+        if past_events.empty:
+            return {}
+        
+        # Get the latest upcoming event
+        next_event = past_events.sort_values("event_date_parsed", ascending=False).iloc[0]
+        # Return full row as dict
+        event = next_event.drop(labels=["event_date_parsed"]).to_dict()
+        
+        print(f"Latest Event: {event}")
+        return scrapeEventInfo(event["event_id"])
+    
+    def getAllEvents(self) -> pd.DataFrame:
+        return pd.DataFrame([
+            asdict(event) if is_dataclass(event) else event
+            for event in self.eventCache.all()
+        ])
+
+    def getFighterMetadata(self, fighter_id: str):
+        # Flatten the list of lists into a list of dictionaries
+        df = pd.DataFrame([
+            asdict(f) if is_dataclass(f) else f
+            for sublist in self.fightCache.all() 
+            for f in sublist
+        ])
+        relevant_fights = df.loc[df["fighter_id"] == fighter_id]
+        name = None
+        fight_ids = []
+        fights = []
+        if len(relevant_fights) > 0:
+            name = relevant_fights.iloc[0]["fighter"]
+            fight_ids = relevant_fights["fight_id"].tolist()
+            fights = relevant_fights.to_dict(orient="records")
+
+        return {
+            "name": name,
+            "fighter_id": fighter_id,
+            "fight_ids": fight_ids,
+            "fights": fights
+        }

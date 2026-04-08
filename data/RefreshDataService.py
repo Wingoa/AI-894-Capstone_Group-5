@@ -38,6 +38,7 @@ class RefreshDataService:
 
             # Scrape for the corresponding Event Info rows that need to be added
             self._scrapeEventInfo(event_id)
+        return new_event_ids
 
     def reloadIncompleteData(self) -> None:
         self._reloadIncompleteEventInfo()
