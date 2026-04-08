@@ -1,12 +1,8 @@
 from __future__ import annotations
 from pathlib import Path
-import json
 import math
 import os
 import csv
-import urllib.request
-import urllib.error
-import urllib.parse
 import sys
 from typing import Dict, List, Optional, Tuple
 from fastapi import FastAPI, HTTPException, Request
@@ -26,6 +22,7 @@ from data_model.Event import Event
 from data_model.EventInfo import EventInfo
 from data_model.Fighter import Fighter
 from data_model.FighterComposition import FighterComposition
+from data_model.FighterStyle import FighterStyle
 from FrontEndService import FrontEndService
 
 app = FastAPI(title="UFC Fighter Optimizer Dashboard")
@@ -147,8 +144,8 @@ def events(request: Request) -> HTMLResponse:
         **_empty_comparison(),
     })
 
-@app.get("/nextFights", response_model=List[EventInfo])
-def getNextFights() -> List[EventInfo]:
+@app.get("/nextFights")
+def getNextFights() -> dict:
     # Return upcoming fights from the data service
     return service.getNextFights()
 
@@ -173,6 +170,16 @@ def getFighter(fighter_id: str):
         )
     return fighter
 
+@app.get("/fighter/style/{fighter_id}", response_model=FighterStyle)
+def getFighterStyle(fighter_id: str) -> FighterStyle:
+    # Return a fighter's style vector from the prediction service
+    return service.getFighterStyle(fighter_id)
+
+@app.get("/predict")
+def predictFight(fighter_a_id: str, fighter_b_id: str):
+    # Return outcome probabilities from the prediction service
+    return service.predictFight(fighter_a_id, fighter_b_id)
+
 # Helpers
 def _fighter_to_template(fighter: Optional[Fighter]) -> Optional[dict]:
     # Convert a Fighter into a Jinja-friendly dict with derived fields
@@ -196,7 +203,6 @@ def _fighter_to_template(fighter: Optional[Fighter]) -> Optional[dict]:
         "primary_style":      archetype,          # used for data-style filter attribute
     }
 
-
 def _composition_to_dict(composition: Optional[FighterComposition]) -> Optional[dict]:
     # Normalize FighterComposition into a dict for charts and JSON
     if composition is None:
@@ -216,7 +222,6 @@ def _composition_to_dict(composition: Optional[FighterComposition]) -> Optional[
         "grappling": round(composition.grappling  / max_val, 3),
         "pace":      round(composition.pace       / max_val, 3),
     }
-
 
 def _event_to_template(info: EventInfo, event: Optional[Event]=None,) -> dict:
     # Convert EventInfo (+ optional Event) into a UI-friendly dict
@@ -289,10 +294,7 @@ def _exploitability_score(c: FighterComposition) -> int:
         return 0
     return min(99, int((max_val / avg_val) * 20))
 
-
-# ═════════════════════════════════════════════════════════════════════════════
 # SIMULATION HELPERS
-# ═════════════════════════════════════════════════════════════════════════════
 def _sim_defaults(fighter: Optional[Fighter]) -> dict:
     # Seed simulation sliders from a fighter's composition scores
     if fighter is None or fighter.composition is None:
@@ -307,11 +309,7 @@ def _sim_defaults(fighter: Optional[Fighter]) -> dict:
         "def":    5.0,
     }
 
-
-# ═════════════════════════════════════════════════════════════════════════════
 # MATCHUP HELPERS
-# ═════════════════════════════════════════════════════════════════════════════
-
 def _prob_confidence(prob: float) -> str:
     # Convert a probability into a simple confidence label
     edge = abs(prob - 0.5)
@@ -345,7 +343,6 @@ def _get_outcome_prediction(red_id: str, blue_id: str) -> Optional[dict]:
     except Exception as e:
         print(f"Exception calling prediction service: {e}")
         return None
-
 
 def _compute_win_probability(red: Fighter, blue: Fighter,) -> dict:
     # Compute win probability for red vs blue using the outcome service
@@ -408,10 +405,7 @@ def _build_matchup_stats(red: Fighter, blue: Fighter) -> dict:
         "exploitability_label": "High" if exploit > 50 else "Moderate",
     }
 
-# ═════════════════════════════════════════════════════════════════════════════
 # HEATMAP / PATTERN DATA
-# ═════════════════════════════════════════════════════════════════════════════
-
 def _build_heatmap_data() -> dict:
     # Return the style-vs-style win rate matrix
     heatmap, _ = _compute_style_matchups()
