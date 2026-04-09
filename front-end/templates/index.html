@@ -40,6 +40,9 @@
           data-screen="events">
           <span class="nav-icon">📅</span> Events
         </div>
+					<div class="nav-item {{ 'active' if active_screen == 'about' else '' }}" data-screen="about">
+						<span class="nav-icon">ℹ️</span> About
+					</div>
       </div>
       <div class="sidebar-footer">
         Data: UFCStats.com<br />
@@ -745,6 +748,84 @@
           {% endif %}
         </div>
         {# /screen-events #}
+
+					<!-- SCREEN: ABOUT  -->
+					<div class="screen" id="screen-about" style="display: none">
+						<div class="card about-fragment">
+              <h3>About UFC Fighter Optimizer</h3>
+              <br />
+              <br />
+              <div class="about-hero about-section">
+                <div class="about-hero-left">
+                  <p class="lead">Style-aware matchup analysis, outcome prediction, and coaching insights.</p>
+                  <p>
+                    We ingest per-fight statistics from public event pages and persist them as append-only CSV
+                    caches for reproducibility. From this data we derive interpretable fighter "style"
+                    vectors, train outcome models, and produce per-prediction explanations to highlight key
+                    matchup drivers. The UI focuses on fast comparatives, visual explanations, and simple
+                    simulations you can run in the browser.
+                  </p>
+                  <p>
+                    This project is intended as an MVP research tool: reproducible scraping, compact CSV
+                    caches, and interpretable features so coaches and analysts can validate model signals
+                    against video and domain knowledge.
+                  </p>
+                </div>
+                <br />
+                <br />
+                <hr />
+                <br />
+                <br />
+                <div class="about-hero-right">
+                  <div class="stat">
+                    <div class="stat-value">{{ fighters|length if fighters else 0 }}</div>
+                    <div class="stat-label">FIGHTERS</div>
+                  </div>
+                  <br />
+                  <div class="stat">
+                    <div class="stat-value">{{ next_fights|length if next_fights else 0 }}</div>
+                    <div class="stat-label">UPCOMING BOUTS</div>
+                  </div>
+                  <br />
+                  <div class="stat">
+                    <div class="stat-value">{{ last_fights|length if last_fights else 0 }}</div>
+                    <div class="stat-label">HISTORIC BOUTS</div>
+                  </div>
+                </div>
+              </div>
+              <br />
+              <br />
+              <hr class="about-divider" />
+              <div class="about-grid mt16 about-section">
+                <div class="feature-card">
+                  <h4>Data</h4>
+                  <p>Append-only CSV caches store scraped fight stats (strikes, takedowns, control time, pace), with timestamps for reproducibility and time-split evaluation.</p>
+                </div>
+                <br />
+                <br />
+                <div class="feature-card">
+                  <h4>Style Modeling</h4>
+                  <p>NMF decomposes per-fight metrics into concise, interpretable style components used as model features and scouting signals.</p>
+                </div>
+                <br />
+                <br />
+                <div class="feature-card">
+                  <h4>Outcome Prediction</h4>
+                  <p>Predictive models are trained on time-held-out splits; SHAP explanations surface the top drivers behind each prediction.</p>
+                </div>
+              </div>
+            <br />
+            <br />
+            <p class="muted mt16">Predictions are probabilistic guidance, not guarantees. Use them alongside video review and domain expertise.</p>
+            <hr class="about-divider" />
+            <br />
+            <br />
+              <div class="about-section card">
+                <div class="card-title">README</div>
+                <pre class="readme-content" style="white-space:pre-wrap; font-size:13px; color:var(--text);">{{ readme_md }}</pre>
+            </div>
+          </div>
+        </div>
       </div>
       {# /content #}
     </div>
