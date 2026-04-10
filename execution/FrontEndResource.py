@@ -27,6 +27,10 @@ class FrontEndResource:
 
     def _register_endpoints(self):
 
+        @self.app.get("/refresh")
+        def refreshData():
+            return self.front_end_service.refreshData()
+
         @self.app.get("/nextFights")
         def getNextFights() -> dict:
             return self.front_end_service.getNextFights()

@@ -18,6 +18,8 @@ from cache.EventCache import EventCache
 from cache.EventInfoCache import EventInfoCache
 from cache.FightCache import FightCache
 from FightDataService import FightDataService
+from RefreshDataService import RefreshDataService
+from scrapers.ScraperService import ScraperService
 
 # Make model subpackages importable as top-level "style" / "fight" packages
 MODEL_DIR = REPO_ROOT / "model"
@@ -35,7 +37,9 @@ event_info_cache = EventInfoCache(str(EVENT_INFO_CSV))
 fight_cache = FightCache(str(FIGHT_CSV))
 
 fight_service = FightDataService(event_cache, event_info_cache, fight_cache)
-resource = FightDataResource(fight_service)
+scraper_service = ScraperService()
+refresh_service = RefreshDataService(fight_cache, event_cache, event_info_cache, scraper_service)
+resource = FightDataResource(fight_service, refresh_service)
 app = resource.app
 
 # Register prediction endpoints on the same app so /outcome and /style are available

@@ -38,6 +38,7 @@ class RefreshDataService:
 
             # Scrape for the corresponding Event Info rows that need to be added
             self._scrapeEventInfo(event_id)
+        return new_event_ids
 
     def reloadIncompleteData(self) -> None:
         self._reloadIncompleteEventInfo()
@@ -107,7 +108,10 @@ class RefreshDataService:
         fight_ids: List[str] = []
         for event in events:
             for eventInfo in event:
-                fight_ids.append(eventInfo.getFightId())
+                if isinstance(eventInfo, EventInfo):
+                    fight_ids.append(eventInfo.getFightId())
+                else:
+                    print(f"EventInfo was not of the expected type: {eventInfo}")
         return fight_ids
     
     def _getFightIdsFromFightData(self, fights: List[List[FightStatLine]]) -> List[str]:
