@@ -751,24 +751,20 @@
 
 					<!-- SCREEN: ABOUT  -->
 					<div class="screen" id="screen-about" style="display: none">
-						<div class="card about-fragment">
-              <h3>About UFC Fighter Optimizer</h3>
+						<div>
+              <h2>About UFC Fighter Optimizer</h2>
               <br />
               <br />
-              <div class="about-hero about-section">
-                <div class="about-hero-left">
-                  <p class="lead">Style-aware matchup analysis, outcome prediction, and coaching insights.</p>
+              <div class="card">
+                <div style="font-size: 16px;">
+                  <p>UFC Fighter Optimizer is a compact research dashboard that turns public per-fight statistics into reproducible, auditable datasets for rapid analysis.</p>
+                  <br />
                   <p>
-                    We ingest per-fight statistics from public event pages and persist them as append-only CSV
-                    caches for reproducibility. From this data we derive interpretable fighter "style"
-                    vectors, train outcome models, and produce per-prediction explanations to highlight key
-                    matchup drivers. The UI focuses on fast comparatives, visual explanations, and simple
-                    simulations you can run in the browser.
+                    We scrape and normalize event and fight-level metrics, persist them as append-only CSV caches, and derive concise fighter "style" vectors (striking, clinch, wrestling, grappling, pace). These features feed outcome models that estimate win probabilities and produce explanations highlighting the most influential matchup drivers.
                   </p>
+                  <br />
                   <p>
-                    This project is intended as an MVP research tool: reproducible scraping, compact CSV
-                    caches, and interpretable features so coaches and analysts can validate model signals
-                    against video and domain knowledge.
+                    This MVP is designed for analysts and coaches to quickly explore matchups, validate model signals against video, and iterate on features. Treat model outputs as probabilistic guidance to inform, not replace, expert judgement.
                   </p>
                 </div>
                 <br />
@@ -776,8 +772,9 @@
                 <hr />
                 <br />
                 <br />
-                <div class="about-hero-right">
-                  <div class="stat">
+                <div>
+                <h3>Data Summary</h3>
+                  <div class="stat mt16">
                     <div class="stat-value">{{ fighters|length if fighters else 0 }}</div>
                     <div class="stat-label">FIGHTERS</div>
                   </div>
@@ -795,32 +792,26 @@
               </div>
               <br />
               <br />
-              <hr class="about-divider" />
-              <div class="about-grid mt16 about-section">
-                <div class="feature-card">
-                  <h4>Data</h4>
-                  <p>Append-only CSV caches store scraped fight stats (strikes, takedowns, control time, pace), with timestamps for reproducibility and time-split evaluation.</p>
+              <div class="card" style="font-size: 16px;">
+                <div>
+                  <h4 class="mb8">Data</h4>
+                  <p>We collect public, per-fight statistics and save them as append-only CSVs so analyses are reproducible and auditable.</p>
                 </div>
                 <br />
-                <br />
-                <div class="feature-card">
-                  <h4>Style Modeling</h4>
-                  <p>NMF decomposes per-fight metrics into concise, interpretable style components used as model features and scouting signals.</p>
+                <div>
+                  <h4 class="mb8">Style Vectors</h4>
+                  <p>Per-fight metrics are summarized into compact "style" vectors (striking, clinch, wrestling, grappling, pace) that are easy to compare.</p>
                 </div>
                 <br />
-                <br />
-                <div class="feature-card">
-                  <h4>Outcome Prediction</h4>
-                  <p>Predictive models are trained on time-held-out splits; SHAP explanations surface the top drivers behind each prediction.</p>
+                <div>
+                  <h4 class="mb8">Predictions</h4>
+                  <p>Models estimate win probabilities from those features. SHAP explanations show which features most influenced each prediction.</p>
                 </div>
+                <br />
+                <p class="muted">Model outputs are probabilistic guidance. Use them together with video review and expert judgement.</p>
               </div>
             <br />
-            <br />
-            <p class="muted mt16">Predictions are probabilistic guidance, not guarantees. Use them alongside video review and domain expertise.</p>
-            <hr class="about-divider" />
-            <br />
-            <br />
-              <div class="about-section card">
+              <div class="card mt20">
                 <div class="card-title">README</div>
                 <pre class="readme-content" style="white-space:pre-wrap; font-size:13px; color:var(--text);">{{ readme_md }}</pre>
             </div>
@@ -866,6 +857,7 @@
       matchup: "STYLE MATCHUP ANALYSIS",
       roster: "FIGHTER ROSTER",
       events: "EVENTS",
+      about: "ABOUT THIS PROJECT",
     };
 
     function showScreen(id) {
