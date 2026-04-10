@@ -2,7 +2,6 @@ from __future__ import annotations
 from pathlib import Path
 import math
 import os
-import csv
 import sys
 from typing import Dict, List, Optional, Tuple
 from fastapi import FastAPI, HTTPException, Request
@@ -31,7 +30,6 @@ templates = Jinja2Templates(directory=BASE_DIR / "templates")
 service = FrontEndService()
 
 _STYLE_MATCHUP_CACHE: Dict[str, object] = {
-    "mtimes": None,
     "heatmap": None,
     "patterns": None,
 }
@@ -44,21 +42,20 @@ def health() -> PlainTextResponse:
 
 @app.get("/", response_class=HTMLResponse)
 def homepage(request: Request) -> HTMLResponse:
-    # Render the landing page with the roster screen active
+    # Render the landing page with the fighter comparison screen active
     fighters    = service.getAllFighters()
-    next_fights = service.getNextFightsWithEvents()
+    next_fights = service.getNextFights()
     last_fights = service.getLastFightsWithEvents()
 
     return templates.TemplateResponse(request, "index.html", {
         "request":      request,
-        "active_screen": "roster",
-        # ── Roster (Fighter.name, Fighter.id, Fighter.fight_ids,
-        #            Fighter.composition → derived fields)
+        "active_screen": "comparison",
+        # Roster (Fighter.name, Fighter.id, Fighter.fight_ids, Fighter.composition → derived fields)
         "fighters":     [_fighter_to_template(f) for f in fighters],
-        # ── Events (API payload normalized in FrontEndService)
+        # Events (API payload normalized in FrontEndService)
         "next_fights":  next_fights,
         "last_fights":  [_event_to_template(info, event) for info, event in last_fights],
-        # ── Null out all comparison / simulation fields
+        # Null out all comparison / simulation fields
         **_empty_comparison(),
         "readme_md": _load_readme_md(),
     })
@@ -69,7 +66,7 @@ def compare(request: Request, red: str = "", blue: str = "") -> HTMLResponse:
     fighter_red  = service.getFighter(red)  if red  else None
     fighter_blue = service.getFighter(blue) if blue else None
     fighters     = service.getAllFighters()
-    next_fights  = service.getNextFightsWithEvents()
+    next_fights  = service.getNextFights()
     last_fights  = service.getLastFightsWithEvents()
 
     composition_red  = _composition_to_dict(fighter_red.composition  if fighter_red  else None)
@@ -120,7 +117,7 @@ def compare(request: Request, red: str = "", blue: str = "") -> HTMLResponse:
 def matchup(request: Request) -> HTMLResponse:
     # Render the style matchup screen
     fighters    = service.getAllFighters()
-    next_fights = service.getNextFightsWithEvents()
+    next_fights = service.getNextFights()
     last_fights = service.getLastFightsWithEvents()
 
     return templates.TemplateResponse(request, "index.html", {
@@ -139,7 +136,7 @@ def matchup(request: Request) -> HTMLResponse:
 def events(request: Request) -> HTMLResponse:
     # Render the events screen with upcoming and past fights
     fighters    = service.getAllFighters()
-    next_fights = service.getNextFightsWithEvents()
+    next_fights = service.getNextFights()
     last_fights = service.getLastFightsWithEvents()
 
     return templates.TemplateResponse(request, "index.html", {
@@ -204,13 +201,13 @@ def _fighter_to_template(fighter: Optional[Fighter]) -> Optional[dict]:
         # Fighter dataclass fields
         "id":        fighter.id,
         "name":      fighter.name,
-        "fight_ids": fighter.fight_ids,           # List[str] — length used as record proxy
+        "fight_ids": fighter.fight_ids, # List[str] — length used as record proxy
         # Derived from FighterComposition
         "archetype":          archetype,
         "primary_styles":     primary_styles,
         "secondary_styles":   secondary_styles,
         "exploitability_score": _exploitability_score(fighter.composition),
-        "primary_style":      archetype,          # used for data-style filter attribute
+        "primary_style":      archetype, # used for data-style filter attribute
     }
 
 def _composition_to_dict(composition: Optional[FighterComposition]) -> Optional[dict]:
@@ -223,7 +220,7 @@ def _composition_to_dict(composition: Optional[FighterComposition]) -> Optional[
         composition.muay_thai,
         composition.wrestling,
         composition.grappling,
-        1.0   # floor to avoid division by zero
+        1.0 # floor to avoid division by zero
     )
     return {
         "striking":  round(composition.boxing     / max_val, 3),
@@ -244,11 +241,11 @@ def _event_to_template(info: EventInfo, event: Optional[Event]=None,) -> dict:
         # Fight-level fields from EventInfo
         "red_fighter":  info.winner_name,
         "blue_fighter": info.loser_name,
-        "red_id":       info.fight_id or "",   # fight_id used as nav key for now
-        "blue_id":      "",                    # EventInfo has no blue fighter_id yet
+        "red_id":       info.fight_id or "", # fight_id used as nav key for now
+        "blue_id":      "", # EventInfo has no blue fighter_id yet
         "weight_class": info.weight_class,
         "method":       info.method   or "—",
-        "round":        info.round,            # Optional[int]
+        "round":        info.round, # Optional[int]
         "time":         info.time     or "—",
         "fight_url":    info.fight_url or None,
     }
@@ -427,56 +424,68 @@ def _build_top_patterns() -> List[dict]:
     return patterns
 
 def _compute_style_matchups() -> Tuple[dict, List[dict]]:
-    # Compute style matchups and top patterns from fight data
+    # Compute style matchups from execution service endpoints
     cache = _STYLE_MATCHUP_CACHE
-    input_paths = [service._events_info_csv, service._fights_csv, service._training_csv]
-    mtimes = tuple(p.stat().st_mtime if p.exists() else 0 for p in input_paths)
-    if cache["mtimes"] == mtimes and cache["heatmap"] and cache["patterns"] is not None:
+    
+    # Check cache
+    if cache["heatmap"] and cache["patterns"] is not None:
         return cache["heatmap"], cache["patterns"]
-
-    style_keys = ["Striking", "Muay Thai", "Wrestling", "Grappling"]
-    style_display = {
-        "Striking": "Striker",
-        "Muay Thai": "Muay Thai",
-        "Wrestling": "Wrestler",
-        "Grappling": "Grappler",
-    }
-    key_index = {k: i for i, k in enumerate(style_keys)}
-
+    
     try:
-        name_to_id = _load_fighter_name_map()
-        style_by_id = _load_style_by_fighter_id()
-
+        # Get all fighters and build name to id and id to style mappings
+        fighters = service.getAllFighters()
+        name_to_id = {_norm_name(f.name): f.id for f in fighters}
+        style_by_id = {f.id: _primary_style_key(f.composition) for f in fighters}
+        
+        # Get all past fights
+        last_fights = service.getLastFights()
+        
+        style_keys = ["Striking", "Muay Thai", "Wrestling", "Grappling"]
+        style_display = {
+            "Striking": "Striker",
+            "Muay Thai": "Muay Thai",
+            "Wrestling": "Wrestler",
+            "Grappling": "Grappler",
+        }
+        key_index = {k: i for i, k in enumerate(style_keys)}
+        
+        # Build win/loss matrices by style
         n = len(style_keys)
         wins = [[0 for _ in range(n)] for _ in range(n)]
         totals = [[0 for _ in range(n)] for _ in range(n)]
-        seen_fights: set = set()
-
-        with service._events_info_csv.open("r", newline="", encoding="utf-8") as csvfile:
-            reader = csv.DictReader(csvfile)
-            for row in reader:
-                fight_id = (row.get("fight_id") or "").strip()
-                if not fight_id or fight_id in seen_fights:
-                    continue
-                seen_fights.add(fight_id)
-                winner_name = (row.get("winner_name") or "").strip()
-                loser_name = (row.get("loser_name") or "").strip()
-                if not winner_name or not loser_name:
-                    continue
-                winner_id = name_to_id.get(_norm_name(winner_name))
-                loser_id = name_to_id.get(_norm_name(loser_name))
-                if not winner_id or not loser_id:
-                    continue
-                winner_style = style_by_id.get(winner_id)
-                loser_style = style_by_id.get(loser_id)
-                if not winner_style or not loser_style:
-                    continue
-                wi = key_index[winner_style]
-                li = key_index[loser_style]
-                totals[wi][li] += 1
-                totals[li][wi] += 1
-                wins[wi][li] += 1
-
+        seen_fights = set()
+        
+        for fight_info in last_fights:
+            fight_id = fight_info.fight_id
+            if not fight_id or fight_id in seen_fights:
+                continue
+            seen_fights.add(fight_id)
+            
+            winner_name = fight_info.winner_name
+            loser_name = fight_info.loser_name
+            if not winner_name or not loser_name:
+                continue
+            
+            # Map names to IDs
+            winner_id = name_to_id.get(_norm_name(winner_name))
+            loser_id = name_to_id.get(_norm_name(loser_name))
+            if not winner_id or not loser_id:
+                continue
+            
+            # Get styles
+            winner_style = style_by_id.get(winner_id)
+            loser_style = style_by_id.get(loser_id)
+            if not winner_style or not loser_style:
+                continue
+            
+            # Update matrices
+            wi = key_index[winner_style]
+            li = key_index[loser_style]
+            totals[wi][li] += 1
+            totals[li][wi] += 1
+            wins[wi][li] += 1
+        
+        # Build heatmap data
         data: List[List[int]] = []
         for i in range(n):
             row: List[int] = []
@@ -487,7 +496,8 @@ def _compute_style_matchups() -> Tuple[dict, List[dict]]:
                 else:
                     row.append(round((wins[i][j] / total) * 100))
             data.append(row)
-
+        
+        # Build top patterns
         patterns: List[dict] = []
         for i in range(n):
             for j in range(n):
@@ -502,33 +512,32 @@ def _compute_style_matchups() -> Tuple[dict, List[dict]]:
                     "win_rate": win_rate,
                     "fight_count": total,
                 })
-
+        
         patterns.sort(key=lambda p: (p["win_rate"], p["fight_count"]), reverse=True)
         top_patterns = patterns[:3]
-
+        
         heatmap = {
             "styles": [style_display[k] for k in style_keys],
             "data": data,
         }
-
-        cache["mtimes"] = mtimes
+        
+        # Cache the results
         cache["heatmap"] = heatmap
         cache["patterns"] = top_patterns
         return heatmap, top_patterns
+        
     except Exception as e:
         print(f"Failed to compute style matchups: {e}")
         fallback_heatmap = {
-            "styles": ["Striker", "Muay Thai", "Wrestler", "Grappler", "Pace"],
+            "styles": ["Striker", "Muay Thai", "Wrestler", "Grappler"],
             "data": [
-                [50, 50, 50, 50, 50],
-                [50, 50, 50, 50, 50],
-                [50, 50, 50, 50, 50],
-                [50, 50, 50, 50, 50],
-                [50, 50, 50, 50, 50],
+                [50, 50, 50, 50],
+                [50, 50, 50, 50],
+                [50, 50, 50, 50],
+                [50, 50, 50, 50],
             ],
         }
         return fallback_heatmap, []
-
 
 def _load_readme_md() -> str:
     try:
@@ -538,35 +547,6 @@ def _load_readme_md() -> str:
     except Exception:
         pass
     return ""
-
-def _load_fighter_name_map() -> Dict[str, str]:
-    # Build a name-to-fighter_id map from fights.csv
-    counts: Dict[str, Dict[str, int]] = {}
-    with service._fights_csv.open("r", newline="", encoding="utf-8") as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            fighter_id = (row.get("fighter_id") or "").strip()
-            fighter_name = (row.get("fighter") or "").strip()
-            if not fighter_id or not fighter_name:
-                continue
-            key = _norm_name(fighter_name)
-            if key not in counts:
-                counts[key] = {}
-            counts[key][fighter_id] = counts[key].get(fighter_id, 0) + 1
-    return {
-        name: max(id_counts, key=id_counts.get)
-        for name, id_counts in counts.items()
-        if id_counts
-    }
-
-def _load_style_by_fighter_id() -> Dict[str, str]:
-    # Map fighter_id to primary style derived from composition
-    compositions = service._compute_fighter_compositions()
-    return {
-        fighter_id: _primary_style_key(comp)
-        for fighter_id, comp in compositions.items()
-        if comp is not None
-    }
 
 def _primary_style_key(c: FighterComposition) -> str:
     # Return the dominant style key for a composition
