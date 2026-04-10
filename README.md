@@ -2,25 +2,41 @@
 
 Group 5 project repo for PSU - AI 894 : Capstone Spring 2026
 
-To run:
-Create and run a virtual environment.
+Local Run Commands
+
+Start a local environment you can use:
+
+    source .venv/bin/activate
+
 In venv:
-cd front-end
-pip install -r requirements.txt
-uvicorn FrontEndResource:app --reload
 
----
+    For UI
 
-Production Site will be hosted on Render:
+    - cd front-end
+    - pip install -r requirements.txt
+    - uvicorn FrontEndResource:app --reload
+    or
+    - python -m uvicorn app:app --reload --port 8000
+
+    For API
+
+    - PYTHONPATH=. uvicorn data.app_render:app --reload --port 8002
+
+<br>
+<hr>
+<br>
+
+**Production Site**
 
 https://ufc-fighter-optimizer.onrender.com/
 
-Right now it is a static webpage, but once Jinja2 is ready, it will be hosted as
-a "Web Service" on render
+The site is hosted as a "Web Service" on Render
 
----
+<br>
+<hr>
+<br>
 
-The API/Services can also be hosted on render.
+**Production API**
 
 The API is live here - Health Check URL
 
@@ -51,9 +67,11 @@ https://ai-894-capstone-group-5.onrender.com/outcome?fighter_a_id=b27a1fcb56a303
 
 Note: The prediction endpoints are served from the same API base when the model artifacts and ML dependencies are available locally or in the deployment.
 
----
+<br>
+<hr>
+<br>
 
-Weekly automation
+**Weekly automation**
 
 What it does: Scrapes UFC stats, runs the cleaning/vector pipeline, retrains the outcome model, and commits updated CSVs/artifacts back to the repo.
 

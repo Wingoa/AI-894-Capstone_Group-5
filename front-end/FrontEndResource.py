@@ -54,6 +54,7 @@ def homepage(request: Request) -> HTMLResponse:
         "last_fights":  [_event_to_template(info, event) for info, event in last_fights],
         # ── Null out all comparison / simulation fields
         **_empty_comparison(),
+        "readme_md": _load_readme_md(),
     })
 
 @app.get("/compare", response_class=HTMLResponse)
@@ -105,6 +106,7 @@ def compare(request: Request, red: str = "", blue: str = "") -> HTMLResponse:
         # Style matchup screen data
         "heatmap_data":  _build_heatmap_data(),
         "top_patterns":  _build_top_patterns(),
+        "readme_md": _load_readme_md(),
     })
 
 
@@ -124,6 +126,7 @@ def matchup(request: Request) -> HTMLResponse:
         "heatmap_data":  _build_heatmap_data(),
         "top_patterns":  _build_top_patterns(),
         **_empty_comparison(),
+        "readme_md": _load_readme_md(),
     })
 
 @app.get("/events", response_class=HTMLResponse)
@@ -142,6 +145,7 @@ def events(request: Request) -> HTMLResponse:
         "heatmap_data":  _build_heatmap_data(),
         "top_patterns":  _build_top_patterns(),
         **_empty_comparison(),
+        "readme_md": _load_readme_md(),
     })
 
 @app.get("/nextFights")
@@ -518,6 +522,16 @@ def _compute_style_matchups() -> Tuple[dict, List[dict]]:
             ],
         }
         return fallback_heatmap, []
+
+
+def _load_readme_md() -> str:
+    try:
+        readme_path = PROJECT_ROOT / "README.md"
+        if readme_path.exists():
+            return readme_path.read_text(encoding="utf-8")
+    except Exception:
+        pass
+    return ""
 
 def _load_fighter_name_map() -> Dict[str, str]:
     # Build a name-to-fighter_id map from fights.csv

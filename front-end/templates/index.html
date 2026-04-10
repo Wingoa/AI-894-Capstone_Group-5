@@ -40,6 +40,9 @@
           data-screen="events">
           <span class="nav-icon">📅</span> Events
         </div>
+					<div class="nav-item {{ 'active' if active_screen == 'about' else '' }}" data-screen="about">
+						<span class="nav-icon">ℹ️</span> About
+					</div>
       </div>
       <div class="sidebar-footer">
         Data: UFCStats.com<br />
@@ -745,6 +748,75 @@
           {% endif %}
         </div>
         {# /screen-events #}
+
+					<!-- SCREEN: ABOUT  -->
+					<div class="screen" id="screen-about" style="display: none">
+						<div>
+              <h2>About UFC Fighter Optimizer</h2>
+              <br />
+              <br />
+              <div class="card">
+                <div style="font-size: 16px;">
+                  <p>UFC Fighter Optimizer is a compact research dashboard that turns public per-fight statistics into reproducible, auditable datasets for rapid analysis.</p>
+                  <br />
+                  <p>
+                    We scrape and normalize event and fight-level metrics, persist them as append-only CSV caches, and derive concise fighter "style" vectors (striking, clinch, wrestling, grappling, pace). These features feed outcome models that estimate win probabilities and produce explanations highlighting the most influential matchup drivers.
+                  </p>
+                  <br />
+                  <p>
+                    This MVP is designed for analysts and coaches to quickly explore matchups, validate model signals against video, and iterate on features. Treat model outputs as probabilistic guidance to inform, not replace, expert judgement.
+                  </p>
+                </div>
+                <br />
+                <br />
+                <hr />
+                <br />
+                <br />
+                <div>
+                <h3>Data Summary</h3>
+                  <div class="stat mt16">
+                    <div class="stat-value">{{ fighters|length if fighters else 0 }}</div>
+                    <div class="stat-label">FIGHTERS</div>
+                  </div>
+                  <br />
+                  <div class="stat">
+                    <div class="stat-value">{{ next_fights|length if next_fights else 0 }}</div>
+                    <div class="stat-label">UPCOMING BOUTS</div>
+                  </div>
+                  <br />
+                  <div class="stat">
+                    <div class="stat-value">{{ last_fights|length if last_fights else 0 }}</div>
+                    <div class="stat-label">HISTORIC BOUTS</div>
+                  </div>
+                </div>
+              </div>
+              <br />
+              <br />
+              <div class="card" style="font-size: 16px;">
+                <div>
+                  <h4 class="mb8">Data</h4>
+                  <p>We collect public, per-fight statistics and save them as append-only CSVs so analyses are reproducible and auditable.</p>
+                </div>
+                <br />
+                <div>
+                  <h4 class="mb8">Style Vectors</h4>
+                  <p>Per-fight metrics are summarized into compact "style" vectors (striking, clinch, wrestling, grappling, pace) that are easy to compare.</p>
+                </div>
+                <br />
+                <div>
+                  <h4 class="mb8">Predictions</h4>
+                  <p>Models estimate win probabilities from those features. SHAP explanations show which features most influenced each prediction.</p>
+                </div>
+                <br />
+                <p class="muted">Model outputs are probabilistic guidance. Use them together with video review and expert judgement.</p>
+              </div>
+            <br />
+              <div class="card mt20">
+                <div class="card-title">README</div>
+                <pre class="readme-content" style="white-space:pre-wrap; font-size:13px; color:var(--text);">{{ readme_md }}</pre>
+            </div>
+          </div>
+        </div>
       </div>
       {# /content #}
     </div>
@@ -785,6 +857,7 @@
       matchup: "STYLE MATCHUP ANALYSIS",
       roster: "FIGHTER ROSTER",
       events: "EVENTS",
+      about: "ABOUT THIS PROJECT",
     };
 
     function showScreen(id) {
