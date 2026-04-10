@@ -7,7 +7,7 @@ import sys
 from typing import Dict, List, Optional, Tuple
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.templating import Jinja2Templates
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -35,6 +35,12 @@ _STYLE_MATCHUP_CACHE: Dict[str, object] = {
     "heatmap": None,
     "patterns": None,
 }
+  
+@app.head("/health")
+@app.get("/health")
+def health() -> PlainTextResponse:
+    return PlainTextResponse("OK", status_code=200)
+
 
 @app.get("/", response_class=HTMLResponse)
 def homepage(request: Request) -> HTMLResponse:

@@ -51,11 +51,18 @@ https://ai-894-capstone-group-5.onrender.com/fights/poirier
 **API Endpoints**
 
 - **GET /meta:** API health and dataset metadata.
+
+- **GET /meta:** API health and dataset metadata.
+- **GET /health** / **HEAD /health:** Lightweight health check for uptime monitors — responds 200 quickly. Use this for uptime pings.
 - **GET /latest/{fighter_id}:** Returns the latest fight vector for a fighter (data service).
 - **GET /fights/{name}:** Returns fights for a fighter by name.
 - **GET /event/next:** Returns the next scheduled event's fights.
 - **GET /style/{fighter_id}:** Returns the fighter style vector (prediction service).
 - **GET /outcome?fighter_a_id={fighter_id}&fighter_b_id={fighter_id}:** Returns win probabilities for a fighter pair (prediction service).
+
+**Front-end health**
+
+- **GET /health** / **HEAD /health:** Front-end lightweight health check (use this to keep the web service awake).
 
 Examples:
 
