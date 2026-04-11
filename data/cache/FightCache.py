@@ -4,6 +4,7 @@ from data_model.FightStatLine import FightStatLine
 import csv
 import os
 from cache.BaseCsvCache import BaseCsvCache
+import pandas as pd
 
 
 class FightCache(BaseCsvCache[str, List[FightStatLine]]):
@@ -17,6 +18,10 @@ class FightCache(BaseCsvCache[str, List[FightStatLine]]):
         "total_str", "td", "td_pct", "sub_att", "rev", "ctrl", "head", "body",
         "leg", "distance", "clinch", "ground",
     ]
+
+    FIGHTER_NAME_MAP = {
+        "patricio pitbull": "Patricio Freire"
+    }
 
     def key_of(self, value: FightStatLine) -> str:
         if not value:
@@ -40,6 +45,14 @@ class FightCache(BaseCsvCache[str, List[FightStatLine]]):
         self.load()
         with self._lock:
             return list(self._data.get(fight_id, []))
+        
+    def get_fighter_id(self, fighter_name: str) -> str:
+        self.load()
+        with self._lock:
+            if fighter_name.lower() in self.FIGHTER_NAME_MAP:
+                fighter_name = self.FIGHTER_NAME_MAP[fighter_name.lower()]
+            rows = self._df.loc[self._df['fighter'] == fighter_name, 'fighter_id']
+            return rows.values[0] if len(rows) > 0 else ""
 
     def _load_from_csv(self, csv_path: str) -> None:
         with open(csv_path, "r", newline="", encoding="utf-8") as f:
@@ -50,12 +63,15 @@ class FightCache(BaseCsvCache[str, List[FightStatLine]]):
             if missing:
                 raise ValueError(f"CSV missing required columns: {sorted(missing)}")
 
+            lines = []
             for row in reader:
                 fight_id = (row.get("fight_id") or "").strip()
                 if not fight_id:
                     continue
                 line = self._row_to_line(row)
+                lines.append(line)
                 self._data.setdefault(fight_id, []).append(line)
+            self._df = pd.DataFrame(lines)
 
     def append_to_csv(self, value: FightStatLine) -> None:
         """

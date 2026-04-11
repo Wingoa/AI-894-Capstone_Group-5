@@ -26,7 +26,7 @@ class FightDataService:
         # Current date
         today = pd.Timestamp(datetime.now().date())
         # Keep only future events
-        future_events = df[df["event_date_parsed"] > today]
+        future_events = df[df["event_date_parsed"] >= today]
         if future_events.empty:
             return {}
         # Get the soonest upcoming event
@@ -42,10 +42,12 @@ class FightDataService:
         for fight in event_info:
             fight["fighter_a"] = fight["winner_name"]
             del fight["winner_name"]
+            fight["fighter_a_id"] = self.fightCache.get_fighter_id(fight["fighter_a"])
             fight["fighter_a_odds"] = self._getOdds(fight["fighter_a"], latest_lines)
 
             fight["fighter_b"] = fight["loser_name"]
             del fight["loser_name"]
+            fight["fighter_b_id"] = self.fightCache.get_fighter_id(fight["fighter_b"])
             fight["fighter_b_odds"] = self._getOdds(fight["fighter_b"], latest_lines)
 
             # Clean up if odds were not offered to one fighter
