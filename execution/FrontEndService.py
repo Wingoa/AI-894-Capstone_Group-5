@@ -5,6 +5,7 @@ from data_model.FightStatLine import FightStatLine
 from data_model.FighterComposition import FighterComposition
 from data_model.Fighter import Fighter
 from data_model.FighterStyle import FighterStyle
+from FighterUtil import POPULAR_FIGHTERS
 
 import requests
 
@@ -34,6 +35,14 @@ class FrontEndService:
         # Unsure this will be efficient or useful
 
         return resp.json()
+    
+    def getPopularFighters(self) -> List[Fighter]:
+        fighters = []
+        for fighter_id in POPULAR_FIGHTERS.keys():
+            fighter = self.getFighter(fighter_id)
+            if fighter != None:
+                fighters.append(fighter)
+        return fighters
     
     def getFighter(self, fighter_id) -> Fighter:
         # Query the data service for the specific fighter info
