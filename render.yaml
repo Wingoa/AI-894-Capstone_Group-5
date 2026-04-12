@@ -11,9 +11,10 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: "3.11.11"
+      - key: EXECUTION_SERVICE_URL
+        value: "https://ai-894-capstone-ufc-api.onrender.com"
       - key: PREDICTION_SERVICE_URL
-        # Use the public API URL
-        value: "https://ai-894-capstone-group-5.onrender.com"
+        value: "https://ai-894-capstone-ufc-api.onrender.com"
 
   - type: web
     name: AI-894-Capstone_UFC_API
@@ -32,6 +33,6 @@ services:
       - key: CORS_ALLOWED_ORIGINS
         value: "*"
       - key: PUBLIC_API_URL
-        value: "https://ai-894-capstone-group-5.onrender.com"
+        value: "https://ai-894-capstone-ufc-api.onrender.com"
       - key: DATA_URL
-        value: "https://ai-894-capstone-group-5.onrender.com"
+        value: "https://ai-894-capstone-ufc-api.onrender.com"
