@@ -11,6 +11,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import HTTPException
 from fastapi.responses import PlainTextResponse
 
 from FightDataResource import FightDataResource
@@ -42,43 +43,60 @@ refresh_service = RefreshDataService(fight_cache, event_cache, event_info_cache,
 resource = FightDataResource(fight_service, refresh_service)
 app = resource.app
 
-# Register prediction endpoints on the same app so /outcome and /style are available
-try:
-    from PredictionResource import PredictionResource
-    from style.StylePredictor import StylePredictor
-    from style.StylePredictionService import StylePredictionService
-    from fight.OutcomePredictor import OutcomePredictor
-    from fight.OutcomePredictionService import OutcomePredictionService
-    from client.DataApiClient import DataApiClient
+# Register prediction endpoints with lazy model loading to reduce startup memory.
+_style_service = None
+_outcome_service = None
+_prediction_init_error = None
 
-    # Build services with artifacts/CSV paths relative to the repo
-    PORT = os.getenv("PORT", "8002")
-    data_url = f"http://127.0.0.1:{PORT}"
 
-    fight_style_csv = str(REPO_ROOT / "resources" / "fighter_vectors" / "fighter_style_predictions.csv")
+def _get_prediction_services():
+    global _style_service, _outcome_service, _prediction_init_error
 
-    style_predictor = StylePredictor()
-    style_service = StylePredictionService(style_predictor, fight_style_csv)
+    if _prediction_init_error is not None:
+        raise RuntimeError(_prediction_init_error)
 
-    outcome_predictor = OutcomePredictor()
-    data_api_client = DataApiClient(data_url)
-    outcome_service = OutcomePredictionService(outcome_predictor, style_service, data_api_client)
+    if _style_service is not None and _outcome_service is not None:
+        return _style_service, _outcome_service
 
-    # Instantiate PredictionResource using the existing app so routes are mounted at root
-    PredictionResource(style_service, outcome_service, app=app)
-except Exception as e:
-    print(f"Warning: could not register PredictionResource routes: {e}")
-    # If prediction services couldn't be instantiated (missing ML deps or artifacts),
-    # register stub endpoints so the routes exist and return a clear 503 error.
-    from fastapi import HTTPException
+    try:
+        from style.StylePredictor import StylePredictor
+        from style.StylePredictionService import StylePredictionService
+        from fight.OutcomePredictor import OutcomePredictor
+        from fight.OutcomePredictionService import OutcomePredictionService
+        from client.DataApiClient import DataApiClient
 
-    @app.get("/style/{fighter_id}")
-    def _style_unavailable(fighter_id: str):
-        raise HTTPException(status_code=503, detail="Prediction model unavailable: missing dependencies or artifacts")
+        port = os.getenv("PORT", "8002")
+        data_url = f"http://127.0.0.1:{port}"
+        fight_style_csv = str(REPO_ROOT / "resources" / "fighter_vectors" / "fighter_style_predictions.csv")
 
-    @app.get("/outcome")
-    def _outcome_unavailable(fighter_a_id: str, fighter_b_id: str):
-        raise HTTPException(status_code=503, detail="Prediction model unavailable: missing dependencies or artifacts")
+        style_predictor = StylePredictor()
+        _style_service = StylePredictionService(style_predictor, fight_style_csv)
+
+        outcome_predictor = OutcomePredictor()
+        data_api_client = DataApiClient(data_url)
+        _outcome_service = OutcomePredictionService(outcome_predictor, _style_service, data_api_client)
+        return _style_service, _outcome_service
+    except Exception as e:
+        _prediction_init_error = str(e)
+        raise
+
+
+@app.get("/style/{fighter_id}")
+def get_style_prediction(fighter_id: str):
+    try:
+        style_service, _ = _get_prediction_services()
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Prediction model unavailable: {e}")
+    return style_service.getFighterStyle(fighter_id)
+
+
+@app.get("/outcome")
+def get_outcome_prediction(fighter_a_id: str, fighter_b_id: str):
+    try:
+        _, outcome_service = _get_prediction_services()
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Prediction model unavailable: {e}")
+    return outcome_service.predictFightFromLatest(fighter_a_id, fighter_b_id)
 
 
 origins_env = os.getenv("CORS_ALLOWED_ORIGINS", "")
