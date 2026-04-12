@@ -10,6 +10,8 @@ class FighterStyle:
     boxing: float
     wrestling: float
     grappling: float
+    pace: float
+    stats: dict
 
     def __iter__(self) -> Iterator[str]:
         yield self.fighter_id
@@ -18,3 +20,5 @@ class FighterStyle:
         yield self.boxing
         yield self.wrestling
         yield self.grappling
+        yield self.pace
+        yield self.stats

@@ -28,7 +28,7 @@ def main():
     dataApiClient: DataApiClient = DataApiClient(DATA_URL)
 
     stylePredictor: StylePredictor = StylePredictor()
-    styleService: StylePredictionService = StylePredictionService(stylePredictor, fight_style_csv_path)
+    styleService: StylePredictionService = StylePredictionService(stylePredictor, dataApiClient, fight_style_csv_path)
     print("StyleService successfully instantiated")
 
     outcomePredictor: OutcomePredictor = OutcomePredictor()

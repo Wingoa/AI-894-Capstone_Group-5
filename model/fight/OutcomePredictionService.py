@@ -25,9 +25,11 @@ class OutcomePredictionService:
             "fighter_a": fighterVectorA["fighter"],
             "fighter_a_id": fighterVectorA["fighter_id"],
             "fighter_a_prob": predictionA,
+            "fighter_a_n_fights_norm": fighterVectorA["n_fights_norm"],
             "fighter_b": fighterVectorB["fighter"],
             "fighter_b_id": fighterVectorB["fighter_id"],
-            "fighter_b_prob": predictionB
+            "fighter_b_prob": predictionB,
+            "fighter_b_n_fights_norm": fighterVectorB["n_fights_norm"],
         }
 
         return prediction

@@ -2,6 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from threading import RLock
 from typing import Dict, Generic, TypeVar, Optional, List
+import pandas as pd
 
 K = TypeVar("K")
 T = TypeVar("T")
@@ -21,6 +22,7 @@ class BaseCsvCache(ABC, Generic[K, T]):
         self._lock = RLock()
         self._loaded = False
         self._data: Dict[K, T] = {}
+        self._df: pd.DataFrame = pd.DataFrame()
 
     def load(self) -> None:
         with self._lock:

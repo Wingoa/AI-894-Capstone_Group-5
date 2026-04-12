@@ -5,6 +5,7 @@ from data_model.FightStatLine import FightStatLine
 from data_model.FighterComposition import FighterComposition
 from data_model.Fighter import Fighter
 from data_model.FighterStyle import FighterStyle
+from FighterUtil import POPULAR_FIGHTERS
 
 import requests
 
@@ -35,6 +36,14 @@ class FrontEndService:
 
         return resp.json()
     
+    def getPopularFighters(self) -> List[Fighter]:
+        fighters = []
+        for fighter_id in POPULAR_FIGHTERS.keys():
+            fighter = self.getFighter(fighter_id)
+            if fighter != None:
+                fighters.append(fighter)
+        return fighters
+    
     def getFighter(self, fighter_id) -> Fighter:
         # Query the data service for the specific fighter info
         fighter_metadata_resp = requests.get(f"{self.data_url}/fighter/{fighter_id}")
@@ -44,13 +53,13 @@ class FrontEndService:
         return Fighter(data["name"], fighter_id, self._getFighterComposition(fighter_style), data["fight_ids"])
     
     def _getFighterComposition(self, fighter_style: FighterStyle) -> FighterComposition:
-        return FighterComposition(None, fighter_style.boxing, fighter_style.muayThai, fighter_style.wrestling, fighter_style.grappling)
+        return FighterComposition(fighter_style.pace, fighter_style.boxing, fighter_style.muayThai, fighter_style.wrestling, fighter_style.grappling, fighter_style.stats)
 
     def getFighterStyle(self, fighter_id) -> FighterStyle:
         resp = requests.get(f"{self.model_url}/style/{fighter_id}", timeout=10)
         resp.raise_for_status()
         data = resp.json()
-        return FighterStyle(data["fighter_id"], data["fighter"], float(data["muayThai"]), float(data["boxing"]), float(data["wrestling"]), float(data["grappling"]))
+        return FighterStyle(data["fighter_id"], data["fighter"], float(data["muayThai"]), float(data["boxing"]), float(data["wrestling"]), float(data["grappling"]), float(data["pace"]), data["stats"])
     
     def refreshData(self):
         # On a browser refresh, this should be called to check if any

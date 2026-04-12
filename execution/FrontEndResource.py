@@ -42,6 +42,10 @@ class FrontEndResource:
         @self.app.get("/fighter/all")
         def getAllFighters() -> List[Fighter]:
             return self.front_end_service.getAllFighters()
+        
+        @self.app.get("/fighter/popular")
+        def getPopularFighters() -> List[Fighter]:
+            return self.front_end_service.getPopularFighters()
 
         @self.app.get("/fighter/{fighter_id}")
         def getFighter(fighter_id: str) -> Fighter:
