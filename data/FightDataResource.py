@@ -10,7 +10,7 @@ import datetime
 
 class FightDataResource:
 
-    def __init__(self, fightDataService: FightDataService, refreshDataService: RefreshDataService, enable_background_refresh: bool = True):
+    def __init__(self, fightDataService: FightDataService, refreshDataService: RefreshDataService, enable_background_refresh: bool = False):
         self.fightDataService = fightDataService
         self.refreshDataService = refreshDataService
 
@@ -36,11 +36,11 @@ class FightDataResource:
         uvicorn.run(
             self.app,
             host="0.0.0.0",
-            port=8000,
+            port=8002,
             reload=False,
             workers=1
         )
-        print(f"Starting FightDataResource on 0.0.0.0:8000")
+        print(f"Starting FightDataResource on 0.0.0.0:8002")
 
     def _registerEndpoints(self):
 
@@ -65,6 +65,7 @@ class FightDataResource:
             return data.iloc[0].to_dict()
         
         @self.app.get("/fighter")
+        @self.app.get("/fighter/all")
         def get_all_fighters():
             return self.fightDataService.getAllFighters()
         

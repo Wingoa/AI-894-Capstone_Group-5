@@ -72,8 +72,8 @@ def run_style_vectors():
         subprocess.check_call([
             sys.executable,
             "-c",
-            "from FightVectorCleaner import generateOutcomeVectorTrainingData; generateOutcomeVectorTrainingData()",
-        ], cwd=str(REPO_ROOT / "model" / "style"))
+            "from style.FightVectorCleaner import generateOutcomeVectorTrainingData; generateOutcomeVectorTrainingData()",
+        ], cwd=str(REPO_ROOT / "model"))
         logging.info("Outcome vectors generated")
     except subprocess.CalledProcessError:
         logging.exception("Outcome vector generation failed")

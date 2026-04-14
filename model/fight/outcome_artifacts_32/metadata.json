@@ -57,5 +57,5 @@
     "dropout": 0.2,
     "random_state": 42
   },
-  "best_test_loss": 0.6575016695664698
+  "best_test_loss": 0.5691151558524467
 }

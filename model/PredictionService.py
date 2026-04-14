@@ -17,7 +17,7 @@ from datetime import datetime
 
 import sys
 
-DATA_URL = os.getenv("DATA_URL", os.getenv("DATA_API_URL", "http://localhost:8000"))
+DATA_URL = os.getenv("DATA_URL", os.getenv("DATA_API_URL", "http://localhost:8002"))
 scheduler: BackgroundScheduler = None
 fight_style_csv_path: str = "../resources/fighter_vectors/fighter_style_predictions.csv" 
 

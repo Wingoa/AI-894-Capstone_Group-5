@@ -1,4 +1,6 @@
 import pandas as pd
+import os
+from pathlib import Path
 from dataclasses import asdict, is_dataclass
 from datetime import datetime
 
@@ -78,10 +80,6 @@ class FightDataService:
         return odds.iloc[0] if not odds.empty else -1
 
     def get_fights_by_fighter(self, name: str):
-        """
-        Returns all fights where the fighter name contains the given string.
-        Case-insensitive.
-        """
         name_lower = name.lower()
 
         fights = self.fightCache.all()
@@ -151,3 +149,93 @@ class FightDataService:
             "fight_ids": fight_ids,
             "fights": fights
         }
+
+    def getAllFighters(self) -> list:
+        # Flatten fight cache into a DataFrame of lines
+        df = pd.DataFrame([
+            asdict(f) if is_dataclass(f) else f
+            for sublist in self.fightCache.all()
+            for f in sublist
+        ])
+
+        if df.empty:
+            return []
+
+        # Attempt to load pre-computed style predictions and fight vectors
+        repo_root = Path(__file__).resolve().parents[1]
+        fv_dir = repo_root / "resources" / "fighter_vectors"
+        style_map = {}
+        pace_map = {}
+        try:
+            styles_path = fv_dir / "fighter_style_predictions.csv"
+            if styles_path.exists():
+                styles_df = pd.read_csv(styles_path)
+                for _, r in styles_df.iterrows():
+                    style_map[str(r["fighter_id"])] = {
+                        "muay_thai": float(r.get("MuayThai", 0.0)),
+                        "boxing": float(r.get("Boxing", 0.0)),
+                        "wrestling": float(r.get("Wrestling", 0.0)),
+                        "grappling": float(r.get("Grappling", 0.0)),
+                    }
+        except Exception:
+            style_map = {}
+
+        try:
+            vectors_path = fv_dir / "fighter_vectors_all.csv"
+            if vectors_path.exists():
+                vec_df = pd.read_csv(vectors_path)
+                for _, r in vec_df.iterrows():
+                    fid = str(r.get("fighter_id"))
+                    try:
+                        sig = float(r.get("sig_str_per_min", 0.0))
+                    except Exception:
+                        sig = 0.0
+                    try:
+                        td = float(r.get("td_att_per_min", 0.0))
+                    except Exception:
+                        td = 0.0
+                    pace_map[fid] = sig + td
+        except Exception:
+            pace_map = {}
+
+        # Group by fighter_id and collect fight ids
+        fighters = []
+        grouped = df.groupby("fighter_id")
+        for fighter_id, group in grouped:
+            # use the first seen name as canonical
+            name = group.iloc[0]["fighter"]
+            fight_ids = group["fight_id"].tolist()
+            # Populate composition from style_map + pace_map when available
+            styles = style_map.get(str(fighter_id), None)
+            pace = pace_map.get(str(fighter_id), 0.0)
+            # Scale pace into a 0-1-ish range to avoid dominating style scores
+            try:
+                raw_pace = float(pace)
+            except Exception:
+                raw_pace = 0.0
+            pace_scaled = raw_pace / (10.0 + raw_pace) if raw_pace > 0 else 0.0
+
+            if styles:
+                composition = {
+                    "pace": float(pace_scaled),
+                    "boxing": float(styles.get("boxing", 0.0)),
+                    "muay_thai": float(styles.get("muay_thai", 0.0)),
+                    "wrestling": float(styles.get("wrestling", 0.0)),
+                    "grappling": float(styles.get("grappling", 0.0)),
+                }
+            else:
+                composition = {
+                    "pace": float(pace_scaled),
+                    "boxing": 0.0,
+                    "muay_thai": 0.0,
+                    "wrestling": 0.0,
+                    "grappling": 0.0,
+                }
+
+            fighters.append({
+                "name": name,
+                "id": fighter_id,
+                "composition": composition,
+                "fight_ids": fight_ids,
+            })
+        return fighters
