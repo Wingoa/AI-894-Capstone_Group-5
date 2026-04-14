@@ -60,9 +60,11 @@ feature_cols = [
 event_data = None
 event_info_data = None
 def loadData():
-    event_data = pd.read_csv(EVENT_CSV)
+    # Populate module-level variables and be tolerant of occasional malformed lines in CSVs
+    global event_data, event_info_data
+    event_data = pd.read_csv(EVENT_CSV, on_bad_lines='skip', engine='python')
     event_data["event_date"] = pd.to_datetime(event_data["event_date"])
-    event_info_data = pd.read_csv(EVENT_INFO_CSV)
+    event_info_data = pd.read_csv(EVENT_INFO_CSV, on_bad_lines='skip', engine='python')
 
 def addDayToDate(date_str: str):
     # Convert string → datetime
@@ -75,19 +77,25 @@ def addDayToDate(date_str: str):
     return new_date.strftime("%Y-%m-%d")
 
 def getEventIdByDate(date: str):
-    return event_data.loc[event_data["event_date"] == date, "event_id"].iloc[0]
+    date_parsed = pd.to_datetime(date)
+    matches = event_data.loc[event_data["event_date"] == date_parsed, "event_id"]
+    if matches.empty:
+        raise ValueError(f"No event found for date {date}")
+    return matches.iloc[0]
 
 def getFightId(fighter: str, date: str):
     event_id = getEventIdByDate(date)
-    fight_id = event_info_data.loc[
+    matches = event_info_data.loc[
         (event_info_data["event_id"] == event_id) &
         (
             (event_info_data["winner_name"] == fighter) |
             (event_info_data["loser_name"] == fighter)
         ),
         "fight_id"
-    ].iloc[0]
-    return fight_id
+    ]
+    if matches.empty:
+        raise ValueError(f"No fight_id found for fighter {fighter} on event {event_id} ({date})")
+    return matches.iloc[0]
 
 def calculatePace(sig_strike_per_min: float, td_att_per_min: float):
     return sig_strike_per_min + td_att_per_min

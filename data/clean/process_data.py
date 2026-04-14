@@ -2,9 +2,11 @@ import pandas as pd
 import os
 import re
 from typing import Tuple, Optional
+from pathlib import Path
 
-DATA_DIR = "../resources/initial_data/"
-OUTPUT_DIR = "../resources/clean_data/"
+REPO_ROOT = Path(__file__).resolve().parents[2]
+DATA_DIR = str(REPO_ROOT / "resources" / "initial_data")
+OUTPUT_DIR = str(REPO_ROOT / "resources" / "clean_data")
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
@@ -146,9 +148,10 @@ def merge_with_event_info(fights_clean: pd.DataFrame, events_info: pd.DataFrame,
 
 def main():
     print("Loading raw data...")
-    fights = pd.read_csv(os.path.join(DATA_DIR, "fights.csv"))
-    events = pd.read_csv(os.path.join(DATA_DIR, "events.csv"))
-    events_info = pd.read_csv(os.path.join(DATA_DIR, "events-info.csv"))
+    # Allow skipping malformed lines so pipeline can continue when CSVs contain occasional corruption
+    fights = pd.read_csv(os.path.join(DATA_DIR, "fights.csv"), on_bad_lines='skip', engine='python')
+    events = pd.read_csv(os.path.join(DATA_DIR, "events.csv"), on_bad_lines='skip', engine='python')
+    events_info = pd.read_csv(os.path.join(DATA_DIR, "events-info.csv"), on_bad_lines='skip', engine='python')
     
     print(f"Loaded: {len(fights)} fights, {len(events)} events, {len(events_info)} event-info records")
     

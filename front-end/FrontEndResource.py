@@ -14,7 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = BASE_DIR.parent
 PREDICTION_SERVICE_URL = os.getenv("PREDICTION_SERVICE_URL", "http://localhost:8002").rstrip("/")
 
-# Allow importing project modules when running from front-end directory; this way, we can reuse data models and services without needing to duplicate code or set up a separate package
+# Allow importing project modules when running from front-end directory
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -208,8 +208,10 @@ def _fighter_to_template(fighter: Optional[Fighter]) -> Optional[dict]:
     if fighter is None:
         return None
 
+    # Normalize composition and derive labels/score from the normalized values
+    comp_dict = _composition_to_dict(fighter.composition)
     archetype, primary_styles, secondary_styles = _derive_style_labels(
-        fighter.composition
+        comp_dict
     )
 
     return {
@@ -221,7 +223,9 @@ def _fighter_to_template(fighter: Optional[Fighter]) -> Optional[dict]:
         "archetype":          archetype,
         "primary_styles":     primary_styles,
         "secondary_styles":   secondary_styles,
-        "exploitability_score": _exploitability_score(fighter.composition),
+        "exploitability_score": _exploitability_score(comp_dict),
+        # expose normalized composition for UI (keys: striking, muay_thai, wrestling, grappling, pace)
+        "composition": comp_dict,
         "primary_style":      archetype, # used for data-style filter attribute
     }
 
@@ -229,20 +233,30 @@ def _composition_to_dict(composition: Optional[FighterComposition]) -> Optional[
     # Normalize FighterComposition into a dict for charts and JSON
     if composition is None:
         return None
-    max_val = max(
-        composition.pace,
-        composition.boxing,
-        composition.muay_thai,
-        composition.wrestling,
-        composition.grappling,
-        1.0 # floor to avoid division by zero
-    )
+    # Support both dicts and FighterComposition objects
+    try:
+        if isinstance(composition, dict):
+            boxing = float(composition.get("boxing", 0.0))
+            muay = float(composition.get("muay_thai", 0.0))
+            wrestling = float(composition.get("wrestling", 0.0))
+            grappling = float(composition.get("grappling", 0.0))
+            pace = float(composition.get("pace", 0.0))
+        else:
+            boxing = float(getattr(composition, "boxing", 0.0))
+            muay = float(getattr(composition, "muay_thai", 0.0))
+            wrestling = float(getattr(composition, "wrestling", 0.0))
+            grappling = float(getattr(composition, "grappling", 0.0))
+            pace = float(getattr(composition, "pace", 0.0))
+    except Exception:
+        boxing = muay = wrestling = grappling = pace = 0.0
+
+    max_val = max(boxing, muay, wrestling, grappling, pace, 1.0)
     return {
-        "striking":  round(composition.boxing     / max_val, 3),
-        "muay_thai": round(composition.muay_thai  / max_val, 3),
-        "wrestling": round(composition.wrestling  / max_val, 3),
-        "grappling": round(composition.grappling  / max_val, 3),
-        "pace":      round(composition.pace       / max_val, 3),
+        "striking":  round(boxing  / max_val, 3),
+        "muay_thai": round(muay    / max_val, 3),
+        "wrestling": round(wrestling / max_val, 3),
+        "grappling": round(grappling / max_val, 3),
+        "pace":      round(pace    / max_val, 3),
     }
 
 def _event_to_template(info: EventInfo, event: Optional[Event]=None,) -> dict:
@@ -284,12 +298,29 @@ def _empty_comparison() -> dict:
 
 def _derive_style_labels(c: FighterComposition,) -> Tuple[str, List[str], List[str]]:
     # Derive archetype and style labels from FighterComposition scores
+    # Accept either dict or FighterComposition
+    try:
+        if isinstance(c, dict):
+            boxing = float(c.get("boxing", 0.0))
+            muay = float(c.get("muay_thai", 0.0))
+            wrestling = float(c.get("wrestling", 0.0))
+            grappling = float(c.get("grappling", 0.0))
+            pace = float(c.get("pace", 0.0))
+        else:
+            boxing = float(getattr(c, "boxing", 0.0))
+            muay = float(getattr(c, "muay_thai", 0.0))
+            wrestling = float(getattr(c, "wrestling", 0.0))
+            grappling = float(getattr(c, "grappling", 0.0))
+            pace = float(getattr(c, "pace", 0.0))
+    except Exception:
+        boxing = muay = wrestling = grappling = pace = 0.0
+
     scores: Dict[str, float] = {
-        "Striking":  c.boxing,
-        "Muay Thai": c.muay_thai,
-        "Wrestling": c.wrestling,
-        "Grappling": c.grappling,
-        "Pace":      c.pace,
+        "Striking":  boxing,
+        "Muay Thai": muay,
+        "Wrestling": wrestling,
+        "Grappling": grappling,
+        "Pace":      pace,
     }
     max_val   = max(scores.values(), default=1.0) or 1.0
     top_key   = max(scores, key=lambda k: scores[k])
@@ -309,12 +340,37 @@ def _derive_style_labels(c: FighterComposition,) -> Tuple[str, List[str], List[s
 
 def _exploitability_score(c: FighterComposition) -> int:
     # Estimate how one-dimensional a fighter is on a 0–99 scale
-    scores = [c.boxing, c.muay_thai, c.wrestling, c.grappling, c.pace]
-    max_val = max(scores, default=1.0) or 1.0
-    avg_val = (sum(scores) / len(scores)) if scores else 1.0
+    try:
+        if c is None:
+            return 0
+        # Extract style scores (ignore pace for exploitability computation)
+        if isinstance(c, dict):
+            style_scores = [
+                float(c.get("boxing", 0.0)),
+                float(c.get("muay_thai", 0.0)),
+                float(c.get("wrestling", 0.0)),
+                float(c.get("grappling", 0.0)),
+            ]
+        else:
+            style_scores = [
+                float(getattr(c, "boxing", 0.0)),
+                float(getattr(c, "muay_thai", 0.0)),
+                float(getattr(c, "wrestling", 0.0)),
+                float(getattr(c, "grappling", 0.0)),
+            ]
+    except Exception:
+        return 0
+
+    # Consider only non-zero style components to avoid inflating score when styles are missing
+    non_zero = [s for s in style_scores if s > 0]
+    if not non_zero:
+        return 0
+    max_val = max(non_zero)
+    avg_val = sum(non_zero) / len(non_zero)
     if avg_val == 0:
         return 0
-    return min(99, int((max_val / avg_val) * 20))
+    score = int((max_val / avg_val) * 20)
+    return min(99, score)
 
 # SIMULATION HELPERS
 def _sim_defaults(fighter: Optional[Fighter]) -> dict:
