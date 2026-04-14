@@ -29,8 +29,9 @@ class FrontEndService:
     def getLastFights(self) -> List[EventInfo]:
         # Return completed fights (past events with fight_id present)
         try: 
-            resp = requests.get(f"{self._execution_api_url}/lastFights", timeout=10)
-            resp.raise_for_status()
+            resp = self._get_with_fallback(["/latest", "/lastFights"], timeout=10)
+            if resp is None:
+                return []
             
             # Parse JSON response into EventInfo objects
             last_fights_data = resp.json()
@@ -84,8 +85,8 @@ class FrontEndService:
     def getNextFights(self) -> Optional[List[dict]]:
         # Call the data API /event/next endpoint and normalize the response
         try:
-            resp = requests.get(f"{self._execution_api_url}/nextFights", timeout=2.5)
-            if resp.status_code != 200:
+            resp = self._get_with_fallback(["/event/next", "/nextFights"], timeout=2.5)
+            if resp is None:
                 return None
             payload = resp.json()
         except Exception:
@@ -131,8 +132,9 @@ class FrontEndService:
     
     def getAllFighters(self) -> List[Fighter]:
         try:
-            resp = requests.get(f"{self._execution_api_url}/fighter/all", timeout=10)
-            resp.raise_for_status()
+            resp = self._get_with_fallback(["/fighter", "/fighter/all"], timeout=10)
+            if resp is None:
+                return []
             fighters_data = resp.json()
             
             if not fighters_data:
@@ -181,6 +183,16 @@ class FrontEndService:
             )
         except Exception:
             return None
+
+    def _get_with_fallback(self, paths: List[str], timeout: float) -> Optional[requests.Response]:
+        for path in paths:
+            try:
+                resp = requests.get(f"{self._execution_api_url}{path}", timeout=timeout)
+                if resp.status_code == 200:
+                    return resp
+            except Exception:
+                continue
+        return None
 
     def getFighterStyle(self, fighter_id: str) -> FighterStyle:
         # Query the Prediction Service for fighter style weights.
