@@ -78,10 +78,6 @@ class FightDataService:
         return odds.iloc[0] if not odds.empty else -1
 
     def get_fights_by_fighter(self, name: str):
-        """
-        Returns all fights where the fighter name contains the given string.
-        Case-insensitive.
-        """
         name_lower = name.lower()
 
         fights = self.fightCache.all()
@@ -151,3 +147,36 @@ class FightDataService:
             "fight_ids": fight_ids,
             "fights": fights
         }
+
+    def getAllFighters(self) -> list:
+        # Flatten fight cache into a DataFrame of lines
+        df = pd.DataFrame([
+            asdict(f) if is_dataclass(f) else f
+            for sublist in self.fightCache.all()
+            for f in sublist
+        ])
+
+        if df.empty:
+            return []
+
+        # Group by fighter_id and collect fight ids
+        fighters = []
+        grouped = df.groupby("fighter_id")
+        for fighter_id, group in grouped:
+            # use the first seen name as canonical
+            name = group.iloc[0]["fighter"]
+            fight_ids = group["fight_id"].tolist()
+            fighters.append({
+                "name": name,
+                "id": fighter_id,
+                "composition": {
+                    "pace": 0.0,
+                    "boxing": 0.0,
+                    "muay_thai": 0.0,
+                    "wrestling": 0.0,
+                    "grappling": 0.0,
+                },
+                "fight_ids": fight_ids,
+            })
+
+        return fighters

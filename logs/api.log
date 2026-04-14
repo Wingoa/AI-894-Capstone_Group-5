@@ -1,0 +1,415 @@
+INFO:     Will watch for changes in these directories: ['/Users/Austin/Repos/AI-894-Capstone_Group-5']
+INFO:     Uvicorn running on http://127.0.0.1:8002 (Press CTRL+C to quit)
+INFO:     Started reloader process [7662] using WatchFiles
+INFO:     Started server process [7664]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+API listening on 0.0.0.0:8002 (set PUBLIC_API_URL to show the external URL)
+INFO:     127.0.0.1:51310 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51311 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     Will watch for changes in these directories: ['/Users/Austin/Repos/AI-894-Capstone_Group-5']
+INFO:     Uvicorn running on http://127.0.0.1:8002 (Press CTRL+C to quit)
+INFO:     Started reloader process [7842] using WatchFiles
+INFO:     Started server process [7848]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+API listening on 0.0.0.0:8002 (set PUBLIC_API_URL to show the external URL)
+INFO:     127.0.0.1:51331 - "GET /fighter HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'c3ac8d0da7b05772', 'event_name': 'UFC Fight Night: Burns vs. Malott', 'event_date': 'April 18, 2026', 'event_location': 'Winnipeg, Manitoba, Canada', 'event_url': 'http://ufcstats.com/event-details/c3ac8d0da7b05772'}
+http://ufcstats.com/event-details/c3ac8d0da7b05772
+Scraped 13 fights
+Found 26 markets for upcoming UFC fights
+Latest odds from Kalshi:                    kalshi_ticker               fighter  ... no_money   timestamp
+0   KXUFCFIGHT-26APR18BURMAL-MAL           Mike Malott  ...     0.27  2026-04-14
+1   KXUFCFIGHT-26APR18BURMAL-BUR         Gilbert Burns  ...     0.75  2026-04-14
+2   KXUFCFIGHT-26APR18JOUPHI-PHI        Kyler Phillips  ...     0.57  2026-04-14
+3   KXUFCFIGHT-26APR18JOUPHI-JOU      Charles Jourdain  ...     0.42  2026-04-14
+4   KXUFCFIGHT-26APR18JASSIL-SIL          Karine Silva  ...     0.76  2026-04-14
+5   KXUFCFIGHT-26APR18JASSIL-JAS  Jasmine Jasudavicius  ...     0.25  2026-04-14
+6   KXUFCFIGHT-26APR18LEBVAL-VAL       Robert Valentin  ...     0.44  2026-04-14
+7   KXUFCFIGHT-26APR18LEBVAL-LEB        Julien Leblanc  ...     0.57  2026-04-14
+8   KXUFCFIGHT-26APR18BOSSAR-SAR        Gokhan Saricam  ...     0.41  2026-04-14
+9   KXUFCFIGHT-26APR18BOSSAR-BOS          Tanner Boser  ...     0.60  2026-04-14
+10  KXUFCFIGHT-26APR18RAPNAS-RAP          Mitch Raposo  ...     0.65  2026-04-14
+11  KXUFCFIGHT-26APR18RAPNAS-NAS      Allan Nascimento  ...     0.35  2026-04-14
+12  KXUFCFIGHT-26APR18NALHER-NAL          Mandel Nallo  ...     0.39  2026-04-14
+13  KXUFCFIGHT-26APR18NALHER-HER           Jai Herbert  ...     0.61  2026-04-14
+14  KXUFCFIGHT-26APR18CROZHE-ZHE   Darya Zheleznyakova  ...     0.60  2026-04-14
+15  KXUFCFIGHT-26APR18CROZHE-CRO        Melissa Croden  ...     0.42  2026-04-14
+16  KXUFCFIGHT-26APR18CASVOL-VOL         Mark Vologdin  ...     0.53  2026-04-14
+17  KXUFCFIGHT-26APR18CASVOL-CAS        John Castaneda  ...     0.49  2026-04-14
+18  KXUFCFIGHT-26APR18BUZBAR-BUZ        Dennis Buzukja  ...     0.79  2026-04-14
+19  KXUFCFIGHT-26APR18BUZBAR-BAR        Marcio Barbosa  ...     0.22  2026-04-14
+20  KXUFCFIGHT-26APR18ALDHOR-HOR       Jamey-Lyn Horth  ...     0.40  2026-04-14
+21  KXUFCFIGHT-26APR18ALDHOR-ALD            Jj Aldrich  ...     0.61  2026-04-14
+22  KXUFCFIGHT-26APR18MOIYOU-YOU           Gauge Young  ...     0.46  2026-04-14
+23  KXUFCFIGHT-26APR18MOIYOU-MOI         Thiago Moises  ...     0.56  2026-04-14
+24  KXUFCFIGHT-26APR18SIRYAN-YAN           John Yannis  ...     0.72  2026-04-14
+25  KXUFCFIGHT-26APR18SIRYAN-SIR           Jamie Siraj  ...     0.30  2026-04-14
+
+[26 rows x 6 columns]
+Could not find odds from fighter Daria Zhelezniakova, attempting to match last name Zhelezniakova
+last name: Zhelezniakova, odds: Series([], Name: yes_money, dtype: float64)
+Could not find odds from fighter JJ Aldrich, attempting to match last name Aldrich
+last name: Aldrich, odds: 21    0.4
+Name: yes_money, dtype: float64
+INFO:     127.0.0.1:51332 - "GET /event/next HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'f3eb664db7fb1df3', 'event_name': 'UFC 327: Prochazka vs. Ulberg', 'event_date': 'April 11, 2026', 'event_location': 'Miami, Florida, USA', 'event_url': 'http://ufcstats.com/event-details/f3eb664db7fb1df3'}
+http://ufcstats.com/event-details/f3eb664db7fb1df3
+Scraped 12 fights
+INFO:     127.0.0.1:51335 - "GET /latest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51337 - "GET /fighter HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'f3eb664db7fb1df3', 'event_name': 'UFC 327: Prochazka vs. Ulberg', 'event_date': 'April 11, 2026', 'event_location': 'Miami, Florida, USA', 'event_url': 'http://ufcstats.com/event-details/f3eb664db7fb1df3'}
+http://ufcstats.com/event-details/f3eb664db7fb1df3
+Scraped 12 fights
+INFO:     127.0.0.1:51338 - "GET /latest HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'f3eb664db7fb1df3', 'event_name': 'UFC 327: Prochazka vs. Ulberg', 'event_date': 'April 11, 2026', 'event_location': 'Miami, Florida, USA', 'event_url': 'http://ufcstats.com/event-details/f3eb664db7fb1df3'}
+http://ufcstats.com/event-details/f3eb664db7fb1df3
+Scraped 12 fights
+INFO:     127.0.0.1:51340 - "GET /latest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51343 - "GET /fighter/cf1a88371c8cb690 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51344 - "GET /fighter/34c2b3656f88f7ef HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51345 - "GET /fighter HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'c3ac8d0da7b05772', 'event_name': 'UFC Fight Night: Burns vs. Malott', 'event_date': 'April 18, 2026', 'event_location': 'Winnipeg, Manitoba, Canada', 'event_url': 'http://ufcstats.com/event-details/c3ac8d0da7b05772'}
+http://ufcstats.com/event-details/c3ac8d0da7b05772
+Scraped 13 fights
+Found 26 markets for upcoming UFC fights
+Latest odds from Kalshi:                    kalshi_ticker               fighter  ... no_money   timestamp
+0   KXUFCFIGHT-26APR18BURMAL-MAL           Mike Malott  ...     0.27  2026-04-14
+1   KXUFCFIGHT-26APR18BURMAL-BUR         Gilbert Burns  ...     0.75  2026-04-14
+2   KXUFCFIGHT-26APR18JOUPHI-PHI        Kyler Phillips  ...     0.57  2026-04-14
+3   KXUFCFIGHT-26APR18JOUPHI-JOU      Charles Jourdain  ...     0.42  2026-04-14
+4   KXUFCFIGHT-26APR18JASSIL-SIL          Karine Silva  ...     0.76  2026-04-14
+5   KXUFCFIGHT-26APR18JASSIL-JAS  Jasmine Jasudavicius  ...     0.25  2026-04-14
+6   KXUFCFIGHT-26APR18LEBVAL-VAL       Robert Valentin  ...     0.44  2026-04-14
+7   KXUFCFIGHT-26APR18LEBVAL-LEB        Julien Leblanc  ...     0.57  2026-04-14
+8   KXUFCFIGHT-26APR18BOSSAR-SAR        Gokhan Saricam  ...     0.41  2026-04-14
+9   KXUFCFIGHT-26APR18BOSSAR-BOS          Tanner Boser  ...     0.60  2026-04-14
+10  KXUFCFIGHT-26APR18RAPNAS-RAP          Mitch Raposo  ...     0.65  2026-04-14
+11  KXUFCFIGHT-26APR18RAPNAS-NAS      Allan Nascimento  ...     0.35  2026-04-14
+12  KXUFCFIGHT-26APR18NALHER-NAL          Mandel Nallo  ...     0.39  2026-04-14
+13  KXUFCFIGHT-26APR18NALHER-HER           Jai Herbert  ...     0.61  2026-04-14
+14  KXUFCFIGHT-26APR18CROZHE-ZHE   Darya Zheleznyakova  ...     0.60  2026-04-14
+15  KXUFCFIGHT-26APR18CROZHE-CRO        Melissa Croden  ...     0.42  2026-04-14
+16  KXUFCFIGHT-26APR18CASVOL-VOL         Mark Vologdin  ...     0.53  2026-04-14
+17  KXUFCFIGHT-26APR18CASVOL-CAS        John Castaneda  ...     0.49  2026-04-14
+18  KXUFCFIGHT-26APR18BUZBAR-BUZ        Dennis Buzukja  ...     0.79  2026-04-14
+19  KXUFCFIGHT-26APR18BUZBAR-BAR        Marcio Barbosa  ...     0.22  2026-04-14
+20  KXUFCFIGHT-26APR18ALDHOR-HOR       Jamey-Lyn Horth  ...     0.40  2026-04-14
+21  KXUFCFIGHT-26APR18ALDHOR-ALD            Jj Aldrich  ...     0.61  2026-04-14
+22  KXUFCFIGHT-26APR18MOIYOU-YOU           Gauge Young  ...     0.46  2026-04-14
+23  KXUFCFIGHT-26APR18MOIYOU-MOI         Thiago Moises  ...     0.56  2026-04-14
+24  KXUFCFIGHT-26APR18SIRYAN-YAN           John Yannis  ...     0.72  2026-04-14
+25  KXUFCFIGHT-26APR18SIRYAN-SIR           Jamie Siraj  ...     0.30  2026-04-14
+
+[26 rows x 6 columns]
+Could not find odds from fighter Daria Zhelezniakova, attempting to match last name Zhelezniakova
+last name: Zhelezniakova, odds: Series([], Name: yes_money, dtype: float64)
+Could not find odds from fighter JJ Aldrich, attempting to match last name Aldrich
+last name: Aldrich, odds: 21    0.4
+Name: yes_money, dtype: float64
+INFO:     127.0.0.1:51346 - "GET /event/next HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'f3eb664db7fb1df3', 'event_name': 'UFC 327: Prochazka vs. Ulberg', 'event_date': 'April 11, 2026', 'event_location': 'Miami, Florida, USA', 'event_url': 'http://ufcstats.com/event-details/f3eb664db7fb1df3'}
+http://ufcstats.com/event-details/f3eb664db7fb1df3
+Scraped 12 fights
+INFO:     127.0.0.1:51349 - "GET /latest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51351 - "GET /fighter HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'f3eb664db7fb1df3', 'event_name': 'UFC 327: Prochazka vs. Ulberg', 'event_date': 'April 11, 2026', 'event_location': 'Miami, Florida, USA', 'event_url': 'http://ufcstats.com/event-details/f3eb664db7fb1df3'}
+http://ufcstats.com/event-details/f3eb664db7fb1df3
+Scraped 12 fights
+INFO:     127.0.0.1:51352 - "GET /latest HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'f3eb664db7fb1df3', 'event_name': 'UFC 327: Prochazka vs. Ulberg', 'event_date': 'April 11, 2026', 'event_location': 'Miami, Florida, USA', 'event_url': 'http://ufcstats.com/event-details/f3eb664db7fb1df3'}
+http://ufcstats.com/event-details/f3eb664db7fb1df3
+Scraped 12 fights
+INFO:     127.0.0.1:51366 - "GET /latest HTTP/1.1" 200 OK
+/opt/anaconda3/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.3.2 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/opt/anaconda3/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.3.2 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+Successfully reloaded StyleNet model
+Successfully reloaded StyleNet model
+Loading 1 fighter styles to the style prediction cache
+Numpy Version 2.4.3
+Successfully reloaded Outcome model
+INFO:     127.0.0.1:51369 - "GET /latest/cf1a88371c8cb690 HTTP/1.1" 200 OK
+Latest fight vector for cf1a88371c8cb690: {'fighter': 'Aaron Brink', 'fighter_id': 'cf1a88371c8cb690', 'event_date': None, 'weight_class': 'Heavyweight', 'win_rate': 0.0, 'total_fights': 1, 'current_streak': -1, 'sig_str_per_min': 0.0, 'td_att_per_min': 0.2, 'td_success_per_min': 0.0, 'ctrl_sec_per_min': 0.8, 'kd_per_min': 0.0, 'distance_str_per_min': 0.0, 'clinch_str_per_min': 0.0, 'ground_str_per_min': 0.0, 'sub_att_per_min': 0.0, 'distance_strike_ratio': 0.0, 'clinch_strike_ratio': 0.0, 'ground_strike_ratio': 0.0, 'head_target_ratio': 0.0, 'body_target_ratio': 0.0, 'leg_target_ratio': 0.0}
+Latest OutcomeVector: {'fighter': 'Aaron Brink', 'fighter_id': 'cf1a88371c8cb690', 'muay_thai': 0.21508075296878815, 'boxing': 0.07513699680566788, 'wrestling': 0.3316783607006073, 'grappling': 0.3781037926673889, 'pace': 0.2, 'td_success': 0.0, 'ctrl_share': 0.8, 'n_fights_norm': 0.1}
+INFO:     127.0.0.1:51370 - "GET /latest/34c2b3656f88f7ef HTTP/1.1" 200 OK
+Latest fight vector for 34c2b3656f88f7ef: {'fighter': 'Aaron Phillips', 'fighter_id': '34c2b3656f88f7ef', 'event_date': None, 'weight_class': 'Bantamweight', 'win_rate': 0.0, 'total_fights': 4, 'current_streak': -4, 'sig_str_per_min': 3.806371191135734, 'td_att_per_min': 0.2577562326869806, 'td_success_per_min': 0.12465373961218837, 'ctrl_sec_per_min': 18.65, 'kd_per_min': 0.0, 'distance_str_per_min': 2.0648199445983377, 'clinch_str_per_min': 1.0915512465373962, 'ground_str_per_min': 0.6499999999999999, 'sub_att_per_min': 0.09155124653739613, 'distance_strike_ratio': 0.6607327141382868, 'clinch_strike_ratio': 0.2098813209494324, 'ground_strike_ratio': 0.1293859649122807, 'head_target_ratio': 0.36536807705538354, 'body_target_ratio': 0.5863003095975232, 'leg_target_ratio': 0.048331613347093225}
+Latest OutcomeVector: {'fighter': 'Aaron Phillips', 'fighter_id': '34c2b3656f88f7ef', 'muay_thai': 0.49635687470436096, 'boxing': 0.11131754517555237, 'wrestling': 0.14772120118141174, 'grappling': 0.24460431933403015, 'pace': 4.064127423822715, 'td_success': 0.12465373961218837, 'ctrl_share': 18.65, 'n_fights_norm': 0.4}
+Combined features: [[0.3316783607006073, 0.3781037926673889, 0.21508075296878815, 0.07513699680566788, 0.20000000298023224, 0.0, 0.800000011920929, 0.10000000149011612, 0.14772120118141174, 0.24460431933403015, 0.49635687470436096, 0.11131754517555237, 4.064127445220947, 0.12465374171733856, 18.649999618530273, 0.4000000059604645, 0.18395715951919556, 0.13349947333335876, -0.2812761068344116, -0.03618054836988449, -3.8641273975372314, -0.12465374171733856, -17.850000381469727, -0.30000001192092896, 0.04899592697620392, 0.09248582273721695, 0.10675681382417679, 0.008364066481590271, 0.8128255009651184, 0.0, 14.920000076293945, 0.03999999910593033]]
+Max abs scaled value: 2.9711414608686417
+Logits:  [[0.6456294655799866]]
+Probabilities:  [[0.6560248732566833]]
+INFO:     127.0.0.1:51368 - "GET /outcome?fighter_a_id=cf1a88371c8cb690&fighter_b_id=34c2b3656f88f7ef HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51371 - "GET /fighter HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'f3eb664db7fb1df3', 'event_name': 'UFC 327: Prochazka vs. Ulberg', 'event_date': 'April 11, 2026', 'event_location': 'Miami, Florida, USA', 'event_url': 'http://ufcstats.com/event-details/f3eb664db7fb1df3'}
+http://ufcstats.com/event-details/f3eb664db7fb1df3
+Scraped 12 fights
+INFO:     127.0.0.1:51372 - "GET /latest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51475 - "GET /fighter/a01a62132460a98d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51476 - "GET /fighter/34c2b3656f88f7ef HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51477 - "GET /fighter HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'c3ac8d0da7b05772', 'event_name': 'UFC Fight Night: Burns vs. Malott', 'event_date': 'April 18, 2026', 'event_location': 'Winnipeg, Manitoba, Canada', 'event_url': 'http://ufcstats.com/event-details/c3ac8d0da7b05772'}
+http://ufcstats.com/event-details/c3ac8d0da7b05772
+Scraped 13 fights
+Found 26 markets for upcoming UFC fights
+Latest odds from Kalshi:                    kalshi_ticker               fighter  ... no_money   timestamp
+0   KXUFCFIGHT-26APR18BURMAL-MAL           Mike Malott  ...     0.27  2026-04-14
+1   KXUFCFIGHT-26APR18BURMAL-BUR         Gilbert Burns  ...     0.75  2026-04-14
+2   KXUFCFIGHT-26APR18JOUPHI-PHI        Kyler Phillips  ...     0.57  2026-04-14
+3   KXUFCFIGHT-26APR18JOUPHI-JOU      Charles Jourdain  ...     0.42  2026-04-14
+4   KXUFCFIGHT-26APR18JASSIL-SIL          Karine Silva  ...     0.76  2026-04-14
+5   KXUFCFIGHT-26APR18JASSIL-JAS  Jasmine Jasudavicius  ...     0.25  2026-04-14
+6   KXUFCFIGHT-26APR18LEBVAL-VAL       Robert Valentin  ...     0.44  2026-04-14
+7   KXUFCFIGHT-26APR18LEBVAL-LEB        Julien Leblanc  ...     0.57  2026-04-14
+8   KXUFCFIGHT-26APR18BOSSAR-SAR        Gokhan Saricam  ...     0.41  2026-04-14
+9   KXUFCFIGHT-26APR18BOSSAR-BOS          Tanner Boser  ...     0.60  2026-04-14
+10  KXUFCFIGHT-26APR18RAPNAS-RAP          Mitch Raposo  ...     0.65  2026-04-14
+11  KXUFCFIGHT-26APR18RAPNAS-NAS      Allan Nascimento  ...     0.35  2026-04-14
+12  KXUFCFIGHT-26APR18NALHER-NAL          Mandel Nallo  ...     0.39  2026-04-14
+13  KXUFCFIGHT-26APR18NALHER-HER           Jai Herbert  ...     0.61  2026-04-14
+14  KXUFCFIGHT-26APR18CROZHE-ZHE   Darya Zheleznyakova  ...     0.60  2026-04-14
+15  KXUFCFIGHT-26APR18CROZHE-CRO        Melissa Croden  ...     0.42  2026-04-14
+16  KXUFCFIGHT-26APR18CASVOL-VOL         Mark Vologdin  ...     0.53  2026-04-14
+17  KXUFCFIGHT-26APR18CASVOL-CAS        John Castaneda  ...     0.49  2026-04-14
+18  KXUFCFIGHT-26APR18BUZBAR-BUZ        Dennis Buzukja  ...     0.79  2026-04-14
+19  KXUFCFIGHT-26APR18BUZBAR-BAR        Marcio Barbosa  ...     0.22  2026-04-14
+20  KXUFCFIGHT-26APR18ALDHOR-HOR       Jamey-Lyn Horth  ...     0.40  2026-04-14
+21  KXUFCFIGHT-26APR18ALDHOR-ALD            Jj Aldrich  ...     0.61  2026-04-14
+22  KXUFCFIGHT-26APR18MOIYOU-YOU           Gauge Young  ...     0.46  2026-04-14
+23  KXUFCFIGHT-26APR18MOIYOU-MOI         Thiago Moises  ...     0.56  2026-04-14
+24  KXUFCFIGHT-26APR18SIRYAN-YAN           John Yannis  ...     0.72  2026-04-14
+25  KXUFCFIGHT-26APR18SIRYAN-SIR           Jamie Siraj  ...     0.30  2026-04-14
+
+[26 rows x 6 columns]
+Could not find odds from fighter Daria Zhelezniakova, attempting to match last name Zhelezniakova
+last name: Zhelezniakova, odds: Series([], Name: yes_money, dtype: float64)
+Could not find odds from fighter JJ Aldrich, attempting to match last name Aldrich
+last name: Aldrich, odds: 21    0.4
+Name: yes_money, dtype: float64
+INFO:     127.0.0.1:51478 - "GET /event/next HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'f3eb664db7fb1df3', 'event_name': 'UFC 327: Prochazka vs. Ulberg', 'event_date': 'April 11, 2026', 'event_location': 'Miami, Florida, USA', 'event_url': 'http://ufcstats.com/event-details/f3eb664db7fb1df3'}
+http://ufcstats.com/event-details/f3eb664db7fb1df3
+Scraped 12 fights
+INFO:     127.0.0.1:51481 - "GET /latest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51483 - "GET /fighter HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'f3eb664db7fb1df3', 'event_name': 'UFC 327: Prochazka vs. Ulberg', 'event_date': 'April 11, 2026', 'event_location': 'Miami, Florida, USA', 'event_url': 'http://ufcstats.com/event-details/f3eb664db7fb1df3'}
+http://ufcstats.com/event-details/f3eb664db7fb1df3
+Scraped 12 fights
+INFO:     127.0.0.1:51484 - "GET /latest HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'f3eb664db7fb1df3', 'event_name': 'UFC 327: Prochazka vs. Ulberg', 'event_date': 'April 11, 2026', 'event_location': 'Miami, Florida, USA', 'event_url': 'http://ufcstats.com/event-details/f3eb664db7fb1df3'}
+http://ufcstats.com/event-details/f3eb664db7fb1df3
+Scraped 12 fights
+INFO:     127.0.0.1:51486 - "GET /latest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51489 - "GET /latest/a01a62132460a98d HTTP/1.1" 200 OK
+Latest fight vector for a01a62132460a98d: {'fighter': 'Adam Fugitt', 'fighter_id': 'a01a62132460a98d', 'event_date': None, 'weight_class': 'Welterweight', 'win_rate': 0.4, 'total_fights': 5, 'current_streak': -1, 'sig_str_per_min': 7.519999999999999, 'td_att_per_min': 0.8, 'td_success_per_min': 0.2, 'ctrl_sec_per_min': 14.0, 'kd_per_min': 0.0, 'distance_str_per_min': 6.840000000000001, 'clinch_str_per_min': 0.44000000000000006, 'ground_str_per_min': 0.24, 'sub_att_per_min': 0.0, 'distance_strike_ratio': 0.8717261904761905, 'clinch_strike_ratio': 0.07113095238095238, 'ground_strike_ratio': 0.05714285714285714, 'head_target_ratio': 0.44075396825396823, 'body_target_ratio': 0.3625, 'leg_target_ratio': 0.19674603174603175}
+Latest OutcomeVector: {'fighter': 'Adam Fugitt', 'fighter_id': 'a01a62132460a98d', 'muay_thai': 0.31361398100852966, 'boxing': 0.22550137341022491, 'wrestling': 0.3275741636753082, 'grappling': 0.133310467004776, 'pace': 8.319999999999999, 'td_success': 0.2, 'ctrl_share': 14.0, 'n_fights_norm': 0.5}
+INFO:     127.0.0.1:51490 - "GET /latest/34c2b3656f88f7ef HTTP/1.1" 200 OK
+Latest fight vector for 34c2b3656f88f7ef: {'fighter': 'Aaron Phillips', 'fighter_id': '34c2b3656f88f7ef', 'event_date': None, 'weight_class': 'Bantamweight', 'win_rate': 0.0, 'total_fights': 4, 'current_streak': -4, 'sig_str_per_min': 3.806371191135734, 'td_att_per_min': 0.2577562326869806, 'td_success_per_min': 0.12465373961218837, 'ctrl_sec_per_min': 18.65, 'kd_per_min': 0.0, 'distance_str_per_min': 2.0648199445983377, 'clinch_str_per_min': 1.0915512465373962, 'ground_str_per_min': 0.6499999999999999, 'sub_att_per_min': 0.09155124653739613, 'distance_strike_ratio': 0.6607327141382868, 'clinch_strike_ratio': 0.2098813209494324, 'ground_strike_ratio': 0.1293859649122807, 'head_target_ratio': 0.36536807705538354, 'body_target_ratio': 0.5863003095975232, 'leg_target_ratio': 0.048331613347093225}
+Latest OutcomeVector: {'fighter': 'Aaron Phillips', 'fighter_id': '34c2b3656f88f7ef', 'muay_thai': 0.49635687470436096, 'boxing': 0.11131754517555237, 'wrestling': 0.14772120118141174, 'grappling': 0.24460431933403015, 'pace': 4.064127423822715, 'td_success': 0.12465373961218837, 'ctrl_share': 18.65, 'n_fights_norm': 0.4}
+Combined features: [[0.3275741636753082, 0.133310467004776, 0.31361398100852966, 0.22550137341022491, 8.319999694824219, 0.20000000298023224, 14.0, 0.5, 0.14772120118141174, 0.24460431933403015, 0.49635687470436096, 0.11131754517555237, 4.064127445220947, 0.12465374171733856, 18.649999618530273, 0.4000000059604645, 0.17985296249389648, -0.11129385232925415, -0.1827428936958313, 0.11418382823467255, 4.25587272644043, 0.07534626126289368, -4.650000095367432, 0.10000000149011612, 0.04838964715600014, 0.03260831534862518, 0.15566445887088776, 0.02510225959122181, 33.813541412353516, 0.024930747225880623, 261.1000061035156, 0.20000000298023224]]
+Max abs scaled value: 3.7423697442207775
+Logits:  [[0.5298629999160767]]
+Probabilities:  [[0.6294511556625366]]
+INFO:     127.0.0.1:51488 - "GET /outcome?fighter_a_id=a01a62132460a98d&fighter_b_id=34c2b3656f88f7ef HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51491 - "GET /fighter/a01a62132460a98d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51492 - "GET /fighter/7dcf06c1967801c1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51493 - "GET /fighter HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'c3ac8d0da7b05772', 'event_name': 'UFC Fight Night: Burns vs. Malott', 'event_date': 'April 18, 2026', 'event_location': 'Winnipeg, Manitoba, Canada', 'event_url': 'http://ufcstats.com/event-details/c3ac8d0da7b05772'}
+http://ufcstats.com/event-details/c3ac8d0da7b05772
+Scraped 13 fights
+Found 26 markets for upcoming UFC fights
+Latest odds from Kalshi:                    kalshi_ticker               fighter  ... no_money   timestamp
+0   KXUFCFIGHT-26APR18BURMAL-MAL           Mike Malott  ...     0.27  2026-04-14
+1   KXUFCFIGHT-26APR18BURMAL-BUR         Gilbert Burns  ...     0.75  2026-04-14
+2   KXUFCFIGHT-26APR18JOUPHI-PHI        Kyler Phillips  ...     0.57  2026-04-14
+3   KXUFCFIGHT-26APR18JOUPHI-JOU      Charles Jourdain  ...     0.42  2026-04-14
+4   KXUFCFIGHT-26APR18JASSIL-SIL          Karine Silva  ...     0.76  2026-04-14
+5   KXUFCFIGHT-26APR18JASSIL-JAS  Jasmine Jasudavicius  ...     0.25  2026-04-14
+6   KXUFCFIGHT-26APR18LEBVAL-VAL       Robert Valentin  ...     0.44  2026-04-14
+7   KXUFCFIGHT-26APR18LEBVAL-LEB        Julien Leblanc  ...     0.57  2026-04-14
+8   KXUFCFIGHT-26APR18BOSSAR-SAR        Gokhan Saricam  ...     0.41  2026-04-14
+9   KXUFCFIGHT-26APR18BOSSAR-BOS          Tanner Boser  ...     0.60  2026-04-14
+10  KXUFCFIGHT-26APR18RAPNAS-RAP          Mitch Raposo  ...     0.65  2026-04-14
+11  KXUFCFIGHT-26APR18RAPNAS-NAS      Allan Nascimento  ...     0.35  2026-04-14
+12  KXUFCFIGHT-26APR18NALHER-NAL          Mandel Nallo  ...     0.39  2026-04-14
+13  KXUFCFIGHT-26APR18NALHER-HER           Jai Herbert  ...     0.61  2026-04-14
+14  KXUFCFIGHT-26APR18CROZHE-ZHE   Darya Zheleznyakova  ...     0.60  2026-04-14
+15  KXUFCFIGHT-26APR18CROZHE-CRO        Melissa Croden  ...     0.42  2026-04-14
+16  KXUFCFIGHT-26APR18CASVOL-VOL         Mark Vologdin  ...     0.53  2026-04-14
+17  KXUFCFIGHT-26APR18CASVOL-CAS        John Castaneda  ...     0.49  2026-04-14
+18  KXUFCFIGHT-26APR18BUZBAR-BUZ        Dennis Buzukja  ...     0.79  2026-04-14
+19  KXUFCFIGHT-26APR18BUZBAR-BAR        Marcio Barbosa  ...     0.22  2026-04-14
+20  KXUFCFIGHT-26APR18ALDHOR-HOR       Jamey-Lyn Horth  ...     0.40  2026-04-14
+21  KXUFCFIGHT-26APR18ALDHOR-ALD            Jj Aldrich  ...     0.61  2026-04-14
+22  KXUFCFIGHT-26APR18MOIYOU-YOU           Gauge Young  ...     0.46  2026-04-14
+23  KXUFCFIGHT-26APR18MOIYOU-MOI         Thiago Moises  ...     0.56  2026-04-14
+24  KXUFCFIGHT-26APR18SIRYAN-YAN           John Yannis  ...     0.72  2026-04-14
+25  KXUFCFIGHT-26APR18SIRYAN-SIR           Jamie Siraj  ...     0.30  2026-04-14
+
+[26 rows x 6 columns]
+Could not find odds from fighter Daria Zhelezniakova, attempting to match last name Zhelezniakova
+last name: Zhelezniakova, odds: Series([], Name: yes_money, dtype: float64)
+Could not find odds from fighter JJ Aldrich, attempting to match last name Aldrich
+last name: Aldrich, odds: 21    0.4
+Name: yes_money, dtype: float64
+INFO:     127.0.0.1:51494 - "GET /event/next HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'f3eb664db7fb1df3', 'event_name': 'UFC 327: Prochazka vs. Ulberg', 'event_date': 'April 11, 2026', 'event_location': 'Miami, Florida, USA', 'event_url': 'http://ufcstats.com/event-details/f3eb664db7fb1df3'}
+http://ufcstats.com/event-details/f3eb664db7fb1df3
+Scraped 12 fights
+INFO:     127.0.0.1:51497 - "GET /latest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51499 - "GET /fighter HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'f3eb664db7fb1df3', 'event_name': 'UFC 327: Prochazka vs. Ulberg', 'event_date': 'April 11, 2026', 'event_location': 'Miami, Florida, USA', 'event_url': 'http://ufcstats.com/event-details/f3eb664db7fb1df3'}
+http://ufcstats.com/event-details/f3eb664db7fb1df3
+Scraped 12 fights
+INFO:     127.0.0.1:51500 - "GET /latest HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'f3eb664db7fb1df3', 'event_name': 'UFC 327: Prochazka vs. Ulberg', 'event_date': 'April 11, 2026', 'event_location': 'Miami, Florida, USA', 'event_url': 'http://ufcstats.com/event-details/f3eb664db7fb1df3'}
+http://ufcstats.com/event-details/f3eb664db7fb1df3
+Scraped 12 fights
+INFO:     127.0.0.1:51502 - "GET /latest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51517 - "GET /latest/a01a62132460a98d HTTP/1.1" 200 OK
+Latest fight vector for a01a62132460a98d: {'fighter': 'Adam Fugitt', 'fighter_id': 'a01a62132460a98d', 'event_date': None, 'weight_class': 'Welterweight', 'win_rate': 0.4, 'total_fights': 5, 'current_streak': -1, 'sig_str_per_min': 7.519999999999999, 'td_att_per_min': 0.8, 'td_success_per_min': 0.2, 'ctrl_sec_per_min': 14.0, 'kd_per_min': 0.0, 'distance_str_per_min': 6.840000000000001, 'clinch_str_per_min': 0.44000000000000006, 'ground_str_per_min': 0.24, 'sub_att_per_min': 0.0, 'distance_strike_ratio': 0.8717261904761905, 'clinch_strike_ratio': 0.07113095238095238, 'ground_strike_ratio': 0.05714285714285714, 'head_target_ratio': 0.44075396825396823, 'body_target_ratio': 0.3625, 'leg_target_ratio': 0.19674603174603175}
+Latest OutcomeVector: {'fighter': 'Adam Fugitt', 'fighter_id': 'a01a62132460a98d', 'muay_thai': 0.31361398100852966, 'boxing': 0.22550137341022491, 'wrestling': 0.3275741636753082, 'grappling': 0.133310467004776, 'pace': 8.319999999999999, 'td_success': 0.2, 'ctrl_share': 14.0, 'n_fights_norm': 0.5}
+INFO:     127.0.0.1:51518 - "GET /latest/7dcf06c1967801c1 HTTP/1.1" 200 OK
+Latest fight vector for 7dcf06c1967801c1: {'fighter': 'Adriano Martins', 'fighter_id': '7dcf06c1967801c1', 'event_date': None, 'weight_class': 'Lightweight', 'win_rate': 0.5714285714285714, 'total_fights': 7, 'current_streak': -2, 'sig_str_per_min': 2.9428571428571426, 'td_att_per_min': 0.14285714285714285, 'td_success_per_min': 0.1142857142857143, 'ctrl_sec_per_min': 10.742857142857144, 'kd_per_min': 0.05714285714285715, 'distance_str_per_min': 2.742857142857143, 'clinch_str_per_min': 0.0, 'ground_str_per_min': 0.19999999999999998, 'sub_att_per_min': 0.05714285714285715, 'distance_strike_ratio': 0.8988095238095238, 'clinch_strike_ratio': 0.0, 'ground_strike_ratio': 0.10119047619047618, 'head_target_ratio': 0.6336592329239388, 'body_target_ratio': 0.07580532212885153, 'leg_target_ratio': 0.2905354449472096}
+Latest OutcomeVector: {'fighter': 'Adriano Martins', 'fighter_id': '7dcf06c1967801c1', 'muay_thai': 0.16578564047813416, 'boxing': 0.48323914408683777, 'wrestling': 0.1446160078048706, 'grappling': 0.20635928213596344, 'pace': 3.0857142857142854, 'td_success': 0.1142857142857143, 'ctrl_share': 10.742857142857144, 'n_fights_norm': 0.7}
+Combined features: [[0.3275741636753082, 0.133310467004776, 0.31361398100852966, 0.22550137341022491, 8.319999694824219, 0.20000000298023224, 14.0, 0.5, 0.1446160078048706, 0.20635928213596344, 0.16578564047813416, 0.48323914408683777, 3.085714340209961, 0.11428571492433548, 10.742856979370117, 0.699999988079071, 0.18295815587043762, -0.07304881513118744, 0.1478283405303955, -0.25773775577545166, 5.234285831451416, 0.08571428805589676, 3.2571427822113037, -0.20000000298023224, 0.04737246781587601, 0.02750985138118267, 0.05199269577860832, 0.10897108912467957, 25.67314338684082, 0.022857142612338066, 150.39999389648438, 0.3499999940395355]]
+Max abs scaled value: 1.4473455653301304
+Logits:  [[0.6175960302352905]]
+Probabilities:  [[0.6496716141700745]]
+INFO:     127.0.0.1:51516 - "GET /outcome?fighter_a_id=a01a62132460a98d&fighter_b_id=7dcf06c1967801c1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51520 - "GET /fighter/0e5c4e72237461bb HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51521 - "GET /fighter/7dcf06c1967801c1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51522 - "GET /fighter HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'c3ac8d0da7b05772', 'event_name': 'UFC Fight Night: Burns vs. Malott', 'event_date': 'April 18, 2026', 'event_location': 'Winnipeg, Manitoba, Canada', 'event_url': 'http://ufcstats.com/event-details/c3ac8d0da7b05772'}
+http://ufcstats.com/event-details/c3ac8d0da7b05772
+Scraped 13 fights
+Found 26 markets for upcoming UFC fights
+Latest odds from Kalshi:                    kalshi_ticker               fighter  ... no_money   timestamp
+0   KXUFCFIGHT-26APR18BURMAL-MAL           Mike Malott  ...     0.27  2026-04-14
+1   KXUFCFIGHT-26APR18BURMAL-BUR         Gilbert Burns  ...     0.75  2026-04-14
+2   KXUFCFIGHT-26APR18JOUPHI-PHI        Kyler Phillips  ...     0.57  2026-04-14
+3   KXUFCFIGHT-26APR18JOUPHI-JOU      Charles Jourdain  ...     0.42  2026-04-14
+4   KXUFCFIGHT-26APR18JASSIL-SIL          Karine Silva  ...     0.76  2026-04-14
+5   KXUFCFIGHT-26APR18JASSIL-JAS  Jasmine Jasudavicius  ...     0.25  2026-04-14
+6   KXUFCFIGHT-26APR18LEBVAL-VAL       Robert Valentin  ...     0.44  2026-04-14
+7   KXUFCFIGHT-26APR18LEBVAL-LEB        Julien Leblanc  ...     0.57  2026-04-14
+8   KXUFCFIGHT-26APR18BOSSAR-SAR        Gokhan Saricam  ...     0.41  2026-04-14
+9   KXUFCFIGHT-26APR18BOSSAR-BOS          Tanner Boser  ...     0.60  2026-04-14
+10  KXUFCFIGHT-26APR18RAPNAS-RAP          Mitch Raposo  ...     0.65  2026-04-14
+11  KXUFCFIGHT-26APR18RAPNAS-NAS      Allan Nascimento  ...     0.35  2026-04-14
+12  KXUFCFIGHT-26APR18NALHER-NAL          Mandel Nallo  ...     0.39  2026-04-14
+13  KXUFCFIGHT-26APR18NALHER-HER           Jai Herbert  ...     0.61  2026-04-14
+14  KXUFCFIGHT-26APR18CROZHE-ZHE   Darya Zheleznyakova  ...     0.60  2026-04-14
+15  KXUFCFIGHT-26APR18CROZHE-CRO        Melissa Croden  ...     0.42  2026-04-14
+16  KXUFCFIGHT-26APR18CASVOL-VOL         Mark Vologdin  ...     0.53  2026-04-14
+17  KXUFCFIGHT-26APR18CASVOL-CAS        John Castaneda  ...     0.49  2026-04-14
+18  KXUFCFIGHT-26APR18BUZBAR-BUZ        Dennis Buzukja  ...     0.79  2026-04-14
+19  KXUFCFIGHT-26APR18BUZBAR-BAR        Marcio Barbosa  ...     0.22  2026-04-14
+20  KXUFCFIGHT-26APR18ALDHOR-HOR       Jamey-Lyn Horth  ...     0.40  2026-04-14
+21  KXUFCFIGHT-26APR18ALDHOR-ALD            Jj Aldrich  ...     0.61  2026-04-14
+22  KXUFCFIGHT-26APR18MOIYOU-YOU           Gauge Young  ...     0.46  2026-04-14
+23  KXUFCFIGHT-26APR18MOIYOU-MOI         Thiago Moises  ...     0.56  2026-04-14
+24  KXUFCFIGHT-26APR18SIRYAN-YAN           John Yannis  ...     0.72  2026-04-14
+25  KXUFCFIGHT-26APR18SIRYAN-SIR           Jamie Siraj  ...     0.30  2026-04-14
+
+[26 rows x 6 columns]
+Could not find odds from fighter Daria Zhelezniakova, attempting to match last name Zhelezniakova
+last name: Zhelezniakova, odds: Series([], Name: yes_money, dtype: float64)
+Could not find odds from fighter JJ Aldrich, attempting to match last name Aldrich
+last name: Aldrich, odds: 21    0.4
+Name: yes_money, dtype: float64
+INFO:     127.0.0.1:51523 - "GET /event/next HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'f3eb664db7fb1df3', 'event_name': 'UFC 327: Prochazka vs. Ulberg', 'event_date': 'April 11, 2026', 'event_location': 'Miami, Florida, USA', 'event_url': 'http://ufcstats.com/event-details/f3eb664db7fb1df3'}
+http://ufcstats.com/event-details/f3eb664db7fb1df3
+Scraped 12 fights
+INFO:     127.0.0.1:51526 - "GET /latest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51528 - "GET /fighter HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'f3eb664db7fb1df3', 'event_name': 'UFC 327: Prochazka vs. Ulberg', 'event_date': 'April 11, 2026', 'event_location': 'Miami, Florida, USA', 'event_url': 'http://ufcstats.com/event-details/f3eb664db7fb1df3'}
+http://ufcstats.com/event-details/f3eb664db7fb1df3
+Scraped 12 fights
+INFO:     127.0.0.1:51529 - "GET /latest HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'f3eb664db7fb1df3', 'event_name': 'UFC 327: Prochazka vs. Ulberg', 'event_date': 'April 11, 2026', 'event_location': 'Miami, Florida, USA', 'event_url': 'http://ufcstats.com/event-details/f3eb664db7fb1df3'}
+http://ufcstats.com/event-details/f3eb664db7fb1df3
+Scraped 12 fights
+INFO:     127.0.0.1:51531 - "GET /latest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51534 - "GET /latest/0e5c4e72237461bb HTTP/1.1" 200 OK
+Latest fight vector for 0e5c4e72237461bb: {'fighter': 'Bruno Souza', 'fighter_id': '0e5c4e72237461bb', 'event_date': None, 'weight_class': 'Featherweight', 'win_rate': 0.0, 'total_fights': 2, 'current_streak': -2, 'sig_str_per_min': 11.2, 'td_att_per_min': 0.6000000000000001, 'td_success_per_min': 0.1, 'ctrl_sec_per_min': 5.7, 'kd_per_min': 0.0, 'distance_str_per_min': 10.5, 'clinch_str_per_min': 0.7, 'ground_str_per_min': 0.0, 'sub_att_per_min': 0.0, 'distance_strike_ratio': 0.9305006587615283, 'clinch_strike_ratio': 0.06949934123847168, 'ground_strike_ratio': 0.0, 'head_target_ratio': 0.5737812911725955, 'body_target_ratio': 0.2700922266139657, 'leg_target_ratio': 0.15612648221343872}
+Latest OutcomeVector: {'fighter': 'Bruno Souza', 'fighter_id': '0e5c4e72237461bb', 'muay_thai': 0.26074740290641785, 'boxing': 0.39470377564430237, 'wrestling': 0.21374882757663727, 'grappling': 0.13079994916915894, 'pace': 11.799999999999999, 'td_success': 0.1, 'ctrl_share': 5.7, 'n_fights_norm': 0.2}
+INFO:     127.0.0.1:51535 - "GET /latest/7dcf06c1967801c1 HTTP/1.1" 200 OK
+Latest fight vector for 7dcf06c1967801c1: {'fighter': 'Adriano Martins', 'fighter_id': '7dcf06c1967801c1', 'event_date': None, 'weight_class': 'Lightweight', 'win_rate': 0.5714285714285714, 'total_fights': 7, 'current_streak': -2, 'sig_str_per_min': 2.9428571428571426, 'td_att_per_min': 0.14285714285714285, 'td_success_per_min': 0.1142857142857143, 'ctrl_sec_per_min': 10.742857142857144, 'kd_per_min': 0.05714285714285715, 'distance_str_per_min': 2.742857142857143, 'clinch_str_per_min': 0.0, 'ground_str_per_min': 0.19999999999999998, 'sub_att_per_min': 0.05714285714285715, 'distance_strike_ratio': 0.8988095238095238, 'clinch_strike_ratio': 0.0, 'ground_strike_ratio': 0.10119047619047618, 'head_target_ratio': 0.6336592329239388, 'body_target_ratio': 0.07580532212885153, 'leg_target_ratio': 0.2905354449472096}
+Latest OutcomeVector: {'fighter': 'Adriano Martins', 'fighter_id': '7dcf06c1967801c1', 'muay_thai': 0.16578564047813416, 'boxing': 0.48323914408683777, 'wrestling': 0.1446160078048706, 'grappling': 0.20635928213596344, 'pace': 3.0857142857142854, 'td_success': 0.1142857142857143, 'ctrl_share': 10.742857142857144, 'n_fights_norm': 0.7}
+Combined features: [[0.21374882757663727, 0.13079994916915894, 0.26074740290641785, 0.39470377564430237, 11.800000190734863, 0.10000000149011612, 5.699999809265137, 0.20000000298023224, 0.1446160078048706, 0.20635928213596344, 0.16578564047813416, 0.48323914408683777, 3.085714340209961, 0.11428571492433548, 10.742856979370117, 0.699999988079071, 0.06913281977176666, -0.0755593329668045, 0.09496176242828369, -0.0885353684425354, 8.714285850524902, -0.014285714365541935, -5.0428571701049805, -0.5, 0.030911501497030258, 0.02699178270995617, 0.04322817549109459, 0.1907363086938858, 36.41143035888672, 0.011428571306169033, 61.23428726196289, 0.14000000059604645]]
+Max abs scaled value: 1.8593734137675617
+Logits:  [[0.7457962036132812]]
+Probabilities:  [[0.6782620549201965]]
+INFO:     127.0.0.1:51533 - "GET /outcome?fighter_a_id=0e5c4e72237461bb&fighter_b_id=7dcf06c1967801c1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51552 - "GET /fighter/0e5c4e72237461bb HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51553 - "GET /fighter/22061ff217907c78 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51554 - "GET /fighter HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'c3ac8d0da7b05772', 'event_name': 'UFC Fight Night: Burns vs. Malott', 'event_date': 'April 18, 2026', 'event_location': 'Winnipeg, Manitoba, Canada', 'event_url': 'http://ufcstats.com/event-details/c3ac8d0da7b05772'}
+http://ufcstats.com/event-details/c3ac8d0da7b05772
+Scraped 13 fights
+Found 26 markets for upcoming UFC fights
+Latest odds from Kalshi:                    kalshi_ticker               fighter  ... no_money   timestamp
+0   KXUFCFIGHT-26APR18BURMAL-MAL           Mike Malott  ...     0.27  2026-04-14
+1   KXUFCFIGHT-26APR18BURMAL-BUR         Gilbert Burns  ...     0.75  2026-04-14
+2   KXUFCFIGHT-26APR18JOUPHI-PHI        Kyler Phillips  ...     0.57  2026-04-14
+3   KXUFCFIGHT-26APR18JOUPHI-JOU      Charles Jourdain  ...     0.42  2026-04-14
+4   KXUFCFIGHT-26APR18JASSIL-SIL          Karine Silva  ...     0.76  2026-04-14
+5   KXUFCFIGHT-26APR18JASSIL-JAS  Jasmine Jasudavicius  ...     0.25  2026-04-14
+6   KXUFCFIGHT-26APR18LEBVAL-VAL       Robert Valentin  ...     0.44  2026-04-14
+7   KXUFCFIGHT-26APR18LEBVAL-LEB        Julien Leblanc  ...     0.57  2026-04-14
+8   KXUFCFIGHT-26APR18BOSSAR-SAR        Gokhan Saricam  ...     0.41  2026-04-14
+9   KXUFCFIGHT-26APR18BOSSAR-BOS          Tanner Boser  ...     0.60  2026-04-14
+10  KXUFCFIGHT-26APR18RAPNAS-RAP          Mitch Raposo  ...     0.65  2026-04-14
+11  KXUFCFIGHT-26APR18RAPNAS-NAS      Allan Nascimento  ...     0.35  2026-04-14
+12  KXUFCFIGHT-26APR18NALHER-NAL          Mandel Nallo  ...     0.39  2026-04-14
+13  KXUFCFIGHT-26APR18NALHER-HER           Jai Herbert  ...     0.61  2026-04-14
+14  KXUFCFIGHT-26APR18CROZHE-ZHE   Darya Zheleznyakova  ...     0.60  2026-04-14
+15  KXUFCFIGHT-26APR18CROZHE-CRO        Melissa Croden  ...     0.42  2026-04-14
+16  KXUFCFIGHT-26APR18CASVOL-VOL         Mark Vologdin  ...     0.53  2026-04-14
+17  KXUFCFIGHT-26APR18CASVOL-CAS        John Castaneda  ...     0.49  2026-04-14
+18  KXUFCFIGHT-26APR18BUZBAR-BUZ        Dennis Buzukja  ...     0.79  2026-04-14
+19  KXUFCFIGHT-26APR18BUZBAR-BAR        Marcio Barbosa  ...     0.22  2026-04-14
+20  KXUFCFIGHT-26APR18ALDHOR-HOR       Jamey-Lyn Horth  ...     0.40  2026-04-14
+21  KXUFCFIGHT-26APR18ALDHOR-ALD            Jj Aldrich  ...     0.61  2026-04-14
+22  KXUFCFIGHT-26APR18MOIYOU-YOU           Gauge Young  ...     0.46  2026-04-14
+23  KXUFCFIGHT-26APR18MOIYOU-MOI         Thiago Moises  ...     0.56  2026-04-14
+24  KXUFCFIGHT-26APR18SIRYAN-YAN           John Yannis  ...     0.72  2026-04-14
+25  KXUFCFIGHT-26APR18SIRYAN-SIR           Jamie Siraj  ...     0.30  2026-04-14
+
+[26 rows x 6 columns]
+Could not find odds from fighter Daria Zhelezniakova, attempting to match last name Zhelezniakova
+last name: Zhelezniakova, odds: Series([], Name: yes_money, dtype: float64)
+Could not find odds from fighter JJ Aldrich, attempting to match last name Aldrich
+last name: Aldrich, odds: 21    0.4
+Name: yes_money, dtype: float64
+INFO:     127.0.0.1:51555 - "GET /event/next HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'f3eb664db7fb1df3', 'event_name': 'UFC 327: Prochazka vs. Ulberg', 'event_date': 'April 11, 2026', 'event_location': 'Miami, Florida, USA', 'event_url': 'http://ufcstats.com/event-details/f3eb664db7fb1df3'}
+http://ufcstats.com/event-details/f3eb664db7fb1df3
+Scraped 12 fights
+INFO:     127.0.0.1:51558 - "GET /latest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51560 - "GET /fighter HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'f3eb664db7fb1df3', 'event_name': 'UFC 327: Prochazka vs. Ulberg', 'event_date': 'April 11, 2026', 'event_location': 'Miami, Florida, USA', 'event_url': 'http://ufcstats.com/event-details/f3eb664db7fb1df3'}
+http://ufcstats.com/event-details/f3eb664db7fb1df3
+Scraped 12 fights
+INFO:     127.0.0.1:51561 - "GET /latest HTTP/1.1" 200 OK
+Latest Event: {'event_id': 'f3eb664db7fb1df3', 'event_name': 'UFC 327: Prochazka vs. Ulberg', 'event_date': 'April 11, 2026', 'event_location': 'Miami, Florida, USA', 'event_url': 'http://ufcstats.com/event-details/f3eb664db7fb1df3'}
+http://ufcstats.com/event-details/f3eb664db7fb1df3
+Scraped 12 fights
+INFO:     127.0.0.1:51563 - "GET /latest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51566 - "GET /latest/0e5c4e72237461bb HTTP/1.1" 200 OK
+Latest fight vector for 0e5c4e72237461bb: {'fighter': 'Bruno Souza', 'fighter_id': '0e5c4e72237461bb', 'event_date': None, 'weight_class': 'Featherweight', 'win_rate': 0.0, 'total_fights': 2, 'current_streak': -2, 'sig_str_per_min': 11.2, 'td_att_per_min': 0.6000000000000001, 'td_success_per_min': 0.1, 'ctrl_sec_per_min': 5.7, 'kd_per_min': 0.0, 'distance_str_per_min': 10.5, 'clinch_str_per_min': 0.7, 'ground_str_per_min': 0.0, 'sub_att_per_min': 0.0, 'distance_strike_ratio': 0.9305006587615283, 'clinch_strike_ratio': 0.06949934123847168, 'ground_strike_ratio': 0.0, 'head_target_ratio': 0.5737812911725955, 'body_target_ratio': 0.2700922266139657, 'leg_target_ratio': 0.15612648221343872}
+Latest OutcomeVector: {'fighter': 'Bruno Souza', 'fighter_id': '0e5c4e72237461bb', 'muay_thai': 0.26074740290641785, 'boxing': 0.39470377564430237, 'wrestling': 0.21374882757663727, 'grappling': 0.13079994916915894, 'pace': 11.799999999999999, 'td_success': 0.1, 'ctrl_share': 5.7, 'n_fights_norm': 0.2}
+INFO:     127.0.0.1:51567 - "GET /latest/22061ff217907c78 HTTP/1.1" 200 OK
+Latest fight vector for 22061ff217907c78: {'fighter': 'Konstantin Erokhin', 'fighter_id': '22061ff217907c78', 'event_date': None, 'weight_class': 'Heavyweight', 'win_rate': 0.0, 'total_fights': 2, 'current_streak': -2, 'sig_str_per_min': 3.2, 'td_att_per_min': 0.0, 'td_success_per_min': 0.0, 'ctrl_sec_per_min': 1.0, 'kd_per_min': 0.0, 'distance_str_per_min': 2.5, 'clinch_str_per_min': 0.7, 'ground_str_per_min': 0.0, 'sub_att_per_min': 0.0, 'distance_strike_ratio': 0.7862745098039217, 'clinch_strike_ratio': 0.21372549019607845, 'ground_strike_ratio': 0.0, 'head_target_ratio': 0.723529411764706, 'body_target_ratio': 0.21764705882352942, 'leg_target_ratio': 0.058823529411764705}
+Latest OutcomeVector: {'fighter': 'Konstantin Erokhin', 'fighter_id': '22061ff217907c78', 'muay_thai': 0.27451932430267334, 'boxing': 0.4801596999168396, 'wrestling': 0.10394436120986938, 'grappling': 0.1413765847682953, 'pace': 3.2, 'td_success': 0.0, 'ctrl_share': 1.0, 'n_fights_norm': 0.2}
+Combined features: [[0.21374882757663727, 0.13079994916915894, 0.26074740290641785, 0.39470377564430237, 11.800000190734863, 0.10000000149011612, 5.699999809265137, 0.20000000298023224, 0.10394436120986938, 0.1413765847682953, 0.27451932430267334, 0.4801596999168396, 3.200000047683716, 0.0, 1.0, 0.20000000298023224, 0.10980446636676788, -0.010576635599136353, -0.013771921396255493, -0.08545592427253723, 8.600000381469727, 0.10000000149011612, 4.699999809265137, 0.0, 0.02221798524260521, 0.01849205046892166, 0.0715802013874054, 0.18952085077762604, 37.7599983215332, 0.0, 5.699999809265137, 0.03999999910593033]]
+Max abs scaled value: 1.8593734137675617
+Logits:  [[0.9675276279449463]]
+Probabilities:  [[0.7246264219284058]]
+INFO:     127.0.0.1:51565 - "GET /outcome?fighter_a_id=0e5c4e72237461bb&fighter_b_id=22061ff217907c78 HTTP/1.1" 200 OK

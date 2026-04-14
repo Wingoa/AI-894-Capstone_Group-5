@@ -7,8 +7,8 @@ import sys
 
 scheduler: BackgroundScheduler = None
 
-MODEL_URL = "http://localhost:8002" # TODO Change when hosted within a DOCKER container
-DATA_URL = "http://localhost:8000"
+MODEL_URL = "http://localhost:8002" 
+DATA_URL = "http://localhost:8002"
 
 def main():
     

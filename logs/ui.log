@@ -1,0 +1,64 @@
+INFO:     Will watch for changes in these directories: ['/Users/Austin/Repos/AI-894-Capstone_Group-5']
+INFO:     Uvicorn running on http://127.0.0.1:8080 (Press CTRL+C to quit)
+INFO:     Started reloader process [7843] using WatchFiles
+INFO:     Started server process [7847]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=728407
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=728407
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+INFO:     127.0.0.1:51330 - "GET / HTTP/1.1" 200 OK
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=728407
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=728407
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=728407
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+INFO:     127.0.0.1:51330 - "GET /compare?red=cf1a88371c8cb690&blue=34c2b3656f88f7ef HTTP/1.1" 200 OK
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=728407
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=728407
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+INFO:     127.0.0.1:51474 - "GET /compare?red=a01a62132460a98d&blue=34c2b3656f88f7ef HTTP/1.1" 200 OK
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=728407
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=728407
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+INFO:     127.0.0.1:51474 - "GET /compare?red=a01a62132460a98d&blue=7dcf06c1967801c1 HTTP/1.1" 200 OK
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=728407
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=728407
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+INFO:     127.0.0.1:51519 - "GET /compare?red=0e5c4e72237461bb&blue=7dcf06c1967801c1 HTTP/1.1" 200 OK
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=728407
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=728407
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+INFO:     127.0.0.1:51551 - "GET /compare?red=0e5c4e72237461bb&blue=22061ff217907c78 HTTP/1.1" 200 OK

@@ -10,22 +10,25 @@ import datetime
 
 class FightDataResource:
 
-    def __init__(self, fightDataService: FightDataService, refreshDataService: RefreshDataService):
+    def __init__(self, fightDataService: FightDataService, refreshDataService: RefreshDataService, enable_background_refresh: bool = False):
         self.fightDataService = fightDataService
         self.refreshDataService = refreshDataService
 
-        # Manage scheduler lifecycle
-        @asynccontextmanager
-        async def lifespan(app: FastAPI):
-            scheduler = BackgroundScheduler()
-            # Refresh data on start
-            scheduler.add_job(refreshDataService.refreshFightData, 'interval', hours=1, next_run_time=datetime.datetime.now())
-            scheduler.add_job(refreshDataService.reloadIncompleteData, 'interval', hours=24, next_run_time=datetime.datetime.now())
-            scheduler.start()
-            yield
-            scheduler.shutdown()
+        if enable_background_refresh:
+            # Manage scheduler lifecycle when background refresh is enabled.
+            @asynccontextmanager
+            async def lifespan(app: FastAPI):
+                scheduler = BackgroundScheduler()
+                # Refresh data on start
+                scheduler.add_job(refreshDataService.refreshFightData, 'interval', hours=1, next_run_time=datetime.datetime.now())
+                scheduler.add_job(refreshDataService.reloadIncompleteData, 'interval', hours=24, next_run_time=datetime.datetime.now())
+                scheduler.start()
+                yield
+                scheduler.shutdown()
 
-        self.app = FastAPI(title="UFC Fight Data API", lifespan=lifespan)
+            self.app = FastAPI(title="UFC Fight Data API", lifespan=lifespan)
+        else:
+            self.app = FastAPI(title="UFC Fight Data API")
         self._registerEndpoints()
 
 
@@ -33,11 +36,11 @@ class FightDataResource:
         uvicorn.run(
             self.app,
             host="0.0.0.0",
-            port=8000,
+            port=8002,
             reload=False,
             workers=1
         )
-        print(f"Starting FightDataResource on 0.0.0.0:8000")
+        print(f"Starting FightDataResource on 0.0.0.0:8002")
 
     def _registerEndpoints(self):
 
@@ -62,6 +65,7 @@ class FightDataResource:
             return data.iloc[0].to_dict()
         
         @self.app.get("/fighter")
+        @self.app.get("/fighter/all")
         def get_all_fighters():
             return self.fightDataService.getAllFighters()
         

@@ -40,7 +40,7 @@ fight_cache = FightCache(str(FIGHT_CSV))
 fight_service = FightDataService(event_cache, event_info_cache, fight_cache)
 scraper_service = ScraperService()
 refresh_service = RefreshDataService(fight_cache, event_cache, event_info_cache, scraper_service)
-resource = FightDataResource(fight_service, refresh_service)
+resource = FightDataResource(fight_service, refresh_service, enable_background_refresh=False)
 app = resource.app
 
 # Register prediction endpoints with lazy model loading to reduce startup memory.
@@ -70,10 +70,10 @@ def _get_prediction_services():
         fight_style_csv = str(REPO_ROOT / "resources" / "fighter_vectors" / "fighter_style_predictions.csv")
 
         style_predictor = StylePredictor()
-        _style_service = StylePredictionService(style_predictor, fight_style_csv)
+        data_api_client = DataApiClient(data_url)
+        _style_service = StylePredictionService(style_predictor, data_api_client, fight_style_csv)
 
         outcome_predictor = OutcomePredictor()
-        data_api_client = DataApiClient(data_url)
         _outcome_service = OutcomePredictionService(outcome_predictor, _style_service, data_api_client)
         return _style_service, _outcome_service
     except Exception as e:

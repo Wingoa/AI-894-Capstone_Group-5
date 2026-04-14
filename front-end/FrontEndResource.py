@@ -5,6 +5,7 @@ import os
 import sys
 from typing import Dict, List, Optional, Tuple
 from fastapi import FastAPI, HTTPException, Request
+from dataclasses import is_dataclass, asdict
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.templating import Jinja2Templates
@@ -163,8 +164,22 @@ def getLastFights() -> List[EventInfo]:
 
 @app.get("/fighter/all", response_model=List[Fighter])
 def getAllFighters() -> List[Fighter]:
-    # Return all fighters from the data service
-    return service.getAllFighters()
+    # Return all fighters from the data service as JSON-serializable dicts.
+    fighters = service.getAllFighters()
+    out = []
+    for f in fighters:
+        try:
+            if is_dataclass(f):
+                out.append(asdict(f))
+            elif isinstance(f, dict):
+                out.append(f)
+            else:
+                # Fallback: try attribute dict
+                out.append(f.__dict__)
+        except Exception:
+            # if conversion fails, skip the entry
+            continue
+    return out
 
 @app.get("/fighter/{fighter_id}", response_model=Fighter)
 def getFighter(fighter_id: str):

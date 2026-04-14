@@ -23,14 +23,15 @@ from data_model.FighterStyle import FighterStyle
 class FrontEndService:
     def __init__(self) -> None:
         # API URLs: Execution Service for upcoming fights, Prediction Service for fighter styles/predictions
-        self._execution_api_url = os.getenv("EXECUTION_SERVICE_URL", "http://localhost:8003").rstrip("/")
+        self._execution_api_url = os.getenv("EXECUTION_SERVICE_URL", "http://localhost:8002").rstrip("/")
         self._prediction_service_url = os.getenv("PREDICTION_SERVICE_URL", "http://localhost:8002").rstrip("/")
 
     def getLastFights(self) -> List[EventInfo]:
         # Return completed fights (past events with fight_id present)
         try: 
-            resp = requests.get(f"{self._execution_api_url}/lastFights", timeout=10)
-            resp.raise_for_status()
+            resp = self._get_with_fallback(["/latest", "/lastFights"], timeout=10)
+            if resp is None:
+                return []
             
             # Parse JSON response into EventInfo objects
             last_fights_data = resp.json()
@@ -84,15 +85,27 @@ class FrontEndService:
     def getNextFights(self) -> Optional[List[dict]]:
         # Call the data API /event/next endpoint and normalize the response
         try:
-            resp = requests.get(f"{self._execution_api_url}/nextFights", timeout=2.5)
-            if resp.status_code != 200:
+            resp = self._get_with_fallback(["/event/next", "/nextFights"], timeout=2.5)
+            if resp is None:
                 return None
             payload = resp.json()
         except Exception:
             return None
-
         events_by_id = {e.event_id: e for e in self.getAllEvents()}
-        all_fighters = {f["name"]: f["id"] for f in self.getAllFighters()}
+        # Build name->id map supporting either dicts (from API) or Fighter objects
+        all_fighters = {}
+        for f in self.getAllFighters():
+            try:
+                if isinstance(f, dict):
+                    name = f.get("name")
+                    fid = f.get("id")
+                else:
+                    name = getattr(f, "name", None)
+                    fid = getattr(f, "id", None)
+                if name:
+                    all_fighters[name] = fid or ""
+            except Exception:
+                continue
         fights = payload.get("fights") or []
         if not fights:
             return None
@@ -131,9 +144,29 @@ class FrontEndService:
     
     def getAllFighters(self) -> List[Fighter]:
         try:
-            resp = requests.get(f"{self._execution_api_url}/fighter/all", timeout=10)
-            resp.raise_for_status()
-            fighters_data = resp.json()
+            paths = ["/fighter", "/fighter/all"]
+            print(f"FrontEndService: execution_url={self._execution_api_url}, trying paths={paths}")
+            resp = self._get_with_fallback(paths, timeout=10)
+            if resp is None:
+                return []
+            # Debug: log raw response text to diagnose empty payloads
+            try:
+                raw = resp.text
+            except Exception:
+                raw = "<no-text>"
+            print(f"FrontEndService.getAllFighters: url={resp.url}, status={resp.status_code}, len={len(raw)}")
+            try:
+                fighters_data = resp.json()
+                # Log structure details
+                print(f"FrontEndService.getAllFighters: parsed type={type(fighters_data)}, count={len(fighters_data) if hasattr(fighters_data, '__len__') else 'n/a'}")
+                if isinstance(fighters_data, (list, tuple)) and len(fighters_data) > 0:
+                    sample = fighters_data[0]
+                    print(f"FrontEndService.getAllFighters: sample_keys={list(sample.keys()) if isinstance(sample, dict) else type(sample)}")
+            except Exception as e:
+                import traceback
+                print("FrontEndService.getAllFighters: JSON parse error:", e)
+                traceback.print_exc()
+                return []
             
             if not fighters_data:
                 return []
@@ -142,19 +175,25 @@ class FrontEndService:
             for f_data in fighters_data:
                 # Handle both Fighter objects and plain dicts
                 if isinstance(f_data, dict):
-                    comp_data = f_data.get("composition", {})
-                    fighters.append(Fighter(
-                        name=f_data.get("name", ""),
-                        id=f_data.get("id", ""),
-                        composition=FighterComposition(
-                            pace=float(comp_data.get("pace", 0.0)),
-                            boxing=float(comp_data.get("boxing", 0.0)),
-                            muay_thai=float(comp_data.get("muay_thai", 0.0)),
-                            wrestling=float(comp_data.get("wrestling", 0.0)),
-                            grappling=float(comp_data.get("grappling", 0.0)),
-                        ),
-                        fight_ids=f_data.get("fight_ids", [])
-                    ))
+                    comp_data = f_data.get("composition", {}) or {}
+                    # Defensive per-item construction so one bad record doesn't abort everything
+                    try:
+                        fighters.append(Fighter(
+                            name=f_data.get("name", ""),
+                            id=f_data.get("id", ""),
+                            composition=FighterComposition(
+                                pace=float(comp_data.get("pace", 0.0)),
+                                boxing=float(comp_data.get("boxing", 0.0)),
+                                muay_thai=float(comp_data.get("muay_thai", 0.0)),
+                                wrestling=float(comp_data.get("wrestling", 0.0)),
+                                grappling=float(comp_data.get("grappling", 0.0)),
+                                stats=comp_data.get("stats", {})
+                            ),
+                            fight_ids=f_data.get("fight_ids", [])
+                        ))
+                    except Exception:
+                        # skip malformed entries
+                        continue
             
             return sorted(fighters, key=lambda fighter: fighter.name)
         except Exception:
@@ -165,22 +204,38 @@ class FrontEndService:
             resp = requests.get(f"{self._execution_api_url}/fighter/{fighter_id}", timeout=10)
             resp.raise_for_status()
             f_data = resp.json()
-            
-            comp_data = f_data.get("composition", {})
-            return Fighter(
-                name=f_data.get("name", ""),
-                id=f_data.get("id", ""),
-                composition=FighterComposition(
-                    pace=float(comp_data.get("pace", 0.0)),
-                    boxing=float(comp_data.get("boxing", 0.0)),
-                    muay_thai=float(comp_data.get("muay_thai", 0.0)),
-                    wrestling=float(comp_data.get("wrestling", 0.0)),
-                    grappling=float(comp_data.get("grappling", 0.0)),
-                ),
-                fight_ids=f_data.get("fight_ids", [])
-            )
+            # Support both `id` and legacy `fighter_id` keys from the data API
+            fid = f_data.get("id") or f_data.get("fighter_id") or f_data.get("fighterId") or ""
+            comp_data = f_data.get("composition") or {}
+            # If composition not provided, fall back to zeros
+            try:
+                return Fighter(
+                    name=f_data.get("name", ""),
+                    id=fid,
+                    composition=FighterComposition(
+                        pace=float(comp_data.get("pace", 0.0)),
+                        boxing=float(comp_data.get("boxing", 0.0)),
+                        muay_thai=float(comp_data.get("muay_thai", 0.0)),
+                        wrestling=float(comp_data.get("wrestling", 0.0)),
+                        grappling=float(comp_data.get("grappling", 0.0)),
+                        stats=comp_data.get("stats", {}),
+                    ),
+                    fight_ids=f_data.get("fight_ids", [])
+                )
+            except Exception:
+                return None
         except Exception:
             return None
+
+    def _get_with_fallback(self, paths: List[str], timeout: float) -> Optional[requests.Response]:
+        for path in paths:
+            try:
+                resp = requests.get(f"{self._execution_api_url}{path}", timeout=timeout)
+                if resp.status_code == 200:
+                    return resp
+            except Exception:
+                continue
+        return None
 
     def getFighterStyle(self, fighter_id: str) -> FighterStyle:
         # Query the Prediction Service for fighter style weights.
