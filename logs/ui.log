@@ -62,3 +62,931 @@ FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, l
 FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
 FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
 INFO:     127.0.0.1:51551 - "GET /compare?red=0e5c4e72237461bb&blue=22061ff217907c78 HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'data/FightDataService.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [7847]
+INFO:     Started server process [7986]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'data/FightDataService.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [7986]
+INFO:     Started server process [8107]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'data/FightDataService.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [8107]
+INFO:     Started server process [8113]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+INFO:     127.0.0.1:51725 - "GET / HTTP/1.1" 200 OK
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+INFO:     127.0.0.1:51725 - "GET /compare?red=725b1abc9a39d873&blue=cf1a88371c8cb690 HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'front-end/FrontEndResource.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [8113]
+INFO:     Started server process [8294]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'front-end/FrontEndResource.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [8294]
+INFO:     Started server process [8367]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'front-end/FrontEndResource.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [8367]
+INFO:     Started server process [8392]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'front-end/FrontEndResource.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [8392]
+INFO:     Started server process [8400]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+INFO:     127.0.0.1:51850 - "GET / HTTP/1.1" 200 OK
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+INFO:     127.0.0.1:51874 - "GET /compare?red=d5f820c11a121050&blue=d1053e55f00e53fe HTTP/1.1" 200 OK
+INFO:     Will watch for changes in these directories: ['/Users/Austin/Repos/AI-894-Capstone_Group-5']
+ERROR:    [Errno 48] Address already in use
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+INFO:     127.0.0.1:51924 - "GET / HTTP/1.1" 200 OK
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+INFO:     127.0.0.1:51962 - "GET / HTTP/1.1" 200 OK
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+INFO:     127.0.0.1:52005 - "GET / HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.12/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/anaconda3/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/anaconda3/lib/python3.12/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/fastapi/routing.py", line 245, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/concurrency.py", line 38, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/anyio/to_thread.py", line 56, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 2134, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 851, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Austin/Repos/AI-894-Capstone_Group-5/front-end/FrontEndResource.py", line 51, in homepage
+    return templates.TemplateResponse(request, "index.html", {
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/templating.py", line 210, in TemplateResponse
+    return _TemplateResponse(
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/templating.py", line 41, in __init__
+    content = template.render(context)
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/opt/anaconda3/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/Austin/Repos/AI-894-Capstone_Group-5/front-end/templates/index.html", line 7, in top-level template code
+    <div class="mini-comp-fill" style="width:{{ fighter.exploitability_score | default(0) }}%;"></div>
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'fighter' is undefined
+WARNING:  WatchFiles detected changes in 'front-end/FrontEndResource.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for connections to close. (CTRL+C to force quit)
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+INFO:     127.0.0.1:52031 - "GET / HTTP/1.1" 200 OK
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [8400]
+INFO:     Started server process [8924]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'front-end/FrontEndResource.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [8924]
+INFO:     Started server process [8988]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+INFO:     127.0.0.1:52058 - "GET / HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'front-end/FrontEndResource.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [8988]
+INFO:     Started server process [9067]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'front-end/FrontEndResource.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [9067]
+INFO:     Started server process [9099]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+INFO:     127.0.0.1:52115 - "GET / HTTP/1.1" 200 OK
+INFO:     Will watch for changes in these directories: ['/Users/Austin/Repos/AI-894-Capstone_Group-5']
+ERROR:    [Errno 48] Address already in use
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=758183
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+INFO:     127.0.0.1:52143 - "GET / HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'data/FightDataService.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [9099]
+INFO:     Started server process [9194]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'data/FightDataService.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [9194]
+INFO:     Started server process [9234]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Will watch for changes in these directories: ['/Users/Austin/Repos/AI-894-Capstone_Group-5']
+ERROR:    [Errno 48] Address already in use
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=768272
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=768272
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+INFO:     127.0.0.1:52169 - "GET / HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'front-end/FrontEndResource.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [9234]
+INFO:     Started server process [9368]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'front-end/FrontEndResource.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [9368]
+INFO:     Started server process [9405]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'data/clean/process_data.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [9405]
+INFO:     Started server process [9894]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'data/clean/process_data.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [9894]
+INFO:     Started server process [9902]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'data/clean/process_data.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [9902]
+INFO:     Started server process [9935]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'scripts/repair_fights_csv.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [9935]
+INFO:     Started server process [9960]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'data/clean/process_data.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [9960]
+INFO:     Started server process [10038]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'data/clean/process_data.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10038]
+INFO:     Started server process [10055]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'model/style/FightVectorCleaner.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10055]
+INFO:     Started server process [10064]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'data/clean/process_data.py', 'model/style/FightVectorCleaner.py', 'scripts/repair_fights_csv.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10064]
+INFO:     Started server process [10088]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'scripts/weekly_pipeline.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10088]
+INFO:     Started server process [10126]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'scripts/weekly_pipeline.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10126]
+INFO:     Started server process [10139]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'scripts/weekly_pipeline.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10139]
+INFO:     Started server process [10237]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'scripts/weekly_pipeline.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10237]
+INFO:     Started server process [10250]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=768728
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=768728
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+INFO:     127.0.0.1:52554 - "GET / HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'model/style/FightVectorCleaner.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10250]
+INFO:     Started server process [10388]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'model/style/FightVectorCleaner.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10388]
+INFO:     Started server process [10405]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'model/style/FightVectorCleaner.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10405]
+INFO:     Started server process [10625]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'model/style/FightVectorCleaner.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10625]
+INFO:     Started server process [10681]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'scripts/repair_fights_csv.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10681]
+INFO:     Started server process [10858]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Will watch for changes in these directories: ['/Users/Austin/Repos/AI-894-Capstone_Group-5']
+ERROR:    [Errno 48] Address already in use
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=768728
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=768728
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+INFO:     127.0.0.1:52812 - "GET / HTTP/1.1" 200 OK
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=768728
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=768728
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=768728
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=768728
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=768728
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=768728
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=768728
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=768728
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+Failed to compute style matchups: 'Pace'
+INFO:     127.0.0.1:52834 - "GET /compare?red=cf1a88371c8cb690&blue=6448e57a9533b7e4 HTTP/1.1" 200 OK
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=768728
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=768728
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=768728
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=768728
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+INFO:     127.0.0.1:52878 - "GET /compare?red=b27b8881d7444114&blue=4c2d90e335e6df19 HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'model/style/StylePredictionService.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10858]
+INFO:     Started server process [11348]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'model/style/StylePredictionService.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [11348]
+INFO:     Started server process [11358]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'model/style/StylePredictionService.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [11358]
+INFO:     Started server process [11359]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'scripts/populate_style_cache.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [11359]
+INFO:     Started server process [11565]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+INFO:     127.0.0.1:53070 - "GET /compare?red=b27b8881d7444114&blue=4c2d90e335e6df19 HTTP/1.1" 200 OK
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+INFO:     127.0.0.1:53070 - "GET /compare?red=b27b8881d7444114&blue=4c2d90e335e6df19 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53156 - "GET /fighter/style/001eb2ab0f30e7ea HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.12/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/anaconda3/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/anaconda3/lib/python3.12/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/fastapi/routing.py", line 245, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/concurrency.py", line 38, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/anyio/to_thread.py", line 56, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 2134, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 851, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Austin/Repos/AI-894-Capstone_Group-5/front-end/FrontEndResource.py", line 198, in getFighterStyle
+    return service.getFighterStyle(fighter_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Austin/Repos/AI-894-Capstone_Group-5/front-end/FrontEndService.py", line 245, in getFighterStyle
+    return FighterStyle(
+           ^^^^^^^^^^^^^
+TypeError: FighterStyle.__init__() missing 2 required positional arguments: 'pace' and 'stats'
+INFO:     127.0.0.1:53160 - "GET /fighter/style/001eb2ab0f30e7ea HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.12/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/anaconda3/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/anaconda3/lib/python3.12/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/fastapi/routing.py", line 245, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/starlette/concurrency.py", line 38, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/anyio/to_thread.py", line 56, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 2134, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 851, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Austin/Repos/AI-894-Capstone_Group-5/front-end/FrontEndResource.py", line 198, in getFighterStyle
+    return service.getFighterStyle(fighter_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/Austin/Repos/AI-894-Capstone_Group-5/front-end/FrontEndService.py", line 245, in getFighterStyle
+    return FighterStyle(
+           ^^^^^^^^^^^^^
+TypeError: FighterStyle.__init__() missing 2 required positional arguments: 'pace' and 'stats'
+INFO:     127.0.0.1:53167 - "GET /fighter/001eb2ab0f30e7ea HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'front-end/FrontEndService.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [11565]
+INFO:     Started server process [12013]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Will watch for changes in these directories: ['/Users/Austin/Repos/AI-894-Capstone_Group-5']
+ERROR:    [Errno 48] Address already in use
+INFO:     127.0.0.1:53219 - "GET /fighter/style/001eb2ab0f30e7ea HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'front-end/FrontEndService.py', 'scripts/populate_style_cache.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [12013]
+INFO:     Started server process [12094]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Will watch for changes in these directories: ['/Users/Austin/Repos/AI-894-Capstone_Group-5']
+ERROR:    [Errno 48] Address already in use
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+INFO:     127.0.0.1:53229 - "GET / HTTP/1.1" 200 OK
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+INFO:     127.0.0.1:53248 - "GET /compare?red=5537efc6e496dd84&blue=009c4420727149ea HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53277 - "GET /fighter/style/001eb2ab0f30e7ea HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53280 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+INFO:     127.0.0.1:53322 - "GET /compare?red=001eb2ab0f30e7ea&blue=002ca196477ce572 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53351 - "GET /fighter/001eb2ab0f30e7ea HTTP/1.1" 200 OK
+INFO:     Will watch for changes in these directories: ['/Users/Austin/Repos/AI-894-Capstone_Group-5']
+ERROR:    [Errno 48] Address already in use
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+INFO:     127.0.0.1:53368 - "GET /compare?red=001eb2ab0f30e7ea&blue=002ca196477ce572 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53430 - "GET /fighter/001eb2ab0f30e7ea HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'front-end/FrontEndService.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [12094]
+INFO:     Started server process [12512]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'scripts/populate_style_cache.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [12512]
+INFO:     Started server process [12536]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'front-end/FrontEndService.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [12536]
+INFO:     Started server process [12562]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Will watch for changes in these directories: ['/Users/Austin/Repos/AI-894-Capstone_Group-5']
+ERROR:    [Errno 48] Address already in use
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+INFO:     127.0.0.1:53495 - "GET / HTTP/1.1" 200 OK
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+FrontEndService: execution_url=http://127.0.0.1:8002, trying paths=['/fighter', '/fighter/all']
+FrontEndService.getAllFighters: url=http://127.0.0.1:8002/fighter, status=200, len=924727
+FrontEndService.getAllFighters: parsed type=<class 'list'>, count=2659
+FrontEndService.getAllFighters: sample_keys=['name', 'id', 'composition', 'fight_ids']
+Failed to compute style matchups: 'Pace'
+INFO:     127.0.0.1:53523 - "GET /compare?red=95aff2fd8d09a5f0&blue=029e1293e609fd74 HTTP/1.1" 200 OK

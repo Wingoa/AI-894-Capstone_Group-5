@@ -14,7 +14,7 @@ set -e
 #### Stop API and UI
 #  1. ./start-dev.sh stop  
 
-API_PORT=8002
+API_PORT=8002Ca
 UI_PORT=8080
 
 export PYTHONPATH=.

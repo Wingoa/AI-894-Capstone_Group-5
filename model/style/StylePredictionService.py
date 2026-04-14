@@ -1,4 +1,5 @@
 import csv
+import os
 import pandas as pd
 import numpy as np
 from typing import Dict
@@ -79,27 +80,70 @@ class StylePredictionService:
         return self._isStyleOld(row["event_date"])
     
     def _clearStyleCache(self):
-        # Load the file
-        df = pd.read_csv(self.fight_style_csv_path)
-        # Keep rows where event_date is older than 2 months
-        df = df[~df.apply(self._shouldRemove, axis=1)]
-        print(f"Loading {len(df)} fighter styles to the style prediction cache")
-        # Save the updated DataFrame back to the CSV
-        df.to_csv(self.fight_style_csv_path, index=False)
+        # Load the file; if it doesn't exist or is malformed, create an empty file with headers
+        try:
+            df = pd.read_csv(self.fight_style_csv_path)
+            # Keep rows where event_date is NOT older than 2 months
+            df = df[~df.apply(self._shouldRemove, axis=1)]
+            print(f"Loading {len(df)} fighter styles to the style prediction cache")
+            df.to_csv(self.fight_style_csv_path, index=False)
+        except Exception as e:
+            # Initialize an empty CSV with expected headers
+            print(f"Warning: could not read style cache {self.fight_style_csv_path}: {e}; creating empty cache")
+            cols = ["fighter_id", "fighter", "event_date", "weight_class", "MuayThai", "Boxing", "Wrestling", "Grappling"]
+            empty = pd.DataFrame(columns=cols)
+            os.makedirs(os.path.dirname(self.fight_style_csv_path), exist_ok=True)
+            empty.to_csv(self.fight_style_csv_path, index=False)
 
     def _getFightStyleVectorFromCsv(self, fighter_id: str) -> Dict:
-        with open(self.fight_style_csv_path, newline="", encoding="utf-8") as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                if row["fighter_id"] == fighter_id:
-                    return row
+        # Try reading the explicit style cache first
+        try:
+            with open(self.fight_style_csv_path, newline="", encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    if row.get("fighter_id") == fighter_id:
+                        return row
+        except Exception:
+            # fallthrough to fallback below
+            pass
+
+        # Fallback: try to compute style from the full fighter vectors file
+        try:
+            parent = os.path.dirname(self.fight_style_csv_path)
+            all_path = os.path.join(parent, "fighter_vectors_all.csv")
+            if os.path.exists(all_path):
+                df = pd.read_csv(all_path)
+                match = df[df["fighter_id"] == fighter_id]
+                if not match.empty:
+                    row = match.iloc[0].to_dict()
+                    # Calculate style vector and persist to cache for future calls
+                    style_vals = self.getStyleVector(row)
+                    csvData = {
+                        "fighter_id": fighter_id,
+                        "fighter": row.get("fighter", ""),
+                        "event_date": date.today().isoformat(),
+                        "weight_class": row.get("weight_class", None),
+                        "MuayThai": style_vals[0],
+                        "Boxing": style_vals[1],
+                        "Wrestling": style_vals[2],
+                        "Grappling": style_vals[3],
+                    }
+                    try:
+                        self._saveToCSV(csvData)
+                    except Exception:
+                        pass
+                    return csvData
+        except Exception:
+            pass
+
         return None
     
     def _saveToCSV(self, data: dict):
-        # Wrap in a list to create a single-row DataFrame
+        # Append the new row to the CSV atomically (create file with header if missing)
+        file_exists = os.path.exists(self.fight_style_csv_path)
         df = pd.DataFrame([data])
-        # Save to CSV
-        df.to_csv(self.fight_style_csv_path, index=False)
+        os.makedirs(os.path.dirname(self.fight_style_csv_path), exist_ok=True)
+        df.to_csv(self.fight_style_csv_path, mode="a", index=False, header=not file_exists)
     
     def getStyleVector(self, fighter_vector: dict):
         # Gather features for style predictor

@@ -206,24 +206,53 @@ class FrontEndService:
             f_data = resp.json()
             # Support both `id` and legacy `fighter_id` keys from the data API
             fid = f_data.get("id") or f_data.get("fighter_id") or f_data.get("fighterId") or ""
-            comp_data = f_data.get("composition") or {}
-            # If composition not provided, fall back to zeros
+
+            # Attempt to get fresh style from prediction service; if it fails, fall back to composition provided by
+            # the execution service's aggregated roster (`/fighter`) which contains precomputed compositions.
             try:
-                return Fighter(
-                    name=f_data.get("name", ""),
-                    id=fid,
-                    composition=FighterComposition(
-                        pace=float(comp_data.get("pace", 0.0)),
-                        boxing=float(comp_data.get("boxing", 0.0)),
-                        muay_thai=float(comp_data.get("muay_thai", 0.0)),
-                        wrestling=float(comp_data.get("wrestling", 0.0)),
-                        grappling=float(comp_data.get("grappling", 0.0)),
-                        stats=comp_data.get("stats", {}),
-                    ),
-                    fight_ids=f_data.get("fight_ids", [])
+                fighter_style = self.getFighterStyle(fighter_id)
+                comp = FighterComposition(
+                    pace=float(getattr(fighter_style, "pace", 0.0)),
+                    boxing=float(getattr(fighter_style, "boxing", 0.0)),
+                    muay_thai=float(getattr(fighter_style, "muayThai", 0.0)),
+                    wrestling=float(getattr(fighter_style, "wrestling", 0.0)),
+                    grappling=float(getattr(fighter_style, "grappling", 0.0)),
+                    stats=getattr(fighter_style, "stats", {}) or {},
                 )
             except Exception:
-                return None
+                # Fallback to roster composition if available
+                comp = None
+                try:
+                    roster = self.getAllFighters()
+                    for entry in roster:
+                        try:
+                            if isinstance(entry, dict) and entry.get("id") == fighter_id:
+                                c = entry.get("composition", {}) or {}
+                                comp = FighterComposition(
+                                    pace=float(c.get("pace", 0.0)),
+                                    boxing=float(c.get("boxing", 0.0)),
+                                    muay_thai=float(c.get("muay_thai", 0.0)),
+                                    wrestling=float(c.get("wrestling", 0.0)),
+                                    grappling=float(c.get("grappling", 0.0)),
+                                    stats=c.get("stats", {}) or {},
+                                )
+                                break
+                        except Exception:
+                            continue
+
+                except Exception:
+                    comp = FighterComposition(0.0, 0.0, 0.0, 0.0, 0.0, {})
+
+            # If still missing, default to zeros
+            if comp is None:
+                comp = FighterComposition(0.0, 0.0, 0.0, 0.0, 0.0, {})
+
+            return Fighter(
+                name=f_data.get("name", ""),
+                id=fid,
+                composition=comp,
+                fight_ids=f_data.get("fight_ids", []),
+            )
         except Exception:
             return None
 
@@ -242,14 +271,29 @@ class FrontEndService:
         resp = requests.get(f"{self._prediction_service_url}/style/{fighter_id}", timeout=10)
         resp.raise_for_status()
         data = resp.json()
-        return FighterStyle(
-            data["fighter_id"],
-            data["fighter"],
-            float(data["muayThai"]),
-            float(data["boxing"]),
-            float(data["wrestling"]),
-            float(data["grappling"]),
-        )
+        # Defensive handling: some responses may omit 'pace' or 'stats'. Provide safe defaults.
+        try:
+            muay = float(data.get("muayThai", 0.0))
+        except Exception:
+            muay = 0.0
+        try:
+            box = float(data.get("boxing", 0.0))
+        except Exception:
+            box = 0.0
+        try:
+            wrest = float(data.get("wrestling", 0.0))
+        except Exception:
+            wrest = 0.0
+        try:
+            grap = float(data.get("grappling", 0.0))
+        except Exception:
+            grap = 0.0
+        try:
+            pace = float(data.get("pace", 0.0))
+        except Exception:
+            pace = 0.0
+        stats = data.get("stats", {}) or {}
+        return FighterStyle(data.get("fighter_id", fighter_id), data.get("fighter", ""), muay, box, wrest, grap, pace, stats)
 
     def predictFight(self, fighter_a_id: str, fighter_b_id: str):
         # Query the Prediction Service for a fight outcome prediction.
