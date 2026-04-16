@@ -151,3 +151,30 @@ class FightDataService:
             "fight_ids": fight_ids,
             "fights": fights
         }
+        
+    # For the fighter comparison page, we need a list of all fighters with their IDs and fight IDs to populate the dropdowns    
+    def getAllFighters(self) -> list:
+        df = pd.DataFrame([
+            asdict(f) if is_dataclass(f) else f
+            for sublist in self.fightCache.all()
+            for f in sublist
+        ])
+        if df.empty:
+            return []
+        # One row per unique fighter_id, keeping name and aggregating fight_ids
+        grouped = (
+            df.groupby("fighter_id")
+            .agg(
+                name=("fighter", "first"),
+                fight_ids=("fight_id", list),
+            )
+            .reset_index()
+        )
+        return [
+            {
+                "name": row["name"],
+                "fighter_id": row["fighter_id"],
+                "fight_ids": row["fight_ids"],
+            }
+            for _, row in grouped.iterrows()
+        ]
