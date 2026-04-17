@@ -304,6 +304,16 @@ class FrontEndService:
         except Exception:
             return None
 
+    def _get_with_fallback(self, paths: List[str], timeout: float) -> Optional[requests.Response]:
+        for path in paths:
+            try:
+                resp = requests.get(f"{self._execution_api_url}{path}", timeout=timeout)
+                if resp.status_code == 200:
+                    return resp
+            except Exception:
+                continue
+        return None
+
     def getFighterStyle(self, fighter_id: str) -> FighterStyle:
         # Query the Prediction Service for fighter style weights.
         data = self._get_json(f"{self._prediction_service_url}/style/{fighter_id}", timeout=30)
