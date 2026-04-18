@@ -20,7 +20,7 @@ def make_session() -> requests.Session:
 
 def get_html(session: requests.Session, url: str, timeout: int = 30):
     # Honor environment flag to disable scraping during startup or in restricted environments
-    enable_scraping = os.getenv("ENABLE_SCRAPING", "false").lower() in ("1", "true", "yes")
+    enable_scraping = os.getenv("ENABLE_SCRAPING", "true").lower() in ("1", "true", "yes")
     if not enable_scraping:
         try:
             print(f"Scraping disabled via ENABLE_SCRAPING env; skipping request to {url}")
