@@ -191,41 +191,6 @@ class FrontEndService:
         except Exception as e:
             print(f"getAllFighters error: {e}")
             return []
-    
-    # def getAllFighters(self) -> List[Fighter]:
-    #     try:
-    #         fighters_data = self._try_get_json(
-    #             [
-    #                 f"{self._execution_api_url}/fighter/all" if self._execution_api_url else "",
-    #             ],
-    #             timeout=10,
-    #         )
-            
-    #         if not fighters_data:
-    #             return []
-            
-    #         fighters = []
-    #         for f_data in fighters_data:
-    #             if isinstance(f_data, dict):
-    #                 comp_data = f_data.get("composition") or {}
-    #                 fighter_id = f_data.get("id") or f_data.get("fighter_id") or ""
-    #                 fighters.append(Fighter(
-    #                     name=f_data.get("name", ""),
-    #                     id=fighter_id,
-    #                     composition=FighterComposition(
-    #                         pace=float(comp_data.get("pace", 0.0)),
-    #                         boxing=float(comp_data.get("boxing", 0.0)),
-    #                         muay_thai=float(comp_data.get("muay_thai", 0.0)),
-    #                         wrestling=float(comp_data.get("wrestling", 0.0)),
-    #                         grappling=float(comp_data.get("grappling", 0.0)),
-    #                         stats=comp_data.get("stats", {}),
-    #                     ),
-    #                     fight_ids=f_data.get("fight_ids", [])
-    #                 ))
-            
-    #         return sorted(fighters, key=lambda fighter: fighter.name)
-    #     except Exception:
-    #         return []
         
     def getPopularFighters(self) -> List[Fighter]:
         try:
