@@ -39,10 +39,6 @@
         <div class="nav-item {{ 'active' if active_screen == 'simulation' else '' }}" data-screen="simulation">
           <span class="nav-icon">⚙</span> Simulation
         </div>
-        <!-- <div class="nav-item {{ 'active' if active_screen == 'matchup' else '' }}"
-          data-screen="matchup">
-          <span class="nav-icon">◈</span> Style Matchup
-        </div> -->
         <div class="nav-label">Data</div>
         <div class="nav-item {{ 'active' if active_screen == 'roster' else '' }}" data-screen="roster">
           <span class="nav-icon">☰</span> Fighter Roster
@@ -345,7 +341,6 @@
         {# /screen-comparison #}
 
         <!-- SCREEN 2: SIMULATION, user can adjust the red fighter's tactics & see how it affects the outcome -->
-
         <div class="screen {{ 'active' if active_screen == 'simulation' else '' }}" id="screen-simulation">
           <div class="grid-2">
             <div>
@@ -507,118 +502,6 @@
           </div>
         </div>
         {# /screen-simulation #}
-
-        <!-- SCREEN 3: STYLE MATCHUP, users can visualize style matchups, top patterns, and upcoming fights -->
-        <!-- <div class="screen {{ 'active' if active_screen == 'matchup' else '' }}" id="screen-matchup">
-          <div class="section-header">
-            <h2>STYLE EXPLOITABILITY MATRIX</h2>
-            <div class="section-divider"></div>
-            <div class="badge badge-red">Historical Win Rates</div>
-          </div>
-
-          <div class="grid-2 mb16">
-            <div class="card">
-              <div class="card-title">
-                Style vs Style Win Rate
-              </div>
-              <div style="overflow-x: auto; margin-top: 8px">
-                <table id="heatmap-table" style="
-											width: 100%;
-											border-collapse: separate;
-											border-spacing: 3px;
-											font-family: &quot;Barlow Condensed&quot;, sans-serif;
-											font-size: 11px;
-											letter-spacing: 1px;
-											text-align: center;
-										"></table>
-              </div>
-              <div class="heatmap-legend">
-                <span>WIN RATE:</span>
-                <span style="color: #00c853">■ &gt;65%</span>
-                <span style="color: #f5c518">■ 50–65%</span>
-                <span style="color: #e8001d">■ &lt;50%</span>
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="card-title">Top Exploitable Patterns</div>
-              <div style="margin-top: 8px">
-                {% for pattern in top_patterns %}
-                <div class="pattern-row {{ 'border-b' if not loop.last else '' }}">
-                  <div class="pattern-rank {{ 'green' if loop.index == 1 else 'gold' if loop.index == 2 else 'red' }}">
-                    {{ loop.index }}
-                  </div>
-                  <div style="flex: 1">
-                    <div class="pattern-label">{{ pattern.label }}</div>
-                    <div class="pattern-sub">
-                      {{ pattern.win_rate }}% win rate · {{ pattern.fight_count }} fights
-                    </div>
-                  </div>
-                  <div class="pattern-pct {{ 'green' if loop.index == 1 else 'gold' if loop.index == 2 else 'red' }}">
-                    {{ pattern.win_rate }}%
-                  </div>
-                </div>
-                {% endfor %}
-              </div>
-            </div>
-          </div> -->
-
-        <!-- Upcoming fights table -->
-        <!-- <div class="card">
-            <div class="card-title">UPCOMING FIGHTS</div>
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Event</th>
-                  <th>Fighter A</th>
-                  <th>Fighter B</th>
-                  <th>Weight Class</th>
-                  <th>Date</th>
-                  <th>Location</th>
-                  <th>Fighter A Odds</th>
-                  <th>Fighter B Odds</th>
-                  <th style="text-align: right">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% if next_fights %}
-                  {% for fight in next_fights %}
-                  <tr class="data-row">
-                    <td>
-                      {% if fight.event_url %}
-                      <a href="{{ fight.event_url }}" target="_blank" class="event-link">
-                        {{ fight.event_name }}
-                      </a>
-                      {% else %}{{ fight.event_name }}{% endif %}
-                    </td>
-                    <td style="color: var(--red)">{{ fight.red_fighter }}</td>
-                    <td style="color: #5b9eff">{{ fight.blue_fighter }}</td>
-                    <td>{{ fight.weight_class }}</td>
-                    <td style="color: var(--muted)">{{ fight.date }}</td>
-                    <td style="color: var(--muted)">{{ fight.location }}</td>
-                    <td style="color: var(--muted)">{{ (fight.fighter_a_odds * 100) | round(1) if fight.fighter_a_odds >= 0 else "N/A" }}%</td>
-                    <td style="color: var(--muted)">{{ (fight.fighter_b_odds * 100) | round(1) if fight.fighter_b_odds >= 0 else "N/A" }}%</td>
-                    <td style="text-align: right">
-                      <a href="/compare?red={{ fight.red_id }}&blue={{ fight.blue_id }}">
-                        <button class="btn btn-outline" style="padding: 5px 10px; font-size: 11px">
-                          ANALYZE
-                        </button>
-                      </a>
-                    </td>
-                  </tr>
-                  {% endfor %}
-                {% else %}
-                  <tr class="data-row">
-                    <td colspan="9" style="text-align:center;color:var(--muted);padding:16px;">
-                      No upcoming fights available.
-                    </td>
-                  </tr>
-                {% endif %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        {# /screen-matchup #} -->
 
         <!-- SCREEN 3: FIGHTER ROSTER, users can visualize the fight data we have and analyze past matchups -->
         <div class="screen {{ 'active' if active_screen == 'roster' else '' }}" id="screen-roster">
@@ -1179,46 +1062,6 @@
     }
 
     recalcSim();
-
-    // Heatmap
-    // function buildHeatmap() {
-    //   const table = document.getElementById("heatmap-table");
-    //   if (!table || table.innerHTML || !heatmapData) return;
-    //   const { styles, data } = heatmapData;
-    //   let html = '<tr><td style="padding:4px;"></td>';
-    //   styles.forEach((s) => {
-    //     html += `<td style="padding:5px 6px;font-size:10px;letter-spacing:1px;
-    //                       color:var(--muted);text-align:center;vertical-align:bottom;">${s}</td>`;
-    //   });
-    //   html += "</tr>";
-    //   data.forEach((row, ri) => {
-    //     html += `<tr><td style="padding:5px 6px;font-size:10px;letter-spacing:1px;
-    //                           color:var(--muted);white-space:nowrap;">${styles[ri]}</td>`;
-    //     row.forEach((cell) => {
-    //       let bg, color;
-    //       if (cell >= 65) {
-    //         bg = "rgba(0,200,83,0.25)";
-    //         color = "#00c853";
-    //       } else if (cell > 50) {
-    //         bg = "rgba(245,197,24,0.2)";
-    //         color = "#f5c518";
-    //       } else if (cell < 50) {
-    //         bg = "rgba(232,0,29,0.2)";
-    //         color = "#e8001d";
-    //       } else {
-    //         bg = "rgba(100,100,120,0.3)";
-    //         color = "var(--muted)";
-    //       }
-    //       html += `<td style="padding:5px;text-align:center;">
-    //       <div style="width:54px;height:30px;background:${bg};border-radius:3px;
-    //                   display:flex;align-items:center;justify-content:center;
-    //                   font-family:'Bebas Neue',cursive;font-size:16px;
-    //                   color:${color};letter-spacing:1px;">${cell}%</div></td>`;
-    //     });
-    //     html += "</tr>";
-    //   });
-    //   table.innerHTML = html;
-    // }
 
     // Roster Filter
     // Filters on Fighter.name (data-name) and derived archetype (data-style)

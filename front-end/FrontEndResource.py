@@ -115,30 +115,9 @@ def compare(request: Request, red: str = "", blue: str = "") -> HTMLResponse:
         "sim_narrative": None,
         "sim_outcome":   None,
         "coaching_recs": [],
-        # Style matchup screen data
-        # "heatmap_data":  _build_heatmap_data(),
-        # "top_patterns":  _build_top_patterns(),
+
         "readme_md": _load_readme_md(),
     })
-
-# @app.get("/matchup", response_class=HTMLResponse)
-# def matchup(request: Request) -> HTMLResponse:
-#     # Render the style matchup screen
-#     fighters    = service.getPopularFighters()
-#     next_fights = service.getNextFights()
-#     last_fights = service.getLastFightsWithEvents()
-
-#     return templates.TemplateResponse(request, "index.html", {
-#         "request":       request,
-#         "active_screen": "matchup",
-#         "fighters":      [_fighter_to_template(f) for f in fighters],
-#         "next_fights":   next_fights,
-#         "last_fights":   [_event_to_template(i, e) for i, e in last_fights],
-#         "heatmap_data":  _build_heatmap_data(),
-#         "top_patterns":  _build_top_patterns(),
-#         **_empty_comparison(),
-#         "readme_md": _load_readme_md(),
-#     })
 
 @app.get("/events", response_class=HTMLResponse)
 def events(request: Request) -> HTMLResponse:
@@ -153,8 +132,6 @@ def events(request: Request) -> HTMLResponse:
         "fighters":      [_fighter_to_template(f) for f in fighters],
         "next_fights":   next_fights,
         "last_fights":   [_event_to_template(i, e) for i, e in last_fights],
-        "heatmap_data":  _build_heatmap_data(),
-        "top_patterns":  _build_top_patterns(),
         **_empty_comparison(),
         "readme_md": _load_readme_md(),
     })
@@ -263,18 +240,18 @@ def _event_to_template(info: EventInfo, event: Optional[Event]=None,) -> dict:
 def _empty_comparison() -> dict:
     # Return empty/default values for comparison/simulation fields
     return {
-        "fighter_red":      None,
-        "fighter_blue":     None,
-        "composition_red":  None,
+        "fighter_red": None,
+        "fighter_blue": None,
+        "composition_red": None,
         "composition_blue": None,
-        "win_probability":  None,
-        "hth_stats":        [],
-        "matchup_stats":    {},
-        "sim_defaults":     _sim_defaults(None),
-        "shap_features":    [],
-        "sim_narrative":    None,
-        "sim_outcome":      None,
-        "coaching_recs":    [],
+        "win_probability": None,
+        "hth_stats": [],
+        "matchup_stats": {},
+        "sim_defaults": _sim_defaults(None),
+        "shap_features": [],
+        "sim_narrative": None,
+        "sim_outcome": None,
+        "coaching_recs": [],
     }
 
 def _derive_style_labels(c: FighterComposition,) -> Tuple[str, List[str], List[str]]:
@@ -566,140 +543,6 @@ def _build_matchup_stats(red: Fighter, blue: Fighter) -> dict:
         "exploitability_score": exploit,
         "exploitability_label": "High" if exploit > 50 else "Moderate",
     }
-
-# # HEATMAP / PATTERN DATA
-# def _build_heatmap_data() -> dict:
-#     # Return the style-vs-style win rate matrix
-#     heatmap, _ = _compute_style_matchups()
-#     return heatmap
-
-# def _build_top_patterns() -> List[dict]:
-#     # Return top exploitable style matchup patterns
-#     _, patterns = _compute_style_matchups()
-#     return patterns
-
-# def _compute_style_matchups() -> Tuple[dict, List[dict]]:
-#     # Compute style matchups from execution service endpoints
-#     cache = _STYLE_MATCHUP_CACHE
-    
-#     # Check cache
-#     if cache["heatmap"] and cache["patterns"] is not None:
-#         return cache["heatmap"], cache["patterns"]
-    
-#     try:
-#         # Get all fighters and build name to id and id to style mappings
-#         fighters = service.getAllFighters()
-#         name_to_id: dict = {_norm_name(f.name): f.id for f in fighters}
-#         # Get all past fights
-#         last_fights = service.getLastFights()
-        
-#         print(f"DEBUG: {len(fighters)} fighters, {len(last_fights)} fights")
-        
-#         # Collect ids of fighters in latest fights, then fetch their styles
-#         style_by_id: dict = {}
-#         for fight in last_fights:
-#             for name in [fight.winner_name, fight.loser_name]:
-#                 if not name:
-#                     continue
-#                 fid = name_to_id.get(_norm_name(name))
-#                 print(f"DEBUG: name='{name}' normalized='{_norm_name(name)}' fid={fid}")
-#                 if not fid or fid in style_by_id:
-#                     continue
-#                 try:
-#                     style = service.getFighterStyle(fid)
-#                     scores = {
-#                         "Striking": style.boxing,
-#                         "Muay Thai": style.muay_thai,
-#                         "Wrestling": style.wrestling,
-#                         "Grappling": style.grappling,
-#                         "Pace": style.pace,
-#                     }
-#                     style_by_id[fid] = max(scores, key=lambda k: scores[k])
-#                 except Exception:
-#                     continue
-        
-#         style_keys = ["Striking", "Muay Thai", "Wrestling", "Grappling", "Pace"]
-#         style_display = {
-#             "Striking": "Striker",
-#             "Muay Thai": "Muay Thai",
-#             "Wrestling": "Wrestler",
-#             "Grappling": "Grappler",
-#             "Pace": "Pace",
-#         }
-#         key_index = {k: i for i, k in enumerate(style_keys)}
-        
-#         # Build win/loss matrices by style
-#         n = len(style_keys)
-#         wins = [[0]*n for _ in range(n)]
-#         totals = [[0]*n for _ in range(n)]
-#         seen = set()
-        
-#         for fight in last_fights:
-#             fid = fight.fight_id
-#             if not fid or fid in seen:
-#                 continue
-#             seen.add(fid)
-            
-#             wid = name_to_id.get(_norm_name(fight.winner_name or ""))
-#             lid = name_to_id.get(_norm_name(fight.loser_name or ""))
-#             if not wid or not lid:
-#                 continue
-            
-#             # Get styles
-#             ws = style_by_id.get(wid)
-#             ls = style_by_id.get(lid)
-#             if not ws or not ls:
-#                 continue
-            
-#             # Update matrices
-#             wi, li = key_index[ws], key_index[ls]
-#             totals[wi][li] += 1
-#             totals[li][wi] += 1
-#             wins[wi][li] += 1
-        
-#         # Build heatmap data
-#         data = [
-#             [50 if totals[i][j] == 0 else round(wins[i][j]/totals[i][j]*100)
-#              for j in range(n)]
-#             for i in range(n)
-#         ]
-        
-#         # Build top patterns
-#         patterns = []
-#         for i in range(n):
-#             for j in range(n):
-#                 if i == j or totals[i][j] == 0:
-#                     continue
-#                 patterns.append({
-#                     "label": f"{style_display[style_keys[i]]} vs {style_display[style_keys[j]]}",
-#                     "win_rate": round(wins[i][j]/totals[i][j]*100),
-#                     "fight_count": totals[i][j],
-#                 })
-                
-#         patterns.sort(key=lambda p: (p["win_rate"], p["fight_count"]), reverse=True)
-        
-#         heatmap = {
-#             "styles": [style_display[k] for k in style_keys],
-#             "data": data,
-#         }
-        
-#         # Cache the results
-#         cache["heatmap"] = heatmap
-#         cache["patterns"] = patterns[:3]
-#         return heatmap, patterns[:3]
-        
-#     except Exception as e:
-#         print(f"Failed to compute style matchups: {e}")
-#         fallback_heatmap = {
-#             "styles": ["Striker", "Muay Thai", "Wrestler", "Grappler"],
-#             "data": [
-#                 [50, 50, 50, 50],
-#                 [50, 50, 50, 50],
-#                 [50, 50, 50, 50],
-#                 [50, 50, 50, 50],
-#             ],
-#         }
-#         return fallback_heatmap, []
 
 def _load_readme_md() -> str:
     try:
