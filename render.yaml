@@ -14,9 +14,11 @@ services:
       - key: EXECUTION_SERVICE_URL
         value: "https://ufc-fighter-optimizer.onrender.com"
       - key: PREDICTION_SERVICE_URL
-        value: "https://ufc-fighter-optimizer.onrender.com"
+        value: "https://ai-894-capstone-group-5.onrender.com"
       - key: DATA_URL
-        value: "https://ufc-fighter-optimizer.onrender.com"
+        value: "https://ai-894-capstone-group-5.onrender.com"
+      - key: FRONTEND_API_RETRIES
+        value: "2"
       - key: FRONTEND_API_TIMEOUT
         value: "120"
 
@@ -41,5 +43,7 @@ services:
       - key: DATA_URL
         value: "https://ai-894-capstone-group-5.onrender.com"
       - key: REFRESH_ON_START
+        value: "false"
+      - key: ENABLE_SCRAPING
         value: "false"
 
