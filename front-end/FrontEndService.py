@@ -1,6 +1,7 @@
 from __future__ import annotations
 # from collections import defaultdict
 from datetime import date, datetime
+import time
 from pathlib import Path
 import sys
 from typing import Dict, List, Optional, Tuple
@@ -30,9 +31,18 @@ class FrontEndService:
         self._prediction_service_url = (prediction_url or data_url or "http://localhost:8002").rstrip("/")
         self._data_api_url = (data_url or prediction_url or execution_url or "http://localhost:8002").rstrip("/")
         self._execution_api_url = execution_url.rstrip("/")
+        # Configurable backend timeout (seconds)
+        try:
+            self._timeout = float(os.getenv("FRONTEND_API_TIMEOUT", "30"))
+        except Exception:
+            self._timeout = 30.0
+        try:
+            self._retries = int(os.getenv("FRONTEND_API_RETRIES", "2"))
+        except Exception:
+            self._retries = 2
         # Debug info: print resolved backend URLs to help diagnose deployment env issues
         try:
-            print(f"FrontEndService configured URLs: data_api={self._data_api_url}, prediction={self._prediction_service_url}, execution={self._execution_api_url}")
+            print(f"FrontEndService configured URLs: data_api={self._data_api_url}, prediction={self._prediction_service_url}, execution={self._execution_api_url}, timeout={self._timeout}s")
         except Exception:
             pass
 
@@ -41,18 +51,51 @@ class FrontEndService:
         resp.raise_for_status()
         return resp.json()
 
-    def _try_get_json(self, urls: List[str], *, timeout: float = 10.0, params: Optional[dict] = None):
+    def _try_get_json(self, urls: List[str], *, timeout: float = None, params: Optional[dict] = None):
         last_error: Optional[Exception] = None
+        tried = []
         for url in urls:
             if not url:
                 continue
-            try:
-                return self._get_json(url, timeout=timeout, params=params)
-            except Exception as exc:
-                last_error = exc
-        if last_error is not None:
-            raise last_error
-        raise RuntimeError("No API URL configured")
+            tried.append(url)
+            attempt = 0
+            while attempt <= self._retries:
+                try:
+                    use_timeout = (timeout if timeout is not None else self._timeout)
+                    return self._get_json(url, timeout=use_timeout, params=params)
+                except Exception as exc:
+                    # Decide whether to retry: only retry for 5xx server errors
+                    is_server_error = False
+                    try:
+                        import requests as _req
+                        if isinstance(exc, _req.HTTPError) and getattr(exc, "response", None) is not None:
+                            status = getattr(exc.response, "status_code", None)
+                            if status is not None and 500 <= int(status) < 600:
+                                is_server_error = True
+                    except Exception:
+                        pass
+
+                    try:
+                        print(f"FrontEndService GET failed for {url}: {exc} (attempt {attempt+1}/{self._retries+1})")
+                    except Exception:
+                        pass
+
+                    last_error = exc
+                    attempt += 1
+                    if attempt <= self._retries and is_server_error:
+                        backoff = 0.5 * (2 ** (attempt - 1))
+                        try:
+                            time.sleep(backoff)
+                        except Exception:
+                            pass
+                        continue
+                    break
+        # All attempts failed — log summary and return None so callers can handle missing backend gracefully
+        try:
+            print(f"FrontEndService: all attempts failed for urls: {tried}")
+        except Exception:
+            pass
+        return None
 
     def getLastFights(self) -> List[EventInfo]:
         # Return completed fights (past events with fight_id present)
@@ -62,7 +105,7 @@ class FrontEndService:
                     f"{self._execution_api_url}/lastFights" if self._execution_api_url else "",
                     f"{self._data_api_url}/latest",
                 ],
-                timeout=10,
+                timeout=self._timeout,
             )
             if not last_fights_data:
                 return []
@@ -95,7 +138,7 @@ class FrontEndService:
                     f"{self._execution_api_url}/lastFights" if self._execution_api_url else "",
                     f"{self._data_api_url}/latest",
                 ],
-                timeout=10,
+                timeout=self._timeout,
             )
             if latest:
                 if isinstance(latest, dict):
@@ -151,9 +194,17 @@ class FrontEndService:
                     f"{self._execution_api_url}/nextFights" if self._execution_api_url else "",
                     f"{self._data_api_url}/event/next",
                 ],
-                timeout=10,
+                timeout=self._timeout,
             )
         except Exception:
+            return None
+
+        # If backend requests failed, _try_get_json returns None — handle gracefully
+        if not payload:
+            try:
+                print(f"FrontEndService.getNextFights: payload is None for data_api={self._data_api_url}")
+            except Exception:
+                pass
             return None
             
         events_by_id = {e.event_id: e for e in self.getAllEvents()}
@@ -202,7 +253,7 @@ class FrontEndService:
                     f"{self._execution_api_url}/fighter/all" if self._execution_api_url else "",
                     f"{self._data_api_url}/fighter",
                 ],
-                timeout=15,
+                timeout=self._timeout,
             )
             if not fighters_data:
                 return []
@@ -237,7 +288,7 @@ class FrontEndService:
                     f"{self._execution_api_url}/meta" if self._execution_api_url else "",
                     f"{self._data_api_url}/meta",
                 ],
-                timeout=5,
+                timeout=self._timeout,
             )
             return meta or {}
         except Exception:
@@ -283,7 +334,7 @@ class FrontEndService:
                     f"{self._execution_api_url}/fighter/{fighter_id}" if self._execution_api_url else "",
                     f"{self._data_api_url}/fighter/{fighter_id}",
                 ],
-                timeout=10,
+                timeout=self._timeout,
             )
 
             if isinstance(f_data, dict) and "composition" in f_data:
