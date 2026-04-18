@@ -2,7 +2,7 @@ services:
   - type: web
     name: UFC-Fighter-Optimizer
     env: python
-    branch: main-Deployment
+    branch: main
     # Install a lightweight set of deps for the frontend to avoid heavy ML libs
     buildCommand: pip install -r requirements-frontend.txt
     # Run with a single Gunicorn worker to reduce memory use
@@ -19,7 +19,7 @@ services:
   - type: web
     name: AI-894-Capstone_UFC_API
     env: python
-    branch: main-Deployment
+    branch: main
     # Install full set including ML libraries
     # Install full set including ML libraries. Use the official PyTorch CPU wheel index
     # so pip can find compatible torch wheels in the Render environment.
