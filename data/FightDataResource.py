@@ -7,6 +7,7 @@ from RefreshDataService import RefreshDataService
 from contextlib import asynccontextmanager
 from apscheduler.schedulers.background import BackgroundScheduler
 import datetime
+import os
 
 class FightDataResource:
 
@@ -19,9 +20,11 @@ class FightDataResource:
             @asynccontextmanager
             async def lifespan(app: FastAPI):
                 scheduler = BackgroundScheduler()
-                # Refresh data on start
-                scheduler.add_job(refreshDataService.refreshFightData, 'interval', hours=1, next_run_time=datetime.datetime.now())
-                scheduler.add_job(refreshDataService.reloadIncompleteData, 'interval', hours=24, next_run_time=datetime.datetime.now())
+                # Control whether to run refresh jobs immediately using env var REFRESH_ON_START
+                refresh_on_start = os.getenv("REFRESH_ON_START", "false").lower() in ("1", "true", "yes")
+                if refresh_on_start:
+                    scheduler.add_job(refreshDataService.refreshFightData, 'interval', hours=1, next_run_time=datetime.datetime.now())
+                    scheduler.add_job(refreshDataService.reloadIncompleteData, 'interval', hours=24, next_run_time=datetime.datetime.now())
                 scheduler.start()
                 yield
                 scheduler.shutdown()

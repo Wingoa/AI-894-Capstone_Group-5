@@ -30,6 +30,11 @@ class FrontEndService:
         self._prediction_service_url = (prediction_url or data_url or "http://localhost:8002").rstrip("/")
         self._data_api_url = (data_url or prediction_url or execution_url or "http://localhost:8002").rstrip("/")
         self._execution_api_url = execution_url.rstrip("/")
+        # Debug info: print resolved backend URLs to help diagnose deployment env issues
+        try:
+            print(f"FrontEndService configured URLs: data_api={self._data_api_url}, prediction={self._prediction_service_url}, execution={self._execution_api_url}")
+        except Exception:
+            pass
 
     def _get_json(self, url: str, *, timeout: float = 10.0, params: Optional[dict] = None):
         resp = requests.get(url, timeout=timeout, params=params)
