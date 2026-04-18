@@ -43,5 +43,5 @@ services:
       - key: REFRESH_ON_START
         value: "false"
       - key: ENABLE_SCRAPING
-        value: "false"
+        value: "true"
 

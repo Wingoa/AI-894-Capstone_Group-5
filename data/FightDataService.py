@@ -35,7 +35,12 @@ class FightDataService:
         event = next_event.drop(labels=["event_date_parsed"]).to_dict()
         
         print(f"Latest Event: {event}")
-        event_info = scrapeEventInfo(event["event_id"])
+        # Use cached event info first; fall back to live scrape only if cache is empty
+        cached_info = self.eventInfoCache.get_event(event["event_id"])
+        if cached_info:
+            event_info = [asdict(ei) if is_dataclass(ei) else dict(ei) for ei in cached_info]
+        else:
+            event_info = scrapeEventInfo(event["event_id"]) or []
         # Enrich event info with betting info
         latest_lines = pd.DataFrame(self.kalshiClient.getLatest())
         print(f"Latest odds from Kalshi: {latest_lines}")
@@ -121,7 +126,12 @@ class FightDataService:
         event = next_event.drop(labels=["event_date_parsed"]).to_dict()
         
         print(f"Latest Event: {event}")
-        event_info = scrapeEventInfo(event["event_id"]) or []
+        # Use cached event info first; fall back to live scrape only if cache is empty
+        cached_info = self.eventInfoCache.get_event(event["event_id"])
+        if cached_info:
+            event_info = [asdict(ei) if is_dataclass(ei) else dict(ei) for ei in cached_info]
+        else:
+            event_info = scrapeEventInfo(event["event_id"]) or []
         # Enrich each fight record with event-level metadata so callers can display human-friendly names
         for fight in event_info:
             fight["event_id"] = event.get("event_id")
