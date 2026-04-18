@@ -42,7 +42,4 @@ services:
         value: "https://ai-894-capstone-group-5.onrender.com"
       - key: REFRESH_ON_START
         value: "false"
-    # Increase replicas to reduce transient 503s from cold starts or overload
-    replicas: 2
-    # Optionally increase instance type if you want larger machines (adjust per Render docs)
-    # instanceType: "standard-2"
+
