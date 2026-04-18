@@ -1,4 +1,5 @@
 from typing import Dict, List
+import os
 
 from scrapers.ScraperService import ScraperService
 
@@ -23,6 +24,12 @@ class RefreshDataService:
         self.scraper_service = scraper_service
 
     def refreshFightData(self):
+        # Respect global env guard to avoid any scraping when disabled.
+        enable_scraping = os.getenv("ENABLE_SCRAPING", "false").lower() in ("1", "true", "yes")
+        if not enable_scraping:
+            print("ENABLE_SCRAPING is false; aborting refreshFightData (no network calls will be made)")
+            return []
+
         # Find new events.
         #   1. Add new events to events.csv database
         #   2. Scrape event and fight info

@@ -12,11 +12,11 @@ services:
       - key: PYTHON_VERSION
         value: "3.11.11"
       - key: EXECUTION_SERVICE_URL
-        value: "https://ai-894-capstone-group-5.onrender.com"
+        value: "https://ufc-fighter-optimizer.onrender.com"
       - key: PREDICTION_SERVICE_URL
-        value: "https://ai-894-capstone-group-5.onrender.com"
+        value: "https://ufc-fighter-optimizer.onrender.com"
       - key: DATA_URL
-        value: "https://ai-894-capstone-group-5.onrender.com"
+        value: "https://ufc-fighter-optimizer.onrender.com"
       - key: FRONTEND_API_TIMEOUT
         value: "120"
 

@@ -56,6 +56,10 @@ class FightDataResource:
         
         @self.app.get("/refresh")
         def refresh_data():
+            # Prevent accidental scraping when disabled via env var
+            enable_scraping = os.getenv("ENABLE_SCRAPING", "false").lower() in ("1", "true", "yes")
+            if not enable_scraping:
+                raise HTTPException(status_code=403, detail="Scraping disabled (ENABLE_SCRAPING=false). Refresh disallowed.")
             return self.refreshDataService.refreshFightData()
         
         @self.app.get("/latest")
