@@ -111,7 +111,7 @@ class FightDataService:
         # Current date
         today = pd.Timestamp(datetime.now().date())
         # Keep only past events
-        past_events = df[df["event_date_parsed"] <= today]
+        past_events = df[df["event_date_parsed"] < today]
         if past_events.empty:
             return {}
         
