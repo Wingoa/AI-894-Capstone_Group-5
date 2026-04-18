@@ -30,7 +30,7 @@ services:
     buildCommand: pip install -r requirements-api.txt -f https://download.pytorch.org/whl/cpu/torch_stable.html
     # Single worker API; use launcher script to avoid nested-quote issues
     startCommand: bash data/start.sh
-    healthCheckPath: /meta
+    healthCheckPath: /health
     envVars:
       - key: PYTHON_VERSION
         value: "3.11.11"

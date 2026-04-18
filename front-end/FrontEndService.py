@@ -318,11 +318,11 @@ class FrontEndService:
                             ))
                     return sorted(fighters, key=lambda fighter: fighter.name)
 
-            fighters = []
-            for fighter_id in POPULAR_FIGHTERS.keys():
-                fighter = self.getFighter(fighter_id)
-                if fighter is not None:
-                    fighters.append(fighter)
+            # Derive popular fighters from the bulk /fighter endpoint (1 call)
+            # instead of N individual getFighter() calls that each hit /fighter/{id} + /style/{id}
+            all_fighters = self.getAllFighters()
+            popular_ids = set(POPULAR_FIGHTERS.keys())
+            fighters = [f for f in all_fighters if f.id in popular_ids]
             return sorted(fighters, key=lambda fighter: fighter.name)
         except Exception:
             return []
