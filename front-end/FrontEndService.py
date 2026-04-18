@@ -83,12 +83,44 @@ class FrontEndService:
             return []
     
     def getAllEvents(self) -> List[Event]:
-        # Return all events
+        # Prefer event metadata from the data API (/latest) which includes event_name/event_date
+        try:
+            latest = self._try_get_json(
+                [
+                    f"{self._execution_api_url}/lastFights" if self._execution_api_url else "",
+                    f"{self._data_api_url}/latest",
+                ],
+                timeout=10,
+            )
+            if latest:
+                if isinstance(latest, dict):
+                    latest = [latest]
+                events_dict: Dict[str, Event] = {}
+                for item in latest:
+                    eid = item.get("event_id") or ""
+                    if not eid:
+                        continue
+                    if eid not in events_dict:
+                        events_dict[eid] = Event(
+                            event_id=eid,
+                            event_name=(item.get("event_name") or eid),
+                            event_date=(item.get("event_date") or ""),
+                            event_location=(item.get("event_location") or ""),
+                            event_url=(item.get("event_url") or ""),
+                        )
+                return sorted(
+                    events_dict.values(),
+                    key=lambda e: self._parse_event_date(e.event_date) or date.min,
+                    reverse=True,
+                )
+        except Exception:
+            pass
+
+        # Fallback: reconstruct Event objects from last_fights when API not available
         try:
             last_fights = self.getLastFights()
             events_dict: Dict[str, Event] = {}
-            
-            # Reconstruct Event objects from EventInfo using event_id as the primary identifier
+
             for info in last_fights:
                 if info.event_id not in events_dict:
                     events_dict[info.event_id] = Event(
@@ -191,42 +223,21 @@ class FrontEndService:
         except Exception as e:
             print(f"getAllFighters error: {e}")
             return []
-    
-    # def getAllFighters(self) -> List[Fighter]:
-    #     try:
-    #         fighters_data = self._try_get_json(
-    #             [
-    #                 f"{self._execution_api_url}/fighter/all" if self._execution_api_url else "",
-    #             ],
-    #             timeout=10,
-    #         )
-            
-    #         if not fighters_data:
-    #             return []
-            
-    #         fighters = []
-    #         for f_data in fighters_data:
-    #             if isinstance(f_data, dict):
-    #                 comp_data = f_data.get("composition") or {}
-    #                 fighter_id = f_data.get("id") or f_data.get("fighter_id") or ""
-    #                 fighters.append(Fighter(
-    #                     name=f_data.get("name", ""),
-    #                     id=fighter_id,
-    #                     composition=FighterComposition(
-    #                         pace=float(comp_data.get("pace", 0.0)),
-    #                         boxing=float(comp_data.get("boxing", 0.0)),
-    #                         muay_thai=float(comp_data.get("muay_thai", 0.0)),
-    #                         wrestling=float(comp_data.get("wrestling", 0.0)),
-    #                         grappling=float(comp_data.get("grappling", 0.0)),
-    #                         stats=comp_data.get("stats", {}),
-    #                     ),
-    #                     fight_ids=f_data.get("fight_ids", [])
-    #                 ))
-            
-    #         return sorted(fighters, key=lambda fighter: fighter.name)
-    #     except Exception:
-    #         return []
-        
+
+    def getMeta(self) -> dict:
+        # Return dataset metadata from the data API /meta endpoint
+        try:
+            meta = self._try_get_json(
+                [
+                    f"{self._execution_api_url}/meta" if self._execution_api_url else "",
+                    f"{self._data_api_url}/meta",
+                ],
+                timeout=5,
+            )
+            return meta or {}
+        except Exception:
+            return {}
+
     def getPopularFighters(self) -> List[Fighter]:
         try:
             if self._execution_api_url:

@@ -46,6 +46,8 @@ def homepage(request: Request) -> HTMLResponse:
     all_fighters = service.getAllFighters()
     next_fights = service.getNextFights()
     last_fights = service.getLastFightsWithEvents()
+    meta = service.getMeta() or {}
+    meta_counts = meta.get("counts", {}) if isinstance(meta, dict) else {}
 
     return templates.TemplateResponse(request, "index.html", {
         "request":      request,
@@ -56,6 +58,7 @@ def homepage(request: Request) -> HTMLResponse:
         # Events (API payload normalized in FrontEndService)
         "next_fights":  next_fights,
         "last_fights":  [_event_to_template(info, event) for info, event in last_fights],
+        "meta_counts":  meta_counts,
         # Null out all comparison / simulation fields
         **_empty_comparison(),
         "readme_md": _load_readme_md(),
@@ -70,6 +73,8 @@ def compare(request: Request, red: str = "", blue: str = "") -> HTMLResponse:
     all_fighters = service.getAllFighters()
     next_fights  = service.getNextFights()
     last_fights  = service.getLastFightsWithEvents()
+    meta = service.getMeta() or {}
+    meta_counts = meta.get("counts", {}) if isinstance(meta, dict) else {}
 
     composition_red  = _composition_to_dict(fighter_red.composition  if fighter_red  else None)
     composition_blue = _composition_to_dict(fighter_blue.composition if fighter_blue else None)
@@ -104,6 +109,7 @@ def compare(request: Request, red: str = "", blue: str = "") -> HTMLResponse:
         # Events
         "next_fights": next_fights,
         "last_fights":  [_event_to_template(i, e) for i, e in last_fights],
+        "meta_counts":  meta_counts,
         # Model outputs (empty until model is connected)
         "shap_features": [],
         "sim_narrative": None,

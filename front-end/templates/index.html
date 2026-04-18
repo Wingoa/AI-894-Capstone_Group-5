@@ -7,6 +7,20 @@
   <title>UFC Fighter Optimizer Dashboard</title>
   <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}" />
   <link rel="icon" href="{{ url_for('static', path='favicon.png') }}" type="image/svg+xml" />
+  <!-- GitHub markdown styles (dark) for README rendering -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown-dark.min.css">
+  <style>
+    /* Let the markdown container inherit the app's dark background and text color */
+    .markdown-body {
+      background: transparent !important;
+      color: inherit !important;
+    }
+
+    #readme.markdown-body {
+      padding: 16px;
+    }
+  </style>
 </head>
 
 <body>
@@ -19,12 +33,10 @@
       </div>
       <div class="nav">
         <div class="nav-label">Analysis</div>
-        <div class="nav-item {{ 'active' if active_screen == 'comparison' else '' }}"
-          data-screen="comparison">
+        <div class="nav-item {{ 'active' if active_screen == 'comparison' else '' }}" data-screen="comparison">
           <span class="nav-icon">⚔</span> Fighter Comparison
         </div>
-        <div class="nav-item {{ 'active' if active_screen == 'simulation' else '' }}"
-          data-screen="simulation">
+        <div class="nav-item {{ 'active' if active_screen == 'simulation' else '' }}" data-screen="simulation">
           <span class="nav-icon">⚙</span> Simulation
         </div>
         <!-- <div class="nav-item {{ 'active' if active_screen == 'matchup' else '' }}"
@@ -32,17 +44,15 @@
           <span class="nav-icon">◈</span> Style Matchup
         </div> -->
         <div class="nav-label">Data</div>
-        <div class="nav-item {{ 'active' if active_screen == 'roster' else '' }}"
-          data-screen="roster">
+        <div class="nav-item {{ 'active' if active_screen == 'roster' else '' }}" data-screen="roster">
           <span class="nav-icon">☰</span> Fighter Roster
         </div>
-        <div class="nav-item {{ 'active' if active_screen == 'events' else '' }}"
-          data-screen="events">
+        <div class="nav-item {{ 'active' if active_screen == 'events' else '' }}" data-screen="events">
           <span class="nav-icon">📅</span> Events
         </div>
-					<div class="nav-item {{ 'active' if active_screen == 'about' else '' }}" data-screen="about">
-						<span class="nav-icon">ℹ️</span> About
-					</div>
+        <div class="nav-item {{ 'active' if active_screen == 'about' else '' }}" data-screen="about">
+          <span class="nav-icon">ℹ️</span> About
+        </div>
       </div>
       <div class="sidebar-footer">
         Data: UFCStats.com<br />
@@ -58,277 +68,279 @@
       </div>
 
       <div class="content">
-      <!-- SCREEN 1: FIGHTER COMPARISON, User can choose 2 fighters and analyze their matchup using our outcome model -->
+        <!-- SCREEN 1: FIGHTER COMPARISON, User can choose 2 fighters and analyze their matchup using our outcome model -->
 
-      <div class="screen {{ 'active' if active_screen == 'comparison' or not active_screen else '' }}"
-           id="screen-comparison">
+        <div class="screen {{ 'active' if active_screen == 'comparison' or not active_screen else '' }}"
+          id="screen-comparison">
 
-        <!-- Fighter Selector Bar (red and blue fighters) -->
-        <div class="fighter-select-bar">
-          <div class="fighter-picker" data-corner="red" onclick="openFighterPicker('red')">
-            <div class="picker-dot red"></div>
-            <div>
-              <div class="picker-name">
-                {{ fighter_red.name if fighter_red else 'Select Fighter' }}
-              </div>
-              <div class="picker-sub">
-                {% if fighter_red %}
+          <!-- Fighter Selector Bar (red and blue fighters) -->
+          <div class="fighter-select-bar">
+            <div class="fighter-picker" data-corner="red" onclick="openFighterPicker('red')">
+              <div class="picker-dot red"></div>
+              <div>
+                <div class="picker-name">
+                  {{ fighter_red.name if fighter_red else 'Select Fighter' }}
+                </div>
+                <div class="picker-sub">
+                  {% if fighter_red %}
                   {{ fighter_red.archetype | upper }} · {{ fighter_red.fight_ids | length }} FIGHTS
-                {% else %}
+                  {% else %}
                   CHOOSE RED CORNER
-                {% endif %}
+                  {% endif %}
+                </div>
               </div>
-            </div>
-            <div class="picker-arrow">▾</div>
-            <select class="fighter-picker-select" id="fighter-select-red" onchange="syncPicker('red')" oninput="syncPicker('red')">
-              <option value="" data-sub="CHOOSE RED CORNER">Select Fighter</option>
-              {% for fighter in all_fighters %}
+              <div class="picker-arrow">▾</div>
+              <select class="fighter-picker-select" id="fighter-select-red" onchange="syncPicker('red')"
+                oninput="syncPicker('red')">
+                <option value="" data-sub="CHOOSE RED CORNER">Select Fighter</option>
+                {% for fighter in all_fighters %}
                 <option value="{{ fighter.id }}"
-                        data-sub="{{ fighter.archetype | upper }} · {{ fighter.fight_ids | length }} FIGHTS"
-                        {% if fighter_red and fighter.id == fighter_red.id %}selected{% endif %}>
+                  data-sub="{{ fighter.archetype | upper }} · {{ fighter.fight_ids | length }} FIGHTS" {% if fighter_red
+                  and fighter.id==fighter_red.id %}selected{% endif %}>
                   {{ fighter.name }}
                 </option>
-              {% endfor %}
-            </select>
-          </div>
+                {% endfor %}
+              </select>
+            </div>
             <div class="vs-badge">VS</div>
-          <div class="fighter-picker" data-corner="blue" onclick="openFighterPicker('blue')">
-            <div class="picker-dot blue"></div>
-            <div>
-              <div class="picker-name">
-                {{ fighter_blue.name if fighter_blue else 'Select Fighter' }}
-              </div>
-              <div class="picker-sub">
-                {% if fighter_blue %}
+            <div class="fighter-picker" data-corner="blue" onclick="openFighterPicker('blue')">
+              <div class="picker-dot blue"></div>
+              <div>
+                <div class="picker-name">
+                  {{ fighter_blue.name if fighter_blue else 'Select Fighter' }}
+                </div>
+                <div class="picker-sub">
+                  {% if fighter_blue %}
                   {{ fighter_blue.archetype | upper }} · {{ fighter_blue.fight_ids | length }} FIGHTS
-                {% else %}
+                  {% else %}
                   CHOOSE BLUE CORNER
-                {% endif %}
+                  {% endif %}
+                </div>
               </div>
-            </div>
-            <div class="picker-arrow">▾</div>
-            <select class="fighter-picker-select" id="fighter-select-blue" onchange="syncPicker('blue')" oninput="syncPicker('blue')">
-              <option value="" data-sub="CHOOSE BLUE CORNER">Select Fighter</option>
-              {% for fighter in all_fighters %}
+              <div class="picker-arrow">▾</div>
+              <select class="fighter-picker-select" id="fighter-select-blue" onchange="syncPicker('blue')"
+                oninput="syncPicker('blue')">
+                <option value="" data-sub="CHOOSE BLUE CORNER">Select Fighter</option>
+                {% for fighter in all_fighters %}
                 <option value="{{ fighter.id }}"
-                        data-sub="{{ fighter.archetype | upper }} · {{ fighter.fight_ids | length }} FIGHTS"
-                        {% if fighter_blue and fighter.id == fighter_blue.id %}selected{% endif %}>
+                  data-sub="{{ fighter.archetype | upper }} · {{ fighter.fight_ids | length }} FIGHTS" {% if
+                  fighter_blue and fighter.id==fighter_blue.id %}selected{% endif %}>
                   {{ fighter.name }}
                 </option>
-              {% endfor %}
-            </select>
-          </div>
+                {% endfor %}
+              </select>
+            </div>
 
-          <button class="btn btn-red" style="margin-left:auto;"
-            onclick="compareFromDropdowns('{{ fighter_red.id if fighter_red else '' }}','{{ fighter_blue.id if fighter_blue else '' }}')">
-            ANALYZE MATCHUP
-          </button>
-        </div>
+            <button class="btn btn-red" style="margin-left:auto;"
+              onclick="compareFromDropdowns('{{ fighter_red.id if fighter_red else '' }}','{{ fighter_blue.id if fighter_blue else '' }}')">
+              ANALYZE MATCHUP
+            </button>
+          </div>
           {% if fighter_red and fighter_blue %}
 
-        <!-- Fighter Profile Cards, display fighter details (how many fights in our dataset & dominant fight style) -->
-        <div class="grid-2 mb16">
-          <div class="fighter-card red">
-            <!-- Split the fighter name into parts to create initials for avatar -->
-            {% set red_parts = fighter_red.name.split() %}
-            <div class="fighter-avatar red">
-              {% if red_parts|length > 1 %}
+          <!-- Fighter Profile Cards, display fighter details (how many fights in our dataset & dominant fight style) -->
+          <div class="grid-2 mb16">
+            <div class="fighter-card red">
+              <!-- Split the fighter name into parts to create initials for avatar -->
+              {% set red_parts = fighter_red.name.split() %}
+              <div class="fighter-avatar red">
+                {% if red_parts|length > 1 %}
                 {{ (red_parts[0][0] ~ red_parts[-1][0]) | upper }}
-              {% else %}
+                {% else %}
                 {{ fighter_red.name[:2] | upper }}
-              {% endif %}
-            </div>
-            <div class="fighter-name">{{ fighter_red.name }}</div>
-            <div class="fighter-meta">
-              {{ fighter_red.fight_ids | length }} fights in dataset
-            </div>
-            <!-- Display the figher's archetype (most dominant style calculated in FrontEndResource) -->
-            <div class="archetype-pill">⬡ {{ fighter_red.archetype }}</div>
-            <div class="style-tags mt8">
-              {% for style in fighter_red.primary_styles %}
-                <span class="style-tag primary">{{ style }}</span>
-              {% endfor %}
-              {% for style in fighter_red.secondary_styles %}
-                <span class="style-tag">{{ style }}</span>
-              {% endfor %}
-            </div>
-          </div>
-
-          <!-- Repeat for blue fighter -->
-          <div class="fighter-card blue">
-            {% set blue_parts = fighter_blue.name.split() %}
-            <div class="fighter-avatar blue">
-              {% if blue_parts|length > 1 %}
-                {{ (blue_parts[0][0] ~ blue_parts[-1][0]) | upper }}
-              {% else %}
-                {{ fighter_blue.name[:2] | upper }}
-              {% endif %}
-            </div>
-            <div class="fighter-name">{{ fighter_blue.name }}</div>
-            <div class="fighter-meta">
-              {{ fighter_blue.fight_ids | length }} fights in dataset
-            </div>
-            <div class="archetype-pill archetype-blue">⬡ {{ fighter_blue.archetype }}</div>
-            <div class="style-tags mt8">
-              {% for style in fighter_blue.primary_styles %}
-                <span class="style-tag primary-blue">{{ style }}</span>
-              {% endfor %}
-              {% for style in fighter_blue.secondary_styles %}
-                <span class="style-tag">{{ style }}</span>
-              {% endfor %}
-            </div>
-          </div>
-        </div>
-
-        <!-- Win Probability using our outcome model in a dual-fill bar, calculated in FrontEndResource (_compute_win_probability) -->
-        {% if win_probability %}
-        <div class="card mb16 win-prob-card">
-          <div class="card-title">
-            AI Win Probability
-            <span class="annotation">{{ win_probability.model }}</span>
-          </div>
-          <div class="win-prob-labels">
-            <span class="prob-red">{{ win_probability.red_pct }}%</span>
-            <span class="prob-center">WIN PROBABILITY</span>
-            <span class="prob-blue">{{ win_probability.blue_pct }}%</span>
-          </div>
-          <div class="win-prob-bar dual-fill">
-            <div class="win-prob-red"  style="width:{{ win_probability.red_pct }}%"></div>
-            <div class="win-prob-blue" style="width:{{ win_probability.blue_pct }}%"></div>
-          </div>
-          <div class="win-prob-footer">
-            <span class="prob-name red">{{ fighter_red.name }}</span>
-            <span class="prob-meta">AUC: {{ win_probability.auc }} · Model Confidence: {{ win_probability.confidence }}</span>
-            <span class="prob-name blue">{{ fighter_blue.name }}</span>
-          </div>
-        </div>
-        {% else %}
-        <!-- Failsafe in case the model is not connected properly; the fill bar will show 50% win probability and 'model pending' -->
-        <div class="card mb16 pending-card">
-          <div class="card-title">AI Win Probability</div>
-          <div class="pending-msg">
-            Model not yet connected — implement <code>_compute_win_probability()</code>
-            in FrontEndResource.py
-          </div>
-        </div>
-        {% endif %}
-
-        <!-- Head-to-Head Stats + Radar, display style matchup between fighters with a fill bar table and style radar table
-           hth_stats built from FighterComposition: pace, boxing (striking), muay_thai, wrestling, grappling; composition_red/blue normalised 0–1 for radar -->
-        <div class="grid-2 mb16">
-          <div class="card">
-            <div class="card-title">Composition — Head to Head</div>
-            <div class="hth-header">
-              <span style="color:var(--red);">{{ fighter_red.name | upper }}</span>
-              <span>METRIC</span>
-              <span style="color:#5b9eff;">{{ fighter_blue.name | upper }}</span>
-            </div>
-            <div id="hth-stats"></div>
-          </div>
-
-          <div class="card">
-            <div class="card-title">
-              Style Radar
-            </div>
-            <div class="radar-wrap">
-              <canvas id="radarCanvas" width="260" height="240"></canvas>
-            </div>
-            <div class="radar-legend">
-              <div class="legend-item">
-                <div class="legend-dot red"></div>
-                <span style="color:var(--red);">{{ fighter_red.name | upper }}</span>
+                {% endif %}
               </div>
-              <div class="legend-item">
-                <div class="legend-dot blue"></div>
+              <div class="fighter-name">{{ fighter_red.name }}</div>
+              <div class="fighter-meta">
+                {{ fighter_red.fight_ids | length }} fights in dataset
+              </div>
+              <!-- Display the figher's archetype (most dominant style calculated in FrontEndResource) -->
+              <div class="archetype-pill">⬡ {{ fighter_red.archetype }}</div>
+              <div class="style-tags mt8">
+                {% for style in fighter_red.primary_styles %}
+                <span class="style-tag primary">{{ style }}</span>
+                {% endfor %}
+                {% for style in fighter_red.secondary_styles %}
+                <span class="style-tag">{{ style }}</span>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- Repeat for blue fighter -->
+            <div class="fighter-card blue">
+              {% set blue_parts = fighter_blue.name.split() %}
+              <div class="fighter-avatar blue">
+                {% if blue_parts|length > 1 %}
+                {{ (blue_parts[0][0] ~ blue_parts[-1][0]) | upper }}
+                {% else %}
+                {{ fighter_blue.name[:2] | upper }}
+                {% endif %}
+              </div>
+              <div class="fighter-name">{{ fighter_blue.name }}</div>
+              <div class="fighter-meta">
+                {{ fighter_blue.fight_ids | length }} fights in dataset
+              </div>
+              <div class="archetype-pill archetype-blue">⬡ {{ fighter_blue.archetype }}</div>
+              <div class="style-tags mt8">
+                {% for style in fighter_blue.primary_styles %}
+                <span class="style-tag primary-blue">{{ style }}</span>
+                {% endfor %}
+                {% for style in fighter_blue.secondary_styles %}
+                <span class="style-tag">{{ style }}</span>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+
+          <!-- Win Probability using our outcome model in a dual-fill bar, calculated in FrontEndResource (_compute_win_probability) -->
+          {% if win_probability %}
+          <div class="card mb16 win-prob-card">
+            <div class="card-title">
+              AI Win Probability
+              <span class="annotation">{{ win_probability.model }}</span>
+            </div>
+            <div class="win-prob-labels">
+              <span class="prob-red">{{ win_probability.red_pct }}%</span>
+              <span class="prob-center">WIN PROBABILITY</span>
+              <span class="prob-blue">{{ win_probability.blue_pct }}%</span>
+            </div>
+            <div class="win-prob-bar dual-fill">
+              <div class="win-prob-red" style="width:{{ win_probability.red_pct }}%"></div>
+              <div class="win-prob-blue" style="width:{{ win_probability.blue_pct }}%"></div>
+            </div>
+            <div class="win-prob-footer">
+              <span class="prob-name red">{{ fighter_red.name }}</span>
+              <span class="prob-meta">AUC: {{ win_probability.auc }} · Model Confidence: {{ win_probability.confidence
+                }}</span>
+              <span class="prob-name blue">{{ fighter_blue.name }}</span>
+            </div>
+          </div>
+          {% else %}
+          <!-- Failsafe in case the model is not connected properly; the fill bar will show 50% win probability and 'model pending' -->
+          <div class="card mb16 pending-card">
+            <div class="card-title">AI Win Probability</div>
+            <div class="pending-msg">
+              Model not yet connected — implement <code>_compute_win_probability()</code>
+              in FrontEndResource.py
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- Head-to-Head Stats + Radar, display style matchup between fighters with a fill bar table and style radar table
+           hth_stats built from FighterComposition: pace, boxing (striking), muay_thai, wrestling, grappling; composition_red/blue normalised 0–1 for radar -->
+          <div class="grid-2 mb16">
+            <div class="card">
+              <div class="card-title">Composition — Head to Head</div>
+              <div class="hth-header">
+                <span style="color:var(--red);">{{ fighter_red.name | upper }}</span>
+                <span>METRIC</span>
                 <span style="color:#5b9eff;">{{ fighter_blue.name | upper }}</span>
               </div>
+              <div id="hth-stats"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">
+                Style Radar
+              </div>
+              <div class="radar-wrap">
+                <canvas id="radarCanvas" width="260" height="240"></canvas>
+              </div>
+              <div class="radar-legend">
+                <div class="legend-item">
+                  <div class="legend-dot red"></div>
+                  <span style="color:var(--red);">{{ fighter_red.name | upper }}</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-dot blue"></div>
+                  <span style="color:#5b9eff;">{{ fighter_blue.name | upper }}</span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Composition Breakdown Bars: composition_red/blue keys map from FighterComposition: boxing → striking | muay_thai | wrestling | grappling | pace
+          <!-- Composition Breakdown Bars: composition_red/blue keys map from FighterComposition: boxing → striking | muay_thai | wrestling | grappling | pace
            All normalised 0–1 by _composition_to_dict()-->
-        <div class="card mb16">
-          <div class="card-title">
-            Style Composition Breakdown
-          </div>
-          <div class="grid-2">
-            <div>
-              <div class="comp-fighter-label red">{{ fighter_red.name | upper }}</div>
-              {% if composition_red %}
-              {% for dim, color in [
-                  ('striking',  '#e8001d'),
-                  ('muay_thai', '#ff6b35'),
-                  ('wrestling', '#f5c518'),
-                  ('grappling', '#00c853'),
-                  ('pace',      '#1a6dff')
-              ] %}
-              <div class="comp-row">
-                <div class="comp-label">{{ dim | replace('_',' ') | title }}</div>
-                <div class="comp-track">
-                  <div class="comp-fill"
-                       style="width:{{ (composition_red[dim] * 100) | round | int }}%;background:{{ color }};"></div>
+          <div class="card mb16">
+            <div class="card-title">
+              Style Composition Breakdown
+            </div>
+            <div class="grid-2">
+              <div>
+                <div class="comp-fighter-label red">{{ fighter_red.name | upper }}</div>
+                {% if composition_red %}
+                {% for dim, color in [
+                ('striking', '#e8001d'),
+                ('muay_thai', '#ff6b35'),
+                ('wrestling', '#f5c518'),
+                ('grappling', '#00c853'),
+                ('pace', '#1a6dff')
+                ] %}
+                <div class="comp-row">
+                  <div class="comp-label">{{ dim | replace('_',' ') | title }}</div>
+                  <div class="comp-track">
+                    <div class="comp-fill"
+                      style="width:{{ (composition_red[dim] * 100) | round | int }}%;background:{{ color }};"></div>
+                  </div>
+                  <div class="comp-pct">{{ (composition_red[dim] * 100) | round | int }}%</div>
                 </div>
-                <div class="comp-pct">{{ (composition_red[dim] * 100) | round | int }}%</div>
+                {% endfor %}
+                {% endif %}
               </div>
-              {% endfor %}
-              {% endif %}
-            </div>
-            <div>
-              <div class="comp-fighter-label blue">{{ fighter_blue.name | upper }}</div>
-              {% if composition_blue %}
-              {% for dim, color in [
-                  ('striking',  '#e8001d'),
-                  ('muay_thai', '#ff6b35'),
-                  ('wrestling', '#f5c518'),
-                  ('grappling', '#00c853'),
-                  ('pace',      '#1a6dff')
-              ] %}
-              <div class="comp-row">
-                <div class="comp-label">{{ dim | replace('_',' ') | title }}</div>
-                <div class="comp-track">
-                  <div class="comp-fill"
-                       style="width:{{ (composition_blue[dim] * 100) | round | int }}%;background:{{ color }};"></div>
+              <div>
+                <div class="comp-fighter-label blue">{{ fighter_blue.name | upper }}</div>
+                {% if composition_blue %}
+                {% for dim, color in [
+                ('striking', '#e8001d'),
+                ('muay_thai', '#ff6b35'),
+                ('wrestling', '#f5c518'),
+                ('grappling', '#00c853'),
+                ('pace', '#1a6dff')
+                ] %}
+                <div class="comp-row">
+                  <div class="comp-label">{{ dim | replace('_',' ') | title }}</div>
+                  <div class="comp-track">
+                    <div class="comp-fill"
+                      style="width:{{ (composition_blue[dim] * 100) | round | int }}%;background:{{ color }};"></div>
+                  </div>
+                  <div class="comp-pct">{{ (composition_blue[dim] * 100) | round | int }}%</div>
                 </div>
-                <div class="comp-pct">{{ (composition_blue[dim] * 100) | round | int }}%</div>
+                {% endfor %}
+                {% endif %}
               </div>
-              {% endfor %}
-              {% endif %}
             </div>
           </div>
-        </div>
 
-        <!-- Fight Count Summary: display how many fights each fighter has in the dataset -->
-        <div class="card mt16">
-          <div class="card-title">Dataset Coverage</div>
-          <div class="grid-2">
-            <div class="fight-count-box red">
-              <div class="fight-count-name">{{ fighter_red.name }}</div>
-              <div class="fight-count-num">{{ fighter_red.fight_ids | length }}</div>
-              <div class="fight-count-label">FIGHTS IN DATASET</div>
-            </div>
-            <div class="fight-count-box blue">
-              <div class="fight-count-name">{{ fighter_blue.name }}</div>
-              <div class="fight-count-num">{{ fighter_blue.fight_ids | length }}</div>
-              <div class="fight-count-label">FIGHTS IN DATASET</div>
+          <!-- Fight Count Summary: display how many fights each fighter has in the dataset -->
+          <div class="card mt16">
+            <div class="card-title">Dataset Coverage</div>
+            <div class="grid-2">
+              <div class="fight-count-box red">
+                <div class="fight-count-name">{{ fighter_red.name }}</div>
+                <div class="fight-count-num">{{ fighter_red.fight_ids | length }}</div>
+                <div class="fight-count-label">FIGHTS IN DATASET</div>
+              </div>
+              <div class="fight-count-box blue">
+                <div class="fight-count-name">{{ fighter_blue.name }}</div>
+                <div class="fight-count-num">{{ fighter_blue.fight_ids | length }}</div>
+                <div class="fight-count-label">FIGHTS IN DATASET</div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- If the user hasn't selected two fighters -->
-        {% else %}
-        <div class="empty-state">
-          <div class="empty-icon">⚔</div>
-          <div class="empty-title">SELECT TWO FIGHTERS TO COMPARE</div>
-          <div class="empty-sub">
-            Use the pickers above to choose red and blue corners, then click Analyze Matchup.
+          <!-- If the user hasn't selected two fighters -->
+          {% else %}
+          <div class="empty-state">
+            <div class="empty-icon">⚔</div>
+            <div class="empty-title">SELECT TWO FIGHTERS TO COMPARE</div>
+            <div class="empty-sub">
+              Use the pickers above to choose red and blue corners, then click Analyze Matchup.
+            </div>
+            <button class="btn btn-red" style="margin-top:16px;" onclick="showScreen('roster')">
+              BROWSE ROSTER
+            </button>
           </div>
-          <button class="btn btn-red" style="margin-top:16px;"
-                  onclick="showScreen('roster')">
-            BROWSE ROSTER
-          </button>
-        </div>
-        {% endif %}
+          {% endif %}
         </div>
         {# /screen-comparison #}
 
@@ -349,12 +361,12 @@
                 <div class="card-title">
                   Tactical Variables
                 </div>
-                {# Slider labels map 1:1 to FighterComposition fields #} 
+                {# Slider labels map 1:1 to FighterComposition fields #}
                 {% for key, label, mn, mx,
-                default in [ ('td', 'Wrestling / Takedown Freq.', 1, 12, sim_defaults.td), 
-                ('str','Boxing / Striking Volume', 1, 10, sim_defaults.str), 
-                ('pace', 'Pace / Activity Rate', 1, 10, sim_defaults.pace), 
-                ('clinch', 'Muay Thai / Clinch Work', 1, 10, sim_defaults.clinch), 
+                default in [ ('td', 'Wrestling / Takedown Freq.', 1, 12, sim_defaults.td),
+                ('str','Boxing / Striking Volume', 1, 10, sim_defaults.str),
+                ('pace', 'Pace / Activity Rate', 1, 10, sim_defaults.pace),
+                ('clinch', 'Muay Thai / Clinch Work', 1, 10, sim_defaults.clinch),
                 ('def', 'Guard Defense Focus', 1, 10, sim_defaults.def), ] %}
                 <div class="slider-row">
                   <div class="slider-label">
@@ -456,37 +468,39 @@
               </thead>
               <tbody>
                 {% if next_fights %}
-                  {% for fight in next_fights %}
-                  <tr class="data-row">
-                    <td>
-                      {% if fight.event_url %}
-                      <a href="{{ fight.event_url }}" target="_blank" class="event-link">
-                        {{ fight.event_name }}
-                      </a>
-                      {% else %}{{ fight.event_name }}{% endif %}
-                    </td>
-                    <td style="color: var(--red)">{{ fight.red_fighter }}</td>
-                    <td style="color: #5b9eff">{{ fight.blue_fighter }}</td>
-                    <td>{{ fight.weight_class }}</td>
-                    <td style="color: var(--muted)">{{ fight.date }}</td>
-                    <td style="color: var(--muted)">{{ fight.location }}</td>
-                    <td style="color: var(--muted)">{{ (fight.fighter_a_odds * 100) | round(1) if fight.fighter_a_odds >= 0 else "N/A" }}%</td>
-                    <td style="color: var(--muted)">{{ (fight.fighter_b_odds * 100) | round(1) if fight.fighter_b_odds >= 0 else "N/A" }}%</td>
-                    <td style="text-align: right">
-                      <a href="/compare?red={{ fight.red_id }}&blue={{ fight.blue_id }}">
-                        <button class="btn btn-outline" style="padding: 5px 10px; font-size: 11px">
-                          ANALYZE
-                        </button>
-                      </a>
-                    </td>
-                  </tr>
-                  {% endfor %}
+                {% for fight in next_fights %}
+                <tr class="data-row">
+                  <td>
+                    {% if fight.event_url %}
+                    <a href="{{ fight.event_url }}" target="_blank" class="event-link">
+                      {{ fight.event_name }}
+                    </a>
+                    {% else %}{{ fight.event_name }}{% endif %}
+                  </td>
+                  <td style="color: var(--red)">{{ fight.red_fighter }}</td>
+                  <td style="color: #5b9eff">{{ fight.blue_fighter }}</td>
+                  <td>{{ fight.weight_class }}</td>
+                  <td style="color: var(--muted)">{{ fight.date }}</td>
+                  <td style="color: var(--muted)">{{ fight.location }}</td>
+                  <td style="color: var(--muted)">{{ (fight.fighter_a_odds * 100) | round(1) if fight.fighter_a_odds >=
+                    0 else "N/A" }}%</td>
+                  <td style="color: var(--muted)">{{ (fight.fighter_b_odds * 100) | round(1) if fight.fighter_b_odds >=
+                    0 else "N/A" }}%</td>
+                  <td style="text-align: right">
+                    <a href="/compare?red={{ fight.red_id }}&blue={{ fight.blue_id }}">
+                      <button class="btn btn-outline" style="padding: 5px 10px; font-size: 11px">
+                        ANALYZE
+                      </button>
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
                 {% else %}
-                  <tr class="data-row">
-                    <td colspan="9" style="text-align:center;color:var(--muted);padding:16px;">
-                      No upcoming fights available.
-                    </td>
-                  </tr>
+                <tr class="data-row">
+                  <td colspan="9" style="text-align:center;color:var(--muted);padding:16px;">
+                    No upcoming fights available.
+                  </td>
+                </tr>
                 {% endif %}
               </tbody>
             </table>
@@ -549,8 +563,8 @@
             </div>
           </div> -->
 
-          <!-- Upcoming fights table -->
-          <!-- <div class="card">
+        <!-- Upcoming fights table -->
+        <!-- <div class="card">
             <div class="card-title">UPCOMING FIGHTS</div>
             <table class="data-table">
               <thead>
@@ -616,19 +630,17 @@
 
           <div class="card">
             <div style="display:flex;gap:10px;margin-bottom:16px;align-items:center;">
-              <input type="text" id="roster-search"
-                     placeholder="Search by name…"
-                     oninput="filterRoster()"
-                     class="search-input">
+              <input type="text" id="roster-search" placeholder="Search by name…" oninput="filterRoster()"
+                class="search-input">
               <label for="roster-sort" style="margin-left:8px;color:var(--muted);font-size:13px;">Sort:</label>
               <select id="roster-sort" onchange="sortRosterBy(this.value)" class="search-input"
-                      style="height:36px !important;background:var(--surface2) !important;">
+                style="height:36px !important;background:var(--surface2) !important;">
                 <option value="name">Name</option>
                 <option value="fights">Fights</option>
                 <option value="archetype">Archetype</option>
               </select>
               <button id="roster-sort-dir" onclick="toggleSortDir()" title="Toggle sort direction"
-                      style="height:36px !important;padding:4px 20px;margin-left:6px;background:var(--surface2) !important;">
+                style="height:36px !important;padding:4px 20px;margin-left:6px;background:var(--surface2) !important;">
                 ▼
               </button>
             </div>
@@ -638,44 +650,42 @@
                   <th>
                     Fighter
                     <span class="info-icon"><span class="info-mark">i</span><span class="tooltip-text">
-                      Full fighter name; click Analyze to view matchup details.
-                    </span></span>
+                        Full fighter name; click Analyze to view matchup details.
+                      </span></span>
                   </th>
                   <th>
                     Archetype
                     <span class="info-icon"><span class="info-mark">i</span><span class="tooltip-text">
-                      Primary style/archetype derived from Fighter Composition scores.
-                    </span></span>
+                        Primary style/archetype derived from Fighter Composition scores.
+                      </span></span>
                   </th>
                   {# fight_ids | length is the only record proxy available in Fighter #}
                   <th>
                     Fights in Dataset
                     <span class="info-icon"><span class="info-mark">i</span><span class="tooltip-text">
-                      Number of fights for this fighter in the dataset.
-                    </span></span>
+                        Number of fights for this fighter in the dataset.
+                      </span></span>
                   </th>
                   <th>
                     Composition
                     <span class="info-icon"><span class="info-mark">i</span><span class="tooltip-text">
-                      Mini visual showing composition (averaged from all 5 styles).
-                    </span></span>
+                        Mini visual showing composition (averaged from all 5 styles).
+                      </span></span>
                   </th>
                   <th style="text-align:right;">Action</th>
                 </tr>
               </thead>
               <tbody id="roster-body">
                 {% for fighter in fighters %}
-                <tr class="data-row roster-row"
-                    data-name="{{ fighter.name | lower }}"
-                    data-style="{{ fighter.primary_style }}">
+                <tr class="data-row roster-row" data-name="{{ fighter.name | lower }}"
+                  data-style="{{ fighter.primary_style }}">
                   <td class="fighter-name-cell">{{ fighter.name }}</td>
                   <td><span class="style-tag">{{ fighter.archetype }}</span></td>
                   <td style="color:var(--muted);">{{ fighter.fight_ids | length }}</td>
                   <td>
                     {# Mini bar visualising composition proxy #}
                     <div class="mini-comp-bar">
-                      <div class="mini-comp-fill"
-                           style="width:{{ fighter.exploitability_score }}%;"></div>
+                      <div class="mini-comp-fill" style="width:{{ fighter.exploitability_score }}%;"></div>
                     </div>
                   </td>
                   <td style="text-align:right;">
@@ -718,35 +728,37 @@
               <tbody>
                 <!-- Show rows when available; otherwise render an empty-state row -->
                 {% if next_fights %}
-                  {% for fight in next_fights %}
-                  <tr class="data-row">
-                    <td>
-                      {% if fight.event_url %}<a href="{{ fight.event_url }}" target="_blank" class="event-link">{{
-                        fight.event_name }}</a>
-                      {% else %}{{ fight.event_name }}{% endif %}
-                    </td>
-                    <td style="color: var(--red)">{{ fight.red_fighter }}</td>
-                    <td style="color: #5b9eff">{{ fight.blue_fighter }}</td>
-                    <td>{{ fight.weight_class }}</td>
-                    <td style="color: var(--muted)">{{ fight.date }}</td>
-                    <td style="color: var(--muted)">{{ fight.location }}</td>
-                    <td style="color: var(--muted)">{{ (fight.fighter_a_odds * 100) | round(1) if fight.fighter_a_odds >= 0 else "N/A" }}%</td>
-                    <td style="color: var(--muted)">{{ (fight.fighter_b_odds * 100) | round(1) if fight.fighter_b_odds >= 0 else "N/A" }}%</td>
-                    <td style="text-align: right">
-                      <a href="/compare?red={{ fight.red_id }}&blue={{ fight.blue_id }}">
-                        <button class="btn btn-outline" style="padding: 5px 10px; font-size: 11px">
-                          ANALYZE
-                        </button>
-                      </a>
-                    </td>
-                  </tr>
-                  {% endfor %}
+                {% for fight in next_fights %}
+                <tr class="data-row">
+                  <td>
+                    {% if fight.event_url %}<a href="{{ fight.event_url }}" target="_blank" class="event-link">{{
+                      fight.event_name }}</a>
+                    {% else %}{{ fight.event_name }}{% endif %}
+                  </td>
+                  <td style="color: var(--red)">{{ fight.red_fighter }}</td>
+                  <td style="color: #5b9eff">{{ fight.blue_fighter }}</td>
+                  <td>{{ fight.weight_class }}</td>
+                  <td style="color: var(--muted)">{{ fight.date }}</td>
+                  <td style="color: var(--muted)">{{ fight.location }}</td>
+                  <td style="color: var(--muted)">{{ (fight.fighter_a_odds * 100) | round(1) if fight.fighter_a_odds >=
+                    0 else "N/A" }}%</td>
+                  <td style="color: var(--muted)">{{ (fight.fighter_b_odds * 100) | round(1) if fight.fighter_b_odds >=
+                    0 else "N/A" }}%</td>
+                  <td style="text-align: right">
+                    <a href="/compare?red={{ fight.red_id }}&blue={{ fight.blue_id }}">
+                      <button class="btn btn-outline" style="padding: 5px 10px; font-size: 11px">
+                        ANALYZE
+                      </button>
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
                 {% else %}
-                  <tr class="data-row">
-                    <td colspan="9" style="text-align:center;color:var(--muted);padding:16px;">
-                      No upcoming fights available.
-                    </td>
-                  </tr>
+                <tr class="data-row">
+                  <td colspan="9" style="text-align:center;color:var(--muted);padding:16px;">
+                    No upcoming fights available.
+                  </td>
+                </tr>
                 {% endif %}
               </tbody>
             </table>
@@ -811,71 +823,83 @@
         </div>
         {# /screen-events #}
 
-					<!-- SCREEN 5: ABOUT  -->
-					<div class="screen" id="screen-about" style="display: none">
-						<div>
-              <h2>About UFC Fighter Optimizer</h2>
-              <br />
-              <br />
-              <div class="card">
-                <div style="font-size: 16px;">
-                  <p>UFC Fighter Optimizer is a compact research dashboard that turns public per-fight statistics into reproducible, auditable datasets for rapid analysis.</p>
-                  <br />
-                  <p>
-                    We scrape and normalize event and fight-level metrics, persist them as append-only CSV caches, and derive concise fighter "style" vectors (striking, clinch, wrestling, grappling, pace). These features feed outcome models that estimate win probabilities and produce explanations highlighting the most influential matchup drivers.
-                  </p>
-                  <br />
-                  <p>
-                    This MVP is designed for analysts and coaches to quickly explore matchups, validate model signals against video, and iterate on features. Treat model outputs as probabilistic guidance to inform, not replace, expert judgement.
-                  </p>
-                </div>
-                <br />
-                <br />
-                <hr />
-                <br />
-                <br />
-                <div>
-                <h3>Data Summary</h3>
-                  <div class="stat mt16">
-                    <div class="stat-value">{{ fighters|length if fighters else 0 }}</div>
-                    <div class="stat-label">FIGHTERS</div>
-                  </div>
-                  <br />
-                  <div class="stat">
-                    <div class="stat-value">{{ next_fights|length if next_fights else 0 }}</div>
-                    <div class="stat-label">UPCOMING FIGHTS</div>
-                  </div>
-                  <br />
-                  <div class="stat">
-                    <div class="stat-value">{{ last_fights|length if last_fights else 0 }}</div>
-                    <div class="stat-label">HISTORIC FIGHTS</div>
-                  </div>
-                </div>
-              </div>
-              <br />
-              <br />
-              <div class="card" style="font-size: 16px;">
-                <div>
-                  <h4 class="mb8">Data</h4>
-                  <p>We collect public, per-fight statistics and save them as append-only CSVs so analyses are reproducible and auditable.</p>
-                </div>
-                <br />
-                <div>
-                  <h4 class="mb8">Style Vectors</h4>
-                  <p>Per-fight metrics are summarized into compact "style" vectors (striking, clinch, wrestling, grappling, pace) that are easy to compare.</p>
-                </div>
-                <br />
-                <div>
-                  <h4 class="mb8">Predictions</h4>
-                  <p>Models estimate win probabilities from those features. SHAP explanations show which features most influenced each prediction.</p>
-                </div>
-                <br />
-                <p class="muted">Model outputs are probabilistic guidance. Use them together with video review and expert judgement.</p>
-              </div>
+        <!-- SCREEN 5: ABOUT  -->
+        <div class="screen" id="screen-about" style="display: none">
+          <div>
+            <h2>About UFC Fighter Optimizer</h2>
             <br />
-              <div class="card mt20">
-                <div class="card-title">README</div>
-                <pre class="readme-content" style="white-space:pre-wrap; font-size:13px; color:var(--text);">{{ readme_md }}</pre>
+            <br />
+            <div class="card">
+              <div style="font-size: 16px;">
+                <p>UFC Fighter Optimizer is a compact research dashboard that turns public per-fight statistics into
+                  reproducible, auditable datasets for rapid analysis.</p>
+                <br />
+                <p>
+                  We scrape and normalize event and fight-level metrics, persist them as append-only CSV caches, and
+                  derive concise fighter "style" vectors (striking, clinch, wrestling, grappling, pace). These features
+                  feed outcome models that estimate win probabilities and produce explanations highlighting the most
+                  influential matchup drivers.
+                </p>
+                <br />
+                <p>
+                  This MVP is designed for analysts and coaches to quickly explore matchups, validate model signals
+                  against video, and iterate on features. Treat model outputs as probabilistic guidance to inform, not
+                  replace, expert judgement.
+                </p>
+              </div>
+              <br />
+              <br />
+              <hr />
+              <br />
+              <br />
+              <div>
+                <h3>Data Summary</h3>
+                <div class="stat mt16">
+                  <div class="stat-value">{{ all_fighters|length if all_fighters else (fighters|length if fighters else
+                    0) }}</div>
+                  <div class="stat-label">FIGHTERS</div>
+                </div>
+                <br />
+                <div class="stat">
+                  <div class="stat-value">{{ next_fights|length if next_fights else 0 }}</div>
+                  <div class="stat-label">UPCOMING FIGHTS</div>
+                </div>
+                <br />
+                <div class="stat">
+                  <div class="stat-value">{{ meta_counts.fightGroups if meta_counts and meta_counts.fightGroups is
+                    defined else (last_fights|length if last_fights else 0) }}</div>
+                  <div class="stat-label">HISTORIC FIGHTS</div>
+                </div>
+              </div>
+            </div>
+            <br />
+            <br />
+            <div class="card" style="font-size: 16px;">
+              <div>
+                <h4 class="mb8">Data</h4>
+                <p>We collect public, per-fight statistics and save them as append-only CSVs so analyses are
+                  reproducible and auditable.</p>
+              </div>
+              <br />
+              <div>
+                <h4 class="mb8">Style Vectors</h4>
+                <p>Per-fight metrics are summarized into compact "style" vectors (striking, clinch, wrestling,
+                  grappling, pace) that are easy to compare.</p>
+              </div>
+              <br />
+              <div>
+                <h4 class="mb8">Predictions</h4>
+                <p>Models estimate win probabilities from those features. SHAP explanations show which features most
+                  influenced each prediction.</p>
+              </div>
+              <br />
+              <p class="muted">Model outputs are probabilistic guidance. Use them together with video review and expert
+                judgement.</p>
+            </div>
+            <br />
+            <div class="card mt20">
+              <div class="card-title">README</div>
+              <div id="readme" class="readme-content" style="font-size:13px; color:var(--text);"></div>
             </div>
           </div>
         </div>
@@ -887,6 +911,8 @@
   {# /app #}
 
   <!-- This section serialized server-side Jinja variables into JavaScript so the UI can use them -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
   <script>
     // FighterComposition (normalised 0–1 by _composition_to_dict):
     //   striking (= boxing), muay_thai, wrestling, grappling, pace
@@ -907,6 +933,25 @@
 
     // Baseline win prob from _compute_win_probability()
     const baseWinProb = {{ win_probability.red_pct if win_probability else 50 }};
+    // Render README markdown (server provided) into HTML using marked
+    const readmeMd = {{ readme_md | tojson | safe }};
+    try {
+      const readmeEl = document.getElementById('readme');
+      if (readmeEl && typeof marked !== 'undefined') {
+        readmeEl.innerHTML = marked.parse(readmeMd || '');
+        // Apply GitHub markdown container class and run syntax highlighting
+        readmeEl.classList.add('markdown-body');
+        if (window.hljs) {
+          document.querySelectorAll('#readme pre code').forEach((block) => {
+            hljs.highlightElement(block);
+          });
+        }
+      } else if (readmeEl) {
+        readmeEl.textContent = readmeMd || '';
+      }
+    } catch (e) {
+      console.error('Failed to render README:', e);
+    }
 
     const activeScreen = "{{ active_screen if active_screen else 'comparison' }}";
   </script>
@@ -1230,14 +1275,14 @@
 
     // Fighter Comparison Dropdowns
     function compareFromDropdowns(fallbackRed, fallbackBlue) {
-      const redSelect  = document.getElementById('fighter-select-red');
+      const redSelect = document.getElementById('fighter-select-red');
       const blueSelect = document.getElementById('fighter-select-blue');
-      const red  = (redSelect && redSelect.value)  ? redSelect.value  : (fallbackRed  || '');
+      const red = (redSelect && redSelect.value) ? redSelect.value : (fallbackRed || '');
       const blue = (blueSelect && blueSelect.value) ? blueSelect.value : (fallbackBlue || '');
       if (!red && !blue) return;
 
       const params = new URLSearchParams();
-      if (red)  params.set('red', red);
+      if (red) params.set('red', red);
       if (blue) params.set('blue', blue);
       const query = params.toString();
       window.location.href = '/compare' + (query ? `?${query}` : '');
@@ -1248,11 +1293,11 @@
       const picker = document.querySelector(`.fighter-picker[data-corner="${corner}"]`);
       if (!select || !picker) return;
       const nameEl = picker.querySelector('.picker-name');
-      const subEl  = picker.querySelector('.picker-sub');
+      const subEl = picker.querySelector('.picker-sub');
       const option = select.options[select.selectedIndex];
       const optionText = (option && option.text) ? option.text : 'Select Fighter';
       if (nameEl) nameEl.textContent = optionText.trim();
-      if (subEl)  subEl.textContent  = option?.getAttribute('data-sub')
+      if (subEl) subEl.textContent = option?.getAttribute('data-sub')
         || (corner === 'red' ? 'CHOOSE RED CORNER' : 'CHOOSE BLUE CORNER');
     }
 
@@ -1275,6 +1320,7 @@
         syncPicker(corner);
       });
     })();
-</script>
+  </script>
 </body>
+
 </html>

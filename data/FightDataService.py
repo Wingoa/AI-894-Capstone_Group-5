@@ -121,7 +121,16 @@ class FightDataService:
         event = next_event.drop(labels=["event_date_parsed"]).to_dict()
         
         print(f"Latest Event: {event}")
-        return scrapeEventInfo(event["event_id"])
+        event_info = scrapeEventInfo(event["event_id"]) or []
+        # Enrich each fight record with event-level metadata so callers can display human-friendly names
+        for fight in event_info:
+            fight["event_id"] = event.get("event_id")
+            fight["event_name"] = event.get("event_name")
+            fight["event_date"] = event.get("event_date")
+            fight["event_location"] = event.get("event_location")
+            fight["event_url"] = event.get("event_url")
+
+        return event_info
     
     def getAllEvents(self) -> pd.DataFrame:
         return pd.DataFrame([

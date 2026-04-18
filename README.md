@@ -2,25 +2,55 @@
 
 Group 5 project repo for PSU - AI 894 : Capstone Spring 2026
 
-Local Run Commands
+Local Run Commands (macOS)
 
-Start a local environment you can use:
+Prerequisites:
+
+    # macOS (optional)
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    brew install python
+
+Create and activate a virtualenv (repo root):
+
+    python3 -m venv .venv
+    source .venv/bin/activate        # bash / zsh
+    # or: . .venv/bin/activate
+    # fish: source .venv/bin/activate.fish
+
+Install dependencies:
+
+    pip install -r requirements.txt
+    # or install only parts:
+    pip install -r requirements-api.txt
+    pip install -r requirements-frontend.txt
+
+Set Python path (repo root):
+
+    export PYTHONPATH=".:data"
+
+Run the API (Terminal 1, repo root):
 
     source .venv/bin/activate
+    export PYTHONPATH=".:data"
+    python -m uvicorn data.app_render:app --reload --port 8002
 
-In venv:
+Run the Front-end (Terminal 2):
 
-    For UI
+    cd front-end
+    source ../.venv/bin/activate
+    export PREDICTION_SERVICE_URL="http://127.0.0.1:8002"
+    export DATA_SERVICE_URL="http://127.0.0.1:8002"
+    python -m uvicorn FrontEndResource:app --reload --port 8001
 
-    - cd front-end
-    - pip install -r requirements.txt
-    - uvicorn FrontEndResource:app --reload
-    or
-    - python -m uvicorn app:app --reload --port 8000
+One-line front-end (temporary envs):
 
-    For API
+    PREDICTION_SERVICE_URL="http://127.0.0.1:8002" DATA_SERVICE_URL="http://127.0.0.1:8002" python -m uvicorn FrontEndResource:app --reload --port 8001
 
-    - PYTHONPATH=. uvicorn data.app_render:app --reload --port 8002
+Notes:
+- Use `export VAR=...` on bash/zsh, `set -x` on fish, and PowerShell syntax only on Windows.
+- README contains Windows commands for Windows; ignore them on macOS.
+- If you see import errors, confirm `export PYTHONPATH=".:data"` was run in the same shell as `uvicorn`.
+- To stop, press Ctrl+C in the terminal running `uvicorn`.
 
 <br>
 <hr>
