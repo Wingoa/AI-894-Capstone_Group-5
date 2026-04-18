@@ -7,12 +7,10 @@ services:
     buildCommand: pip install -r requirements-frontend.txt
     # Run with a single Gunicorn worker to reduce memory use
     startCommand: gunicorn -k uvicorn.workers.UvicornWorker app:app --workers 1 --threads 4 --bind 0.0.0.0:$PORT
-    healthCheckPath: /
+    healthCheckPath: /health
     envVars:
       - key: PYTHON_VERSION
         value: "3.11.11"
-      - key: EXECUTION_SERVICE_URL
-        value: "https://ufc-fighter-optimizer.onrender.com"
       - key: PREDICTION_SERVICE_URL
         value: "https://ai-894-capstone-group-5.onrender.com"
       - key: DATA_URL
@@ -20,7 +18,7 @@ services:
       - key: FRONTEND_API_RETRIES
         value: "2"
       - key: FRONTEND_API_TIMEOUT
-        value: "120"
+        value: "30"
 
   - type: web
     name: AI-894-Capstone_UFC_API
