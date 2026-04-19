@@ -25,7 +25,7 @@ class RefreshDataService:
 
     def refreshFightData(self):
         # Respect global env guard to avoid any scraping when disabled.
-        enable_scraping = os.getenv("ENABLE_SCRAPING", "false").lower() in ("1", "true", "yes")
+        enable_scraping = os.getenv("ENABLE_SCRAPING", "true").lower() in ("1", "true", "yes")
         if not enable_scraping:
             print("ENABLE_SCRAPING is false; aborting refreshFightData (no network calls will be made)")
             return []

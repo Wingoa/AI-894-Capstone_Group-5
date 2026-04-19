@@ -27,7 +27,7 @@ services:
     # Install full set including ML libraries
     # Install full set including ML libraries. Use the official PyTorch CPU wheel index
     # so pip can find compatible torch wheels in the Render environment.
-    buildCommand: pip install -r requirements-api.txt -f https://download.pytorch.org/whl/cpu/torch_stable.html
+    buildCommand: pip install -r requirements-api.txt
     # Single worker API; use launcher script to avoid nested-quote issues
     startCommand: bash data/start.sh
     healthCheckPath: /health
@@ -41,7 +41,7 @@ services:
       - key: DATA_URL
         value: "https://ai-894-capstone-group-5.onrender.com"
       - key: REFRESH_ON_START
-        value: "false"
+        value: "true"
       - key: ENABLE_SCRAPING
         value: "true"
 

@@ -107,7 +107,9 @@ class FightCache(BaseCsvCache[str, List[FightStatLine]]):
     def saveAll(self, fights: List[Dict]) -> None:
         for fight in fights:
             print(f"Saving fight {fight} to FightCache")
-            self.save(fight)
+            line = self._row_to_line(fight)
+            self.upsert_line(line)
+            self.append_line_to_csv(line)
 
     def hasFight(self, fight_id: str) -> bool:
         return len(self.get_fight(fight_id)) > 0

@@ -21,7 +21,7 @@ class FightDataResource:
             async def lifespan(app: FastAPI):
                 scheduler = BackgroundScheduler()
                 # Control whether to run refresh jobs immediately using env var REFRESH_ON_START
-                refresh_on_start = os.getenv("REFRESH_ON_START", "false").lower() in ("1", "true", "yes")
+                refresh_on_start = os.getenv("REFRESH_ON_START", "true").lower() in ("1", "true", "yes")
                 if refresh_on_start:
                     scheduler.add_job(refreshDataService.refreshFightData, 'interval', hours=1, next_run_time=datetime.datetime.now())
                     scheduler.add_job(refreshDataService.reloadIncompleteData, 'interval', hours=24, next_run_time=datetime.datetime.now())
@@ -57,7 +57,7 @@ class FightDataResource:
         @self.app.get("/refresh")
         def refresh_data():
             # Prevent accidental scraping when disabled via env var
-            enable_scraping = os.getenv("ENABLE_SCRAPING", "false").lower() in ("1", "true", "yes")
+            enable_scraping = os.getenv("ENABLE_SCRAPING", "true").lower() in ("1", "true", "yes")
             if not enable_scraping:
                 raise HTTPException(status_code=403, detail="Scraping disabled (ENABLE_SCRAPING=false). Refresh disallowed.")
             return self.refreshDataService.refreshFightData()
