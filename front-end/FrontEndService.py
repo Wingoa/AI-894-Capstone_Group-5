@@ -74,7 +74,6 @@ class FrontEndService:
                                 is_server_error = True
                     except Exception:
                         pass
-
                     try:
                         print(f"FrontEndService GET failed for {url}: {exc} (attempt {attempt+1}/{self._retries+1})")
                     except Exception:
@@ -208,7 +207,6 @@ class FrontEndService:
             return None
             
         events_by_id = {e.event_id: e for e in self.getAllEvents()}
-        # all_fighters = {fighter.name: fighter.id for fighter in self.getAllFighters()}
         event_payload = payload.get("event") or {}
         fights = payload.get("fights") or []
         if not fights:
@@ -372,16 +370,6 @@ class FrontEndService:
             
         except Exception:
             return None
-
-    def _get_with_fallback(self, paths: List[str], timeout: float) -> Optional[requests.Response]:
-        for path in paths:
-            try:
-                resp = requests.get(f"{self._execution_api_url}{path}", timeout=timeout)
-                if resp.status_code == 200:
-                    return resp
-            except Exception:
-                continue
-        return None
 
     def getFighterStyle(self, fighter_id: str) -> FighterStyle:
         # Query the Prediction Service for fighter style weights.

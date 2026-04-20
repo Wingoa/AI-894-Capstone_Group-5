@@ -28,11 +28,6 @@ app = FastAPI(title="UFC Fighter Optimizer Dashboard")
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 templates = Jinja2Templates(directory=BASE_DIR / "templates")
 service = FrontEndService()
-
-# _STYLE_MATCHUP_CACHE: Dict[str, object] = {
-#     "heatmap": None,
-#     "patterns": None,
-# }
  
 @app.head("/health")
 @app.get("/health")
@@ -80,12 +75,10 @@ def compare(request: Request, red: str = "", blue: str = "") -> HTMLResponse:
     composition_blue = _composition_to_dict(fighter_blue.composition if fighter_blue else None)
     win_probability  = None
     hth_stats: List[dict] = []
-    matchup_stats: dict = {}
     
     if fighter_red and fighter_blue:
         win_probability = _compute_win_probability(fighter_red, fighter_blue)
         hth_stats       = _build_hth_stats(fighter_red, fighter_blue)
-        matchup_stats   = _build_matchup_stats(fighter_red, fighter_blue)
 
     return templates.TemplateResponse(request, "index.html", {
         "request":      request,
@@ -100,7 +93,6 @@ def compare(request: Request, red: str = "", blue: str = "") -> HTMLResponse:
         # Matchup outputs
         "win_probability": win_probability,
         "hth_stats":       hth_stats,
-        "matchup_stats":   matchup_stats,
         # Simulation sliders seeded from FighterComposition
         "sim_defaults":    _sim_defaults(fighter_red),
         # Roster
@@ -110,12 +102,6 @@ def compare(request: Request, red: str = "", blue: str = "") -> HTMLResponse:
         "next_fights": next_fights,
         "last_fights":  [_event_to_template(i, e) for i, e in last_fights],
         "meta_counts":  meta_counts,
-        # Model outputs (empty until model is connected)
-        "shap_features": [],
-        "sim_narrative": None,
-        "sim_outcome":   None,
-        "coaching_recs": [],
-
         "readme_md": _load_readme_md(),
     })
 
@@ -246,12 +232,7 @@ def _empty_comparison() -> dict:
         "composition_blue": None,
         "win_probability": None,
         "hth_stats": [],
-        "matchup_stats": {},
         "sim_defaults": _sim_defaults(None),
-        "shap_features": [],
-        "sim_narrative": None,
-        "sim_outcome": None,
-        "coaching_recs": [],
     }
 
 def _derive_style_labels(c: FighterComposition,) -> Tuple[str, List[str], List[str]]:
@@ -371,7 +352,6 @@ def _build_hth_stats(red: Fighter, blue: Fighter) -> List[dict]:
         return round(a / m * 100), round(b / m * 100)
 
     rows = []
-    
     # Style Composition
     for label, r_val, b_val in [
         ("Pace Score", rc.pace, bc.pace),
@@ -388,7 +368,6 @@ def _build_hth_stats(red: Fighter, blue: Fighter) -> List[dict]:
             "red_pct": r_pct,
             "blue_pct": b_pct,
         })
-    
     # Fight Record
     if "win_rate" in rs and "win_rate" in bs:
         rows.append({
@@ -398,7 +377,6 @@ def _build_hth_stats(red: Fighter, blue: Fighter) -> List[dict]:
             "red_pct": int(rs.get('win_rate', 0) * 100),
             "blue_pct": int(bs.get('win_rate', 0) * 100),
         })
-    
     if "total_fights" in rs and "total_fights" in bs:
         rows.append({
             "label": "Total Fights",
@@ -407,7 +385,6 @@ def _build_hth_stats(red: Fighter, blue: Fighter) -> List[dict]:
             "red_pct": 50,
             "blue_pct": 50,
         })
-    
     if "current_streak" in rs and "current_streak" in bs:
         rows.append({
             "label": "Current Streak",
@@ -416,7 +393,6 @@ def _build_hth_stats(red: Fighter, blue: Fighter) -> List[dict]:
             "red_pct": 50,
             "blue_pct": 50,
         })
-    
     # Striking Stats
     if "sig_str_per_min" in rs and "sig_str_per_min" in bs:
         r_val, b_val = rs.get('sig_str_per_min', 0), bs.get('sig_str_per_min', 0)
@@ -428,7 +404,6 @@ def _build_hth_stats(red: Fighter, blue: Fighter) -> List[dict]:
             "red_pct": r_pct,
             "blue_pct": b_pct,
         })
-    
     if "kd_per_min" in rs and "kd_per_min" in bs:
         r_val, b_val = rs.get('kd_per_min', 0), bs.get('kd_per_min', 0)
         r_pct, b_pct = norm(r_val, b_val)
@@ -439,7 +414,6 @@ def _build_hth_stats(red: Fighter, blue: Fighter) -> List[dict]:
             "red_pct": r_pct,
             "blue_pct": b_pct,
         })
-    
     # Takedown Stats
     if "td_att_per_min" in rs and "td_att_per_min" in bs:
         r_val, b_val = rs.get('td_att_per_min', 0), bs.get('td_att_per_min', 0)
@@ -451,7 +425,6 @@ def _build_hth_stats(red: Fighter, blue: Fighter) -> List[dict]:
             "red_pct": r_pct,
             "blue_pct": b_pct,
         })
-    
     if "td_success_per_min" in rs and "td_success_per_min" in bs:
         r_val, b_val = rs.get('td_success_per_min', 0), bs.get('td_success_per_min', 0)
         r_pct, b_pct = norm(r_val, b_val)
@@ -462,7 +435,6 @@ def _build_hth_stats(red: Fighter, blue: Fighter) -> List[dict]:
             "red_pct": r_pct,
             "blue_pct": b_pct,
         })
-    
     # Control
     if "ctrl_sec_per_min" in rs and "ctrl_sec_per_min" in bs:
         r_val, b_val = rs.get('ctrl_sec_per_min', 0), bs.get('ctrl_sec_per_min', 0)
@@ -474,7 +446,6 @@ def _build_hth_stats(red: Fighter, blue: Fighter) -> List[dict]:
             "red_pct": r_pct,
             "blue_pct": b_pct,
         })
-    
     # Strike Distribution
     if "distance_strike_ratio" in rs and "distance_strike_ratio" in bs:
         rows.append({
@@ -484,7 +455,6 @@ def _build_hth_stats(red: Fighter, blue: Fighter) -> List[dict]:
             "red_pct": int(rs.get('distance_strike_ratio', 0) * 100),
             "blue_pct": int(bs.get('distance_strike_ratio', 0) * 100),
         })
-    
     if "clinch_strike_ratio" in rs and "clinch_strike_ratio" in bs:
         rows.append({
             "label": "Clinch Str %",
@@ -493,7 +463,6 @@ def _build_hth_stats(red: Fighter, blue: Fighter) -> List[dict]:
             "red_pct": int(rs.get('clinch_strike_ratio', 0) * 100),
             "blue_pct": int(bs.get('clinch_strike_ratio', 0) * 100),
         })
-    
     if "ground_strike_ratio" in rs and "ground_strike_ratio" in bs:
         rows.append({
             "label": "Ground Str %",
@@ -502,7 +471,6 @@ def _build_hth_stats(red: Fighter, blue: Fighter) -> List[dict]:
             "red_pct": int(rs.get('ground_strike_ratio', 0) * 100),
             "blue_pct": int(bs.get('ground_strike_ratio', 0) * 100),
         })
-    
     # Target Distribution
     if "head_target_ratio" in rs and "head_target_ratio" in bs:
         rows.append({
@@ -512,7 +480,6 @@ def _build_hth_stats(red: Fighter, blue: Fighter) -> List[dict]:
             "red_pct": int(rs.get('head_target_ratio', 0) * 100),
             "blue_pct": int(bs.get('head_target_ratio', 0) * 100),
         })
-    
     if "body_target_ratio" in rs and "body_target_ratio" in bs:
         rows.append({
             "label": "Body Target %",
@@ -521,7 +488,6 @@ def _build_hth_stats(red: Fighter, blue: Fighter) -> List[dict]:
             "red_pct": int(rs.get('body_target_ratio', 0) * 100),
             "blue_pct": int(bs.get('body_target_ratio', 0) * 100),
         })
-    
     if "leg_target_ratio" in rs and "leg_target_ratio" in bs:
         rows.append({
             "label": "Leg Target %",
@@ -532,18 +498,6 @@ def _build_hth_stats(red: Fighter, blue: Fighter) -> List[dict]:
         })
     return rows
 
-def _build_matchup_stats(red: Fighter, blue: Fighter) -> dict:
-    # Build summary chip values from FighterComposition
-    rc, bc = red.composition, blue.composition
-    exploit = _exploitability_score(rc)
-    return {
-        "str_acc_diff":         round(rc.boxing - bc.boxing, 1),
-        "td_success_rate":      round(rc.wrestling, 1),
-        "sub_attempts":         round(rc.grappling / 10, 1),
-        "exploitability_score": exploit,
-        "exploitability_label": "High" if exploit > 50 else "Moderate",
-    }
-
 def _load_readme_md() -> str:
     try:
         readme_path = PROJECT_ROOT / "README.md"
@@ -552,7 +506,3 @@ def _load_readme_md() -> str:
     except Exception:
         pass
     return ""
-
-def _norm_name(name: str) -> str:
-    # Normalize a fighter name for matching
-    return " ".join(name.strip().lower().split())
