@@ -803,11 +803,7 @@
     const fighterBlueComposition = {{ composition_blue | tojson if composition_blue else 'null' }};
 
     // Built by _build_hth_stats() from FighterComposition fields
-    // [{label, red, blue, red_pct, blue_pct}]
     const hthStats = {{ hth_stats | tojson if hth_stats else '[]' }};
-
-    // {styles:[...], data:[[...]]} for heatmap
-    // const heatmapData = {{ heatmap_data | tojson if heatmap_data else 'null' }};
 
     // Seeded from FighterComposition by _sim_defaults():
     //   td ← wrestling/10  |  str ← boxing/10  |  pace ← pace/10
@@ -844,7 +840,6 @@
     const pageTitles = {
       comparison: "FIGHTER COMPARISON",
       simulation: "WHAT-IF SIMULATION",
-      // matchup: "STYLE MATCHUP ANALYSIS",
       roster: "FIGHTER ROSTER",
       events: "EVENTS",
       about: "ABOUT THIS PROJECT",
@@ -867,7 +862,6 @@
       const title = document.getElementById("page-title");
       if (title) title.textContent = pageTitles[id] || "";
       if (id === "comparison" && typeof drawRadar === "function") drawRadar();
-      // if (id === "matchup" && typeof buildHeatmap === "function") buildHeatmap();
     }
 
     (function initNav() {
